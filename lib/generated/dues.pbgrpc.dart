@@ -32,11 +32,11 @@ class DuesServiceClient extends $grpc.Client {
 
   DuesServiceClient(super.channel, {super.options, super.interceptors});
 
-  $grpc.ResponseFuture<$0.IsFileExistsRes> isFileExists(
-    $0.IsFileExistsReq request, {
+  $grpc.ResponseFuture<$0.AppendIfExistsRes> appendIfExists(
+    $0.AppendIfExistsReq request, {
     $grpc.CallOptions? options,
   }) {
-    return $createUnaryCall(_$isFileExists, request, options: options);
+    return $createUnaryCall(_$appendIfExists, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.StreamFileRes> streamFile(
@@ -54,7 +54,7 @@ class DuesServiceClient extends $grpc.Client {
   }
 
   $grpc.ResponseFuture<$0.GetPartitionFilesRes> getPartitionFiles(
-    $0.GetIndexedFilesReq request, {
+    $0.GetPartitionFilesReq request, {
     $grpc.CallOptions? options,
   }) {
     return $createUnaryCall(_$getPartitionFiles, request, options: options);
@@ -76,11 +76,11 @@ class DuesServiceClient extends $grpc.Client {
 
   // method descriptors
 
-  static final _$isFileExists =
-      $grpc.ClientMethod<$0.IsFileExistsReq, $0.IsFileExistsRes>(
-          '/dues.DuesService/IsFileExists',
-          ($0.IsFileExistsReq value) => value.writeToBuffer(),
-          $0.IsFileExistsRes.fromBuffer);
+  static final _$appendIfExists =
+      $grpc.ClientMethod<$0.AppendIfExistsReq, $0.AppendIfExistsRes>(
+          '/dues.DuesService/AppendIfExists',
+          ($0.AppendIfExistsReq value) => value.writeToBuffer(),
+          $0.AppendIfExistsRes.fromBuffer);
   static final _$streamFile =
       $grpc.ClientMethod<$0.StreamFileReq, $0.StreamFileRes>(
           '/dues.DuesService/StreamFile',
@@ -92,9 +92,9 @@ class DuesServiceClient extends $grpc.Client {
           ($0.GetEviFilesReq value) => value.writeToBuffer(),
           $0.GetEviFilesRes.fromBuffer);
   static final _$getPartitionFiles =
-      $grpc.ClientMethod<$0.GetIndexedFilesReq, $0.GetPartitionFilesRes>(
+      $grpc.ClientMethod<$0.GetPartitionFilesReq, $0.GetPartitionFilesRes>(
           '/dues.DuesService/GetPartitionFiles',
-          ($0.GetIndexedFilesReq value) => value.writeToBuffer(),
+          ($0.GetPartitionFilesReq value) => value.writeToBuffer(),
           $0.GetPartitionFilesRes.fromBuffer);
   static final _$getIndexedFiles =
       $grpc.ClientMethod<$0.GetIndexedFilesReq, $0.GetIndexedFilesRes>(
@@ -112,13 +112,13 @@ abstract class DuesServiceBase extends $grpc.Service {
   $core.String get $name => 'dues.DuesService';
 
   DuesServiceBase() {
-    $addMethod($grpc.ServiceMethod<$0.IsFileExistsReq, $0.IsFileExistsRes>(
-        'IsFileExists',
-        isFileExists_Pre,
+    $addMethod($grpc.ServiceMethod<$0.AppendIfExistsReq, $0.AppendIfExistsRes>(
+        'AppendIfExists',
+        appendIfExists_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $0.IsFileExistsReq.fromBuffer(value),
-        ($0.IsFileExistsRes value) => value.writeToBuffer()));
+        ($core.List<$core.int> value) => $0.AppendIfExistsReq.fromBuffer(value),
+        ($0.AppendIfExistsRes value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.StreamFileReq, $0.StreamFileRes>(
         'StreamFile',
         streamFile,
@@ -134,13 +134,13 @@ abstract class DuesServiceBase extends $grpc.Service {
         ($core.List<$core.int> value) => $0.GetEviFilesReq.fromBuffer(value),
         ($0.GetEviFilesRes value) => value.writeToBuffer()));
     $addMethod(
-        $grpc.ServiceMethod<$0.GetIndexedFilesReq, $0.GetPartitionFilesRes>(
+        $grpc.ServiceMethod<$0.GetPartitionFilesReq, $0.GetPartitionFilesRes>(
             'GetPartitionFiles',
             getPartitionFiles_Pre,
             false,
             false,
             ($core.List<$core.int> value) =>
-                $0.GetIndexedFilesReq.fromBuffer(value),
+                $0.GetPartitionFilesReq.fromBuffer(value),
             ($0.GetPartitionFilesRes value) => value.writeToBuffer()));
     $addMethod(
         $grpc.ServiceMethod<$0.GetIndexedFilesReq, $0.GetIndexedFilesRes>(
@@ -160,13 +160,14 @@ abstract class DuesServiceBase extends $grpc.Service {
         ($0.SearchRes value) => value.writeToBuffer()));
   }
 
-  $async.Future<$0.IsFileExistsRes> isFileExists_Pre($grpc.ServiceCall $call,
-      $async.Future<$0.IsFileExistsReq> $request) async {
-    return isFileExists($call, await $request);
+  $async.Future<$0.AppendIfExistsRes> appendIfExists_Pre(
+      $grpc.ServiceCall $call,
+      $async.Future<$0.AppendIfExistsReq> $request) async {
+    return appendIfExists($call, await $request);
   }
 
-  $async.Future<$0.IsFileExistsRes> isFileExists(
-      $grpc.ServiceCall call, $0.IsFileExistsReq request);
+  $async.Future<$0.AppendIfExistsRes> appendIfExists(
+      $grpc.ServiceCall call, $0.AppendIfExistsReq request);
 
   $async.Future<$0.StreamFileRes> streamFile(
       $grpc.ServiceCall call, $async.Stream<$0.StreamFileReq> request);
@@ -181,12 +182,12 @@ abstract class DuesServiceBase extends $grpc.Service {
 
   $async.Future<$0.GetPartitionFilesRes> getPartitionFiles_Pre(
       $grpc.ServiceCall $call,
-      $async.Future<$0.GetIndexedFilesReq> $request) async {
+      $async.Future<$0.GetPartitionFilesReq> $request) async {
     return getPartitionFiles($call, await $request);
   }
 
   $async.Future<$0.GetPartitionFilesRes> getPartitionFiles(
-      $grpc.ServiceCall call, $0.GetIndexedFilesReq request);
+      $grpc.ServiceCall call, $0.GetPartitionFilesReq request);
 
   $async.Future<$0.GetIndexedFilesRes> getIndexedFiles_Pre(
       $grpc.ServiceCall $call,

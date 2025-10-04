@@ -18,7 +18,7 @@ import 'dart:typed_data' as $typed_data;
 const BaseFile$json = {
   '1': 'BaseFile',
   '2': [
-    {'1': 'file_name', '3': 1, '4': 1, '5': 9, '10': 'fileName'},
+    {'1': 'file_path', '3': 1, '4': 1, '5': 9, '10': 'filePath'},
     {
       '1': 'chunk_map',
       '3': 2,
@@ -43,38 +43,38 @@ const BaseFile_ChunkMapEntry$json = {
 
 /// Descriptor for `BaseFile`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List baseFileDescriptor = $convert.base64Decode(
-    'CghCYXNlRmlsZRIbCglmaWxlX25hbWUYASABKAlSCGZpbGVOYW1lEjkKCWNodW5rX21hcBgCIA'
+    'CghCYXNlRmlsZRIbCglmaWxlX3BhdGgYASABKAlSCGZpbGVQYXRoEjkKCWNodW5rX21hcBgCIA'
     'MoCzIcLmR1ZXMuQmFzZUZpbGUuQ2h1bmtNYXBFbnRyeVIIY2h1bmtNYXAaOwoNQ2h1bmtNYXBF'
     'bnRyeRIQCgNrZXkYASABKAlSA2tleRIUCgV2YWx1ZRgCIAEoA1IFdmFsdWU6AjgB');
 
-@$core.Deprecated('Use isFileExistsReqDescriptor instead')
-const IsFileExistsReq$json = {
-  '1': 'IsFileExistsReq',
+@$core.Deprecated('Use appendIfExistsReqDescriptor instead')
+const AppendIfExistsReq$json = {
+  '1': 'AppendIfExistsReq',
   '2': [
     {'1': 'file_hash', '3': 1, '4': 1, '5': 9, '10': 'fileHash'},
     {'1': 'file_path', '3': 2, '4': 1, '5': 9, '10': 'filePath'},
   ],
 };
 
-/// Descriptor for `IsFileExistsReq`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List isFileExistsReqDescriptor = $convert.base64Decode(
-    'Cg9Jc0ZpbGVFeGlzdHNSZXESGwoJZmlsZV9oYXNoGAEgASgJUghmaWxlSGFzaBIbCglmaWxlX3'
-    'BhdGgYAiABKAlSCGZpbGVQYXRo');
+/// Descriptor for `AppendIfExistsReq`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List appendIfExistsReqDescriptor = $convert.base64Decode(
+    'ChFBcHBlbmRJZkV4aXN0c1JlcRIbCglmaWxlX2hhc2gYASABKAlSCGZpbGVIYXNoEhsKCWZpbG'
+    'VfcGF0aBgCIAEoCVIIZmlsZVBhdGg=');
 
-@$core.Deprecated('Use isFileExistsResDescriptor instead')
-const IsFileExistsRes$json = {
-  '1': 'IsFileExistsRes',
+@$core.Deprecated('Use appendIfExistsResDescriptor instead')
+const AppendIfExistsRes$json = {
+  '1': 'AppendIfExistsRes',
   '2': [
-    {'1': 'is_exist', '3': 1, '4': 1, '5': 8, '10': 'isExist'},
-    {'1': 'is_complete', '3': 2, '4': 1, '5': 8, '10': 'isComplete'},
+    {'1': 'exists', '3': 1, '4': 1, '5': 8, '10': 'exists'},
+    {'1': 'appended', '3': 2, '4': 1, '5': 8, '10': 'appended'},
     {'1': 'err', '3': 3, '4': 1, '5': 9, '10': 'err'},
   ],
 };
 
-/// Descriptor for `IsFileExistsRes`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List isFileExistsResDescriptor = $convert.base64Decode(
-    'Cg9Jc0ZpbGVFeGlzdHNSZXMSGQoIaXNfZXhpc3QYASABKAhSB2lzRXhpc3QSHwoLaXNfY29tcG'
-    'xldGUYAiABKAhSCmlzQ29tcGxldGUSEAoDZXJyGAMgASgJUgNlcnI=');
+/// Descriptor for `AppendIfExistsRes`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List appendIfExistsResDescriptor = $convert.base64Decode(
+    'ChFBcHBlbmRJZkV4aXN0c1JlcxIWCgZleGlzdHMYASABKAhSBmV4aXN0cxIaCghhcHBlbmRlZB'
+    'gCIAEoCFIIYXBwZW5kZWQSEAoDZXJyGAMgASgJUgNlcnI=');
 
 @$core.Deprecated('Use streamFileMetaDescriptor instead')
 const StreamFileMeta$json = {

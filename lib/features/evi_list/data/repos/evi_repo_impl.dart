@@ -11,8 +11,6 @@ class EviRepoImpl implements IEviRepo {
   final IEviRemoteDataSource rds;
   const EviRepoImpl(this.rds, this.logger);
 
-  // function calls not implemented yet
-
   Future<Either<Failure, Evidence>> _getEvidence(
     Future<Evidence> Function() fn,
   ) async {
@@ -23,5 +21,33 @@ class EviRepoImpl implements IEviRepo {
       logger.log(Level.error, e);
       return left(Failure(e.message));
     }
+  }
+
+  @override
+  Future<Either<Failure, Evidence>> getEvidenceFiles() {
+    // TODO: implement getEvidenceFiles
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<Failure, Evidence>> getIndexedFiles({
+    required String partiFileId,
+  }) {
+    // TODO: implement getIndexedFiles
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<Failure, Evidence>> getPartitionFiles({
+    required String eviFileId,
+  }) {
+    // TODO: implement getPartitionFiles
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<Failure, Evidence>> storeEvidence({required String eviPath}) {
+    // TODO: implement storeEvidence
+    throw UnimplementedError();
   }
 }

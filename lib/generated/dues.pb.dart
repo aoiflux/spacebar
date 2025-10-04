@@ -19,11 +19,11 @@ export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
 
 class BaseFile extends $pb.GeneratedMessage {
   factory BaseFile({
-    $core.String? fileName,
+    $core.String? filePath,
     $core.Iterable<$core.MapEntry<$core.String, $fixnum.Int64>>? chunkMap,
   }) {
     final result = create();
-    if (fileName != null) result.fileName = fileName;
+    if (filePath != null) result.filePath = filePath;
     if (chunkMap != null) result.chunkMap.addEntries(chunkMap);
     return result;
   }
@@ -41,7 +41,7 @@ class BaseFile extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'BaseFile',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'dues'),
       createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'fileName')
+    ..aOS(1, _omitFieldNames ? '' : 'filePath')
     ..m<$core.String, $fixnum.Int64>(2, _omitFieldNames ? '' : 'chunkMap',
         entryClassName: 'BaseFile.ChunkMapEntry',
         keyFieldType: $pb.PbFieldType.OS,
@@ -69,20 +69,20 @@ class BaseFile extends $pb.GeneratedMessage {
   static BaseFile? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get fileName => $_getSZ(0);
+  $core.String get filePath => $_getSZ(0);
   @$pb.TagNumber(1)
-  set fileName($core.String value) => $_setString(0, value);
+  set filePath($core.String value) => $_setString(0, value);
   @$pb.TagNumber(1)
-  $core.bool hasFileName() => $_has(0);
+  $core.bool hasFilePath() => $_has(0);
   @$pb.TagNumber(1)
-  void clearFileName() => $_clearField(1);
+  void clearFilePath() => $_clearField(1);
 
   @$pb.TagNumber(2)
   $pb.PbMap<$core.String, $fixnum.Int64> get chunkMap => $_getMap(1);
 }
 
-class IsFileExistsReq extends $pb.GeneratedMessage {
-  factory IsFileExistsReq({
+class AppendIfExistsReq extends $pb.GeneratedMessage {
+  factory AppendIfExistsReq({
     $core.String? fileHash,
     $core.String? filePath,
   }) {
@@ -92,17 +92,17 @@ class IsFileExistsReq extends $pb.GeneratedMessage {
     return result;
   }
 
-  IsFileExistsReq._();
+  AppendIfExistsReq._();
 
-  factory IsFileExistsReq.fromBuffer($core.List<$core.int> data,
+  factory AppendIfExistsReq.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory IsFileExistsReq.fromJson($core.String json,
+  factory AppendIfExistsReq.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'IsFileExistsReq',
+      _omitMessageNames ? '' : 'AppendIfExistsReq',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'dues'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'fileHash')
@@ -110,25 +110,25 @@ class IsFileExistsReq extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  IsFileExistsReq clone() => IsFileExistsReq()..mergeFromMessage(this);
+  AppendIfExistsReq clone() => AppendIfExistsReq()..mergeFromMessage(this);
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  IsFileExistsReq copyWith(void Function(IsFileExistsReq) updates) =>
-      super.copyWith((message) => updates(message as IsFileExistsReq))
-          as IsFileExistsReq;
+  AppendIfExistsReq copyWith(void Function(AppendIfExistsReq) updates) =>
+      super.copyWith((message) => updates(message as AppendIfExistsReq))
+          as AppendIfExistsReq;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static IsFileExistsReq create() => IsFileExistsReq._();
+  static AppendIfExistsReq create() => AppendIfExistsReq._();
   @$core.override
-  IsFileExistsReq createEmptyInstance() => create();
-  static $pb.PbList<IsFileExistsReq> createRepeated() =>
-      $pb.PbList<IsFileExistsReq>();
+  AppendIfExistsReq createEmptyInstance() => create();
+  static $pb.PbList<AppendIfExistsReq> createRepeated() =>
+      $pb.PbList<AppendIfExistsReq>();
   @$core.pragma('dart2js:noInline')
-  static IsFileExistsReq getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<IsFileExistsReq>(create);
-  static IsFileExistsReq? _defaultInstance;
+  static AppendIfExistsReq getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<AppendIfExistsReq>(create);
+  static AppendIfExistsReq? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get fileHash => $_getSZ(0);
@@ -149,75 +149,75 @@ class IsFileExistsReq extends $pb.GeneratedMessage {
   void clearFilePath() => $_clearField(2);
 }
 
-class IsFileExistsRes extends $pb.GeneratedMessage {
-  factory IsFileExistsRes({
-    $core.bool? isExist,
-    $core.bool? isComplete,
+class AppendIfExistsRes extends $pb.GeneratedMessage {
+  factory AppendIfExistsRes({
+    $core.bool? exists,
+    $core.bool? appended,
     $core.String? err,
   }) {
     final result = create();
-    if (isExist != null) result.isExist = isExist;
-    if (isComplete != null) result.isComplete = isComplete;
+    if (exists != null) result.exists = exists;
+    if (appended != null) result.appended = appended;
     if (err != null) result.err = err;
     return result;
   }
 
-  IsFileExistsRes._();
+  AppendIfExistsRes._();
 
-  factory IsFileExistsRes.fromBuffer($core.List<$core.int> data,
+  factory AppendIfExistsRes.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory IsFileExistsRes.fromJson($core.String json,
+  factory AppendIfExistsRes.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'IsFileExistsRes',
+      _omitMessageNames ? '' : 'AppendIfExistsRes',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'dues'),
       createEmptyInstance: create)
-    ..aOB(1, _omitFieldNames ? '' : 'isExist')
-    ..aOB(2, _omitFieldNames ? '' : 'isComplete')
+    ..aOB(1, _omitFieldNames ? '' : 'exists')
+    ..aOB(2, _omitFieldNames ? '' : 'appended')
     ..aOS(3, _omitFieldNames ? '' : 'err')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  IsFileExistsRes clone() => IsFileExistsRes()..mergeFromMessage(this);
+  AppendIfExistsRes clone() => AppendIfExistsRes()..mergeFromMessage(this);
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  IsFileExistsRes copyWith(void Function(IsFileExistsRes) updates) =>
-      super.copyWith((message) => updates(message as IsFileExistsRes))
-          as IsFileExistsRes;
+  AppendIfExistsRes copyWith(void Function(AppendIfExistsRes) updates) =>
+      super.copyWith((message) => updates(message as AppendIfExistsRes))
+          as AppendIfExistsRes;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static IsFileExistsRes create() => IsFileExistsRes._();
+  static AppendIfExistsRes create() => AppendIfExistsRes._();
   @$core.override
-  IsFileExistsRes createEmptyInstance() => create();
-  static $pb.PbList<IsFileExistsRes> createRepeated() =>
-      $pb.PbList<IsFileExistsRes>();
+  AppendIfExistsRes createEmptyInstance() => create();
+  static $pb.PbList<AppendIfExistsRes> createRepeated() =>
+      $pb.PbList<AppendIfExistsRes>();
   @$core.pragma('dart2js:noInline')
-  static IsFileExistsRes getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<IsFileExistsRes>(create);
-  static IsFileExistsRes? _defaultInstance;
+  static AppendIfExistsRes getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<AppendIfExistsRes>(create);
+  static AppendIfExistsRes? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.bool get isExist => $_getBF(0);
+  $core.bool get exists => $_getBF(0);
   @$pb.TagNumber(1)
-  set isExist($core.bool value) => $_setBool(0, value);
+  set exists($core.bool value) => $_setBool(0, value);
   @$pb.TagNumber(1)
-  $core.bool hasIsExist() => $_has(0);
+  $core.bool hasExists() => $_has(0);
   @$pb.TagNumber(1)
-  void clearIsExist() => $_clearField(1);
+  void clearExists() => $_clearField(1);
 
   @$pb.TagNumber(2)
-  $core.bool get isComplete => $_getBF(1);
+  $core.bool get appended => $_getBF(1);
   @$pb.TagNumber(2)
-  set isComplete($core.bool value) => $_setBool(1, value);
+  set appended($core.bool value) => $_setBool(1, value);
   @$pb.TagNumber(2)
-  $core.bool hasIsComplete() => $_has(1);
+  $core.bool hasAppended() => $_has(1);
   @$pb.TagNumber(2)
-  void clearIsComplete() => $_clearField(2);
+  void clearAppended() => $_clearField(2);
 
   @$pb.TagNumber(3)
   $core.String get err => $_getSZ(2);

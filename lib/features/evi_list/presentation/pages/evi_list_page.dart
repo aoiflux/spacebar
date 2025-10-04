@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spacebar/core/common/widgets/loader.dart';
 import 'package:spacebar/core/utils/show_snackbar.dart';
 import 'package:spacebar/features/evi_list/presentation/bloc/evi_bloc/evi_bloc.dart';
-import 'package:spacebar/features/evi_list/presentation/widgets/evi_obj_list.dart';
 
 class EviListPage extends StatelessWidget {
   const EviListPage({super.key});
@@ -46,7 +45,7 @@ class EviListPage extends StatelessWidget {
             return Loader();
           }
           if (state is EviSuccess) {
-            return EviObjectList(fileHierarchy: state.evidence.flist);
+            return Placeholder();
           }
           return Placeholder();
         },

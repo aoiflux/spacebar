@@ -5,7 +5,7 @@ import 'package:spacebar/core/cnst/cnst.dart';
 import 'package:spacebar/features/evi_list/data/repos/evi_repo_impl.dart';
 import 'package:spacebar/features/evi_list/data/sources/grpc_impl.dart';
 import 'package:spacebar/features/evi_list/domain/repo/ievirepo.dart';
-import 'package:spacebar/features/evi_list/domain/usecases/evi_list_case.dart';
+import 'package:spacebar/features/evi_list/domain/usecases/evi_get_evi_case.dart';
 import 'package:spacebar/features/evi_list/domain/usecases/evi_store_case.dart';
 import 'package:spacebar/features/evi_list/presentation/bloc/evi_bloc/evi_bloc.dart';
 import 'package:spacebar/generated/dues.pbgrpc.dart';
@@ -36,7 +36,7 @@ void _initEviClient() {
     ..registerFactory<IEviRepo>(
       () => EviRepoImpl(serviceLocator(), serviceLocator()),
     )
-    ..registerFactory(() => EviListCase(serviceLocator()))
+    ..registerFactory(() => EviFilesCase(serviceLocator()))
     ..registerFactory(() => EviStoreCase(serviceLocator()))
     ..registerLazySingleton(() => EviBloc(serviceLocator(), serviceLocator()));
 }

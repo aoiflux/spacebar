@@ -1,20 +1,15 @@
 import 'dart:collection';
 
 class Evidence {
+  final String fileName;
   final int totalSize;
   final int compressedSize;
-  final List<FileHierarchy> flist;
+  final HashMap<String, int> chunkMap;
 
   Evidence({
+    required this.fileName,
     required this.totalSize,
     required this.compressedSize,
-    required this.flist,
+    required this.chunkMap,
   });
-}
-
-class FileHierarchy {
-  final List<String> evis;
-  final HashMap<String, List<String>> partitionMap;
-
-  FileHierarchy({required this.evis, required this.partitionMap});
 }
