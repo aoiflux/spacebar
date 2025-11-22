@@ -50,7 +50,7 @@ class BaseFile extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  BaseFile clone() => BaseFile()..mergeFromMessage(this);
+  BaseFile clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   BaseFile copyWith(void Function(BaseFile) updates) =>
       super.copyWith((message) => updates(message as BaseFile)) as BaseFile;
@@ -110,7 +110,7 @@ class AppendIfExistsReq extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  AppendIfExistsReq clone() => AppendIfExistsReq()..mergeFromMessage(this);
+  AppendIfExistsReq clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   AppendIfExistsReq copyWith(void Function(AppendIfExistsReq) updates) =>
       super.copyWith((message) => updates(message as AppendIfExistsReq))
@@ -153,11 +153,13 @@ class AppendIfExistsRes extends $pb.GeneratedMessage {
   factory AppendIfExistsRes({
     $core.bool? exists,
     $core.bool? appended,
+    BaseFile? eviFile,
     $core.String? err,
   }) {
     final result = create();
     if (exists != null) result.exists = exists;
     if (appended != null) result.appended = appended;
+    if (eviFile != null) result.eviFile = eviFile;
     if (err != null) result.err = err;
     return result;
   }
@@ -177,11 +179,13 @@ class AppendIfExistsRes extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..aOB(1, _omitFieldNames ? '' : 'exists')
     ..aOB(2, _omitFieldNames ? '' : 'appended')
-    ..aOS(3, _omitFieldNames ? '' : 'err')
+    ..aOM<BaseFile>(3, _omitFieldNames ? '' : 'eviFile',
+        subBuilder: BaseFile.create)
+    ..aOS(4, _omitFieldNames ? '' : 'err')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  AppendIfExistsRes clone() => AppendIfExistsRes()..mergeFromMessage(this);
+  AppendIfExistsRes clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   AppendIfExistsRes copyWith(void Function(AppendIfExistsRes) updates) =>
       super.copyWith((message) => updates(message as AppendIfExistsRes))
@@ -220,13 +224,24 @@ class AppendIfExistsRes extends $pb.GeneratedMessage {
   void clearAppended() => $_clearField(2);
 
   @$pb.TagNumber(3)
-  $core.String get err => $_getSZ(2);
+  BaseFile get eviFile => $_getN(2);
   @$pb.TagNumber(3)
-  set err($core.String value) => $_setString(2, value);
+  set eviFile(BaseFile value) => $_setField(3, value);
   @$pb.TagNumber(3)
-  $core.bool hasErr() => $_has(2);
+  $core.bool hasEviFile() => $_has(2);
   @$pb.TagNumber(3)
-  void clearErr() => $_clearField(3);
+  void clearEviFile() => $_clearField(3);
+  @$pb.TagNumber(3)
+  BaseFile ensureEviFile() => $_ensure(2);
+
+  @$pb.TagNumber(4)
+  $core.String get err => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set err($core.String value) => $_setString(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasErr() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearErr() => $_clearField(4);
 }
 
 class StreamFileMeta extends $pb.GeneratedMessage {
@@ -264,7 +279,7 @@ class StreamFileMeta extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  StreamFileMeta clone() => StreamFileMeta()..mergeFromMessage(this);
+  StreamFileMeta clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   StreamFileMeta copyWith(void Function(StreamFileMeta) updates) =>
       super.copyWith((message) => updates(message as StreamFileMeta))
@@ -361,7 +376,7 @@ class StreamFileReq extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  StreamFileReq clone() => StreamFileReq()..mergeFromMessage(this);
+  StreamFileReq clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   StreamFileReq copyWith(void Function(StreamFileReq) updates) =>
       super.copyWith((message) => updates(message as StreamFileReq))
@@ -381,8 +396,12 @@ class StreamFileReq extends $pb.GeneratedMessage {
       $pb.GeneratedMessage.$_defaultFor<StreamFileReq>(create);
   static StreamFileReq? _defaultInstance;
 
+  @$pb.TagNumber(1)
+  @$pb.TagNumber(2)
   StreamFileReq_Payload whichPayload() =>
       _StreamFileReq_PayloadByTag[$_whichOneof(0)]!;
+  @$pb.TagNumber(1)
+  @$pb.TagNumber(2)
   void clearPayload() => $_clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
@@ -439,7 +458,7 @@ class StreamFileRes extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  StreamFileRes clone() => StreamFileRes()..mergeFromMessage(this);
+  StreamFileRes clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   StreamFileRes copyWith(void Function(StreamFileRes) updates) =>
       super.copyWith((message) => updates(message as StreamFileRes))
@@ -508,7 +527,7 @@ class GetEviFilesReq extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GetEviFilesReq clone() => GetEviFilesReq()..mergeFromMessage(this);
+  GetEviFilesReq clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   GetEviFilesReq copyWith(void Function(GetEviFilesReq) updates) =>
       super.copyWith((message) => updates(message as GetEviFilesReq))
@@ -557,12 +576,12 @@ class GetEviFilesRes extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..aOB(1, _omitFieldNames ? '' : 'done')
     ..aOS(2, _omitFieldNames ? '' : 'err')
-    ..pc<BaseFile>(3, _omitFieldNames ? '' : 'eviFile', $pb.PbFieldType.PM,
+    ..pPM<BaseFile>(3, _omitFieldNames ? '' : 'eviFile',
         subBuilder: BaseFile.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GetEviFilesRes clone() => GetEviFilesRes()..mergeFromMessage(this);
+  GetEviFilesRes clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   GetEviFilesRes copyWith(void Function(GetEviFilesRes) updates) =>
       super.copyWith((message) => updates(message as GetEviFilesRes))
@@ -630,8 +649,7 @@ class GetPartitionFilesReq extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GetPartitionFilesReq clone() =>
-      GetPartitionFilesReq()..mergeFromMessage(this);
+  GetPartitionFilesReq clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   GetPartitionFilesReq copyWith(void Function(GetPartitionFilesReq) updates) =>
       super.copyWith((message) => updates(message as GetPartitionFilesReq))
@@ -689,14 +707,12 @@ class GetPartitionFilesRes extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..aOB(1, _omitFieldNames ? '' : 'done')
     ..aOS(2, _omitFieldNames ? '' : 'err')
-    ..pc<BaseFile>(
-        3, _omitFieldNames ? '' : 'partitionFile', $pb.PbFieldType.PM,
+    ..pPM<BaseFile>(3, _omitFieldNames ? '' : 'partitionFile',
         subBuilder: BaseFile.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GetPartitionFilesRes clone() =>
-      GetPartitionFilesRes()..mergeFromMessage(this);
+  GetPartitionFilesRes clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   GetPartitionFilesRes copyWith(void Function(GetPartitionFilesRes) updates) =>
       super.copyWith((message) => updates(message as GetPartitionFilesRes))
@@ -764,7 +780,7 @@ class GetIndexedFilesReq extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GetIndexedFilesReq clone() => GetIndexedFilesReq()..mergeFromMessage(this);
+  GetIndexedFilesReq clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   GetIndexedFilesReq copyWith(void Function(GetIndexedFilesReq) updates) =>
       super.copyWith((message) => updates(message as GetIndexedFilesReq))
@@ -822,12 +838,12 @@ class GetIndexedFilesRes extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..aOB(1, _omitFieldNames ? '' : 'done')
     ..aOS(2, _omitFieldNames ? '' : 'err')
-    ..pc<BaseFile>(3, _omitFieldNames ? '' : 'indexedFile', $pb.PbFieldType.PM,
+    ..pPM<BaseFile>(3, _omitFieldNames ? '' : 'indexedFile',
         subBuilder: BaseFile.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GetIndexedFilesRes clone() => GetIndexedFilesRes()..mergeFromMessage(this);
+  GetIndexedFilesRes clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   GetIndexedFilesRes copyWith(void Function(GetIndexedFilesRes) updates) =>
       super.copyWith((message) => updates(message as GetIndexedFilesRes))
@@ -895,7 +911,7 @@ class SearchReq extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  SearchReq clone() => SearchReq()..mergeFromMessage(this);
+  SearchReq clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   SearchReq copyWith(void Function(SearchReq) updates) =>
       super.copyWith((message) => updates(message as SearchReq)) as SearchReq;
@@ -962,7 +978,7 @@ class SearchRes extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  SearchRes clone() => SearchRes()..mergeFromMessage(this);
+  SearchRes clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   SearchRes copyWith(void Function(SearchRes) updates) =>
       super.copyWith((message) => updates(message as SearchRes)) as SearchRes;

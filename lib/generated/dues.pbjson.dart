@@ -67,14 +67,23 @@ const AppendIfExistsRes$json = {
   '2': [
     {'1': 'exists', '3': 1, '4': 1, '5': 8, '10': 'exists'},
     {'1': 'appended', '3': 2, '4': 1, '5': 8, '10': 'appended'},
-    {'1': 'err', '3': 3, '4': 1, '5': 9, '10': 'err'},
+    {
+      '1': 'evi_file',
+      '3': 3,
+      '4': 1,
+      '5': 11,
+      '6': '.dues.BaseFile',
+      '10': 'eviFile'
+    },
+    {'1': 'err', '3': 4, '4': 1, '5': 9, '10': 'err'},
   ],
 };
 
 /// Descriptor for `AppendIfExistsRes`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List appendIfExistsResDescriptor = $convert.base64Decode(
     'ChFBcHBlbmRJZkV4aXN0c1JlcxIWCgZleGlzdHMYASABKAhSBmV4aXN0cxIaCghhcHBlbmRlZB'
-    'gCIAEoCFIIYXBwZW5kZWQSEAoDZXJyGAMgASgJUgNlcnI=');
+    'gCIAEoCFIIYXBwZW5kZWQSKQoIZXZpX2ZpbGUYAyABKAsyDi5kdWVzLkJhc2VGaWxlUgdldmlG'
+    'aWxlEhAKA2VychgEIAEoCVIDZXJy');
 
 @$core.Deprecated('Use streamFileMetaDescriptor instead')
 const StreamFileMeta$json = {

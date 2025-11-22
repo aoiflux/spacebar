@@ -47,7 +47,6 @@ class EviRepoImpl implements IEviRepo {
 
   @override
   Future<Either<Failure, Evidence>> storeEvidence({required String eviPath}) {
-    // TODO: implement storeEvidence
     throw UnimplementedError();
   }
 }
