@@ -1,5 +1,7 @@
 import 'dart:collection';
+import 'dart:io';
 
+import 'package:fixnum/fixnum.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:logger/logger.dart';
 import 'package:spacebar/core/utils/util.dart';
@@ -41,14 +43,90 @@ class GrpcImpl implements IEviRemoteDataSource {
       fileName: filePath,
       totalSize: _fileSize,
       chunkMap: chunkMap,
-      compressedSize: 0,
+      compressedSize: chunkMap.values.fold(0, (sum, size) => sum + size),
       fileId: res.eviFile.fileId,
     );
     return model;
   }
 
   @override
-  Future<EvidenceFileModel> streamFile(String fileType, String filePath) {
-    throw UnimplementedError();
+  Future<EvidenceFileModel> streamFile(String fileType, String filePath) async {
+    // Prepare file metadata
+    if (_fileHash.isEmpty) {
+      final fileHashResult = await getFileHash(filePath);
+      fileHashResult.match((l) => _fileHash = "", (r) => _fileHash = r);
+    }
+    if (_fileSize == 0) {
+      _fileSize = getFileSize(filePath).getRight().getOrElse(() => 0);
+    }
+
+    final file = File(filePath);
+    if (!await file.exists()) {
+      throw Exception('File not found: $filePath');
+    }
+
+    // Create stream controller for sending requests
+    Stream<StreamFileReq> generateRequests() async* {
+      // First, send metadata
+      final metadata = StreamFileMeta(
+        filePath: filePath,
+        fileSize: Int64(_fileSize),
+        fileType: fileType,
+        fileHash: _fileHash,
+      );
+
+      yield StreamFileReq(fileMeta: metadata);
+      logger.d('Sent metadata: $filePath, size: $_fileSize, type: $fileType');
+
+      // Then stream file chunks (using default chunk size from openRead)
+      final fileStream = file.openRead();
+      int sentBytes = 0;
+
+      await for (final chunk in fileStream) {
+        yield StreamFileReq(file: chunk);
+        sentBytes += chunk.length;
+
+        // Optional: log progress
+        if (sentBytes % (1024 * 1024) == 0 || sentBytes == _fileSize) {
+          logger.d('Streamed: $sentBytes / $_fileSize bytes');
+        }
+      }
+
+      logger.d('File streaming completed: $filePath');
+    }
+
+    try {
+      // Call the streaming RPC
+      final response = await client.streamFile(generateRequests());
+
+      if (!response.done) {
+        throw Exception('Streaming failed: ${response.err}');
+      }
+
+      if (response.err.isNotEmpty) {
+        throw Exception('Server error: ${response.err}');
+      }
+
+      // Convert response to model
+      HashMap<String, int> chunkMap = HashMap.from(response.eviFile.chunkMap);
+      final model = EvidenceFileModel(
+        fileName: filePath,
+        totalSize: _fileSize,
+        chunkMap: chunkMap,
+        compressedSize: chunkMap.values.fold(0, (sum, size) => sum + size),
+        fileId: response.eviFile.fileId,
+      );
+
+      // Reset state for next call
+      _fileHash = "";
+      _fileSize = 0;
+
+      return model;
+    } catch (e) {
+      logger.e('Error streaming file: $e');
+      _fileHash = "";
+      _fileSize = 0;
+      rethrow;
+    }
   }
 }

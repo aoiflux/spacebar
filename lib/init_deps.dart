@@ -12,8 +12,6 @@ import 'package:spacebar/generated/dues.pbgrpc.dart';
 
 final serviceLocator = GetIt.instance;
 Future<void> initDeps() async {
-  _initEviClient();
-
   late final DuesServiceClient client;
   final channel = ClientChannel(
     GrpCnst.host,
@@ -26,6 +24,8 @@ Future<void> initDeps() async {
   serviceLocator
     ..registerLazySingleton(() => client)
     ..registerLazySingleton(() => logger);
+
+  _initEviClient();
 }
 
 void _initEviClient() {

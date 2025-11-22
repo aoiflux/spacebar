@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:spacebar/core/cnst/cnst.dart';
 import 'package:spacebar/core/common/entities/evidence.dart';
 import 'package:spacebar/core/error/except.dart';
 import 'package:spacebar/core/error/failure.dart';
@@ -46,7 +47,19 @@ class EviRepoImpl implements IEviRepo {
   }
 
   @override
-  Future<Either<Failure, Evidence>> storeEvidence({required String eviPath}) {
-    throw UnimplementedError();
+  Future<Either<Failure, Evidence>> storeEvidence({
+    required String eviPath,
+  }) async {
+    final appendRes = await rds.appendIfExists(eviPath);
+    if (appendRes != null) {
+      return right((appendRes));
+    }
+
+    try {
+      final storeRes = await rds.streamFile(FileType.evi, eviPath);
+      return right(storeRes);
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
   }
 }
