@@ -42,6 +42,7 @@ class GrpcImpl implements IEviRemoteDataSource {
       totalSize: _fileSize,
       chunkMap: chunkMap,
       compressedSize: 0,
+      fileId: res.eviFile.fileId,
     );
     return model;
   }

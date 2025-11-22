@@ -24,24 +24,24 @@ class EviRepoImpl implements IEviRepo {
   }
 
   @override
-  Future<Either<Failure, Evidence>> getEvidenceFiles() {
-    // TODO: implement getEvidenceFiles
+  Future<Either<Failure, List<Evidence>>> getEviFiles() {
+    // TODO: implement getEviFiles
     throw UnimplementedError();
   }
 
   @override
-  Future<Either<Failure, Evidence>> getIndexedFiles({
+  Future<Either<Failure, List<Evidence>>> getIdxFiles({
     required String partiFileId,
   }) {
-    // TODO: implement getIndexedFiles
+    // TODO: implement getIdxFiles
     throw UnimplementedError();
   }
 
   @override
-  Future<Either<Failure, Evidence>> getPartitionFiles({
+  Future<Either<Failure, List<Evidence>>> getPartiFiles({
     required String eviFileId,
   }) {
-    // TODO: implement getPartitionFiles
+    // TODO: implement getPartiFiles
     throw UnimplementedError();
   }
 

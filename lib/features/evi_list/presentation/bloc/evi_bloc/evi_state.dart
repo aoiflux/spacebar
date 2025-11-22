@@ -9,9 +9,14 @@ final class EviInitial extends EviState {}
 
 final class EviLoading extends EviState {}
 
-final class EviSuccess extends EviState {
+final class EviSuccessStore extends EviState {
   final Evidence evidence;
-  const EviSuccess(this.evidence);
+  const EviSuccessStore(this.evidence);
+}
+
+final class EviSuccessList extends EviState {
+  final List<Evidence> evidenceList;
+  const EviSuccessList(this.evidenceList);
 }
 
 final class EviFailure extends EviState {
