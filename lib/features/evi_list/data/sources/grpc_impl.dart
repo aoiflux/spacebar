@@ -82,20 +82,27 @@ class GrpcImpl implements IEviRemoteDataSource {
       yield StreamFileReq(fileMeta: metadata);
       logger.d('Sent metadata: $filePath, size: $_fileSize, type: $fileType');
 
-      // Then stream file chunks (using default chunk size from openRead)
-      final fileStream = file.openRead();
-      int sentBytes = 0;
+      // Then stream file chunks with 256KB chunk size
+      const chunkSize = 256 * 1024; // 256KB chunks
+      final raf = await file.open(mode: FileMode.read);
 
-      await for (final chunk in fileStream) {
-        yield StreamFileReq(file: chunk);
-        sentBytes += chunk.length;
+      try {
+        final buffer = List<int>.filled(chunkSize, 0);
+        int sentBytes = 0;
+        int bytesRead;
 
-        // Optional: log progress
-        if (sentBytes % (1024 * 1024) == 0 || sentBytes == _fileSize) {
-          logger.d('Streamed: $sentBytes / $_fileSize bytes');
+        while ((bytesRead = await raf.readInto(buffer)) > 0) {
+          yield StreamFileReq(file: buffer.sublist(0, bytesRead));
+          sentBytes += bytesRead;
+
+          // Optional: log progress
+          if (sentBytes % (1024 * 1024) == 0 || sentBytes == _fileSize) {
+            logger.d('Streamed: $sentBytes / $_fileSize bytes');
+          }
         }
+      } finally {
+        await raf.close();
       }
-
       logger.d('File streaming completed: $filePath');
     }
 
