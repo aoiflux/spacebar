@@ -38,7 +38,11 @@ class GrpcImpl implements IEviRemoteDataSource {
       return null;
     }
 
-    HashMap<String, int> chunkMap = HashMap.from(res.eviFile.chunkMap);
+    HashMap<String, Int64> resMap = HashMap.from(res.eviFile.chunkMap);
+    HashMap<String, int> chunkMap = HashMap();
+    resMap.forEach((key, value) {
+      chunkMap[key] = value.toInt();
+    });
     EvidenceFileModel model = EvidenceFileModel(
       fileName: filePath,
       totalSize: _fileSize,
@@ -97,24 +101,28 @@ class GrpcImpl implements IEviRemoteDataSource {
 
     try {
       // Call the streaming RPC
-      final response = await client.streamFile(generateRequests());
+      final res = await client.streamFile(generateRequests());
 
-      if (!response.done) {
-        throw Exception('Streaming failed: ${response.err}');
+      if (!res.done) {
+        throw Exception('Streaming failed: ${res.err}');
       }
 
-      if (response.err.isNotEmpty) {
-        throw Exception('Server error: ${response.err}');
+      if (res.err.isNotEmpty) {
+        throw Exception('Server error: ${res.err}');
       }
 
-      // Convert response to model
-      HashMap<String, int> chunkMap = HashMap.from(response.eviFile.chunkMap);
+      HashMap<String, Int64> resMap = HashMap.from(res.eviFile.chunkMap);
+      HashMap<String, int> chunkMap = HashMap();
+      resMap.forEach((key, value) {
+        chunkMap[key] = value.toInt();
+      });
+
       final model = EvidenceFileModel(
         fileName: filePath,
         totalSize: _fileSize,
         chunkMap: chunkMap,
         compressedSize: chunkMap.values.fold(0, (sum, size) => sum + size),
-        fileId: response.eviFile.fileId,
+        fileId: res.eviFile.fileId,
       );
 
       // Reset state for next call

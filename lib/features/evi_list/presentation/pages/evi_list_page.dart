@@ -45,11 +45,9 @@ class EviListPage extends StatelessWidget {
             return Loader();
           }
           if (state is EviSuccessStore) {
-            showSnackBar(context, "stored file");
             return Placeholder();
           }
           if (state is EviSuccessList) {
-            showSnackBar(context, "listed files");
             return Placeholder();
           }
           return Placeholder();
