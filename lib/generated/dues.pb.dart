@@ -1,6 +1,6 @@
 // This is a generated file - do not edit.
 //
-// Generated from protos/dues.proto.
+// Generated from dues.proto.
 
 // @dart = 3.3
 
@@ -20,10 +20,12 @@ export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
 class BaseFile extends $pb.GeneratedMessage {
   factory BaseFile({
     $core.String? filePath,
+    $core.String? fileId,
     $core.Iterable<$core.MapEntry<$core.String, $fixnum.Int64>>? chunkMap,
   }) {
     final result = create();
     if (filePath != null) result.filePath = filePath;
+    if (fileId != null) result.fileId = fileId;
     if (chunkMap != null) result.chunkMap.addEntries(chunkMap);
     return result;
   }
@@ -42,7 +44,8 @@ class BaseFile extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'dues'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'filePath')
-    ..m<$core.String, $fixnum.Int64>(2, _omitFieldNames ? '' : 'chunkMap',
+    ..aOS(2, _omitFieldNames ? '' : 'fileId')
+    ..m<$core.String, $fixnum.Int64>(3, _omitFieldNames ? '' : 'chunkMap',
         entryClassName: 'BaseFile.ChunkMapEntry',
         keyFieldType: $pb.PbFieldType.OS,
         valueFieldType: $pb.PbFieldType.O6,
@@ -50,7 +53,7 @@ class BaseFile extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  BaseFile clone() => BaseFile()..mergeFromMessage(this);
+  BaseFile clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   BaseFile copyWith(void Function(BaseFile) updates) =>
       super.copyWith((message) => updates(message as BaseFile)) as BaseFile;
@@ -62,7 +65,6 @@ class BaseFile extends $pb.GeneratedMessage {
   static BaseFile create() => BaseFile._();
   @$core.override
   BaseFile createEmptyInstance() => create();
-  static $pb.PbList<BaseFile> createRepeated() => $pb.PbList<BaseFile>();
   @$core.pragma('dart2js:noInline')
   static BaseFile getDefault() =>
       _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<BaseFile>(create);
@@ -78,7 +80,16 @@ class BaseFile extends $pb.GeneratedMessage {
   void clearFilePath() => $_clearField(1);
 
   @$pb.TagNumber(2)
-  $pb.PbMap<$core.String, $fixnum.Int64> get chunkMap => $_getMap(1);
+  $core.String get fileId => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set fileId($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasFileId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearFileId() => $_clearField(2);
+
+  @$pb.TagNumber(3)
+  $pb.PbMap<$core.String, $fixnum.Int64> get chunkMap => $_getMap(2);
 }
 
 class AppendIfExistsReq extends $pb.GeneratedMessage {
@@ -110,7 +121,7 @@ class AppendIfExistsReq extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  AppendIfExistsReq clone() => AppendIfExistsReq()..mergeFromMessage(this);
+  AppendIfExistsReq clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   AppendIfExistsReq copyWith(void Function(AppendIfExistsReq) updates) =>
       super.copyWith((message) => updates(message as AppendIfExistsReq))
@@ -123,8 +134,6 @@ class AppendIfExistsReq extends $pb.GeneratedMessage {
   static AppendIfExistsReq create() => AppendIfExistsReq._();
   @$core.override
   AppendIfExistsReq createEmptyInstance() => create();
-  static $pb.PbList<AppendIfExistsReq> createRepeated() =>
-      $pb.PbList<AppendIfExistsReq>();
   @$core.pragma('dart2js:noInline')
   static AppendIfExistsReq getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<AppendIfExistsReq>(create);
@@ -153,11 +162,13 @@ class AppendIfExistsRes extends $pb.GeneratedMessage {
   factory AppendIfExistsRes({
     $core.bool? exists,
     $core.bool? appended,
+    BaseFile? eviFile,
     $core.String? err,
   }) {
     final result = create();
     if (exists != null) result.exists = exists;
     if (appended != null) result.appended = appended;
+    if (eviFile != null) result.eviFile = eviFile;
     if (err != null) result.err = err;
     return result;
   }
@@ -177,11 +188,13 @@ class AppendIfExistsRes extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..aOB(1, _omitFieldNames ? '' : 'exists')
     ..aOB(2, _omitFieldNames ? '' : 'appended')
-    ..aOS(3, _omitFieldNames ? '' : 'err')
+    ..aOM<BaseFile>(3, _omitFieldNames ? '' : 'eviFile',
+        subBuilder: BaseFile.create)
+    ..aOS(4, _omitFieldNames ? '' : 'err')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  AppendIfExistsRes clone() => AppendIfExistsRes()..mergeFromMessage(this);
+  AppendIfExistsRes clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   AppendIfExistsRes copyWith(void Function(AppendIfExistsRes) updates) =>
       super.copyWith((message) => updates(message as AppendIfExistsRes))
@@ -194,8 +207,6 @@ class AppendIfExistsRes extends $pb.GeneratedMessage {
   static AppendIfExistsRes create() => AppendIfExistsRes._();
   @$core.override
   AppendIfExistsRes createEmptyInstance() => create();
-  static $pb.PbList<AppendIfExistsRes> createRepeated() =>
-      $pb.PbList<AppendIfExistsRes>();
   @$core.pragma('dart2js:noInline')
   static AppendIfExistsRes getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<AppendIfExistsRes>(create);
@@ -220,13 +231,24 @@ class AppendIfExistsRes extends $pb.GeneratedMessage {
   void clearAppended() => $_clearField(2);
 
   @$pb.TagNumber(3)
-  $core.String get err => $_getSZ(2);
+  BaseFile get eviFile => $_getN(2);
   @$pb.TagNumber(3)
-  set err($core.String value) => $_setString(2, value);
+  set eviFile(BaseFile value) => $_setField(3, value);
   @$pb.TagNumber(3)
-  $core.bool hasErr() => $_has(2);
+  $core.bool hasEviFile() => $_has(2);
   @$pb.TagNumber(3)
-  void clearErr() => $_clearField(3);
+  void clearEviFile() => $_clearField(3);
+  @$pb.TagNumber(3)
+  BaseFile ensureEviFile() => $_ensure(2);
+
+  @$pb.TagNumber(4)
+  $core.String get err => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set err($core.String value) => $_setString(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasErr() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearErr() => $_clearField(4);
 }
 
 class StreamFileMeta extends $pb.GeneratedMessage {
@@ -264,7 +286,7 @@ class StreamFileMeta extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  StreamFileMeta clone() => StreamFileMeta()..mergeFromMessage(this);
+  StreamFileMeta clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   StreamFileMeta copyWith(void Function(StreamFileMeta) updates) =>
       super.copyWith((message) => updates(message as StreamFileMeta))
@@ -277,8 +299,6 @@ class StreamFileMeta extends $pb.GeneratedMessage {
   static StreamFileMeta create() => StreamFileMeta._();
   @$core.override
   StreamFileMeta createEmptyInstance() => create();
-  static $pb.PbList<StreamFileMeta> createRepeated() =>
-      $pb.PbList<StreamFileMeta>();
   @$core.pragma('dart2js:noInline')
   static StreamFileMeta getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<StreamFileMeta>(create);
@@ -361,7 +381,7 @@ class StreamFileReq extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  StreamFileReq clone() => StreamFileReq()..mergeFromMessage(this);
+  StreamFileReq clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   StreamFileReq copyWith(void Function(StreamFileReq) updates) =>
       super.copyWith((message) => updates(message as StreamFileReq))
@@ -374,15 +394,17 @@ class StreamFileReq extends $pb.GeneratedMessage {
   static StreamFileReq create() => StreamFileReq._();
   @$core.override
   StreamFileReq createEmptyInstance() => create();
-  static $pb.PbList<StreamFileReq> createRepeated() =>
-      $pb.PbList<StreamFileReq>();
   @$core.pragma('dart2js:noInline')
   static StreamFileReq getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<StreamFileReq>(create);
   static StreamFileReq? _defaultInstance;
 
+  @$pb.TagNumber(1)
+  @$pb.TagNumber(2)
   StreamFileReq_Payload whichPayload() =>
       _StreamFileReq_PayloadByTag[$_whichOneof(0)]!;
+  @$pb.TagNumber(1)
+  @$pb.TagNumber(2)
   void clearPayload() => $_clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
@@ -439,7 +461,7 @@ class StreamFileRes extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  StreamFileRes clone() => StreamFileRes()..mergeFromMessage(this);
+  StreamFileRes clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   StreamFileRes copyWith(void Function(StreamFileRes) updates) =>
       super.copyWith((message) => updates(message as StreamFileRes))
@@ -452,8 +474,6 @@ class StreamFileRes extends $pb.GeneratedMessage {
   static StreamFileRes create() => StreamFileRes._();
   @$core.override
   StreamFileRes createEmptyInstance() => create();
-  static $pb.PbList<StreamFileRes> createRepeated() =>
-      $pb.PbList<StreamFileRes>();
   @$core.pragma('dart2js:noInline')
   static StreamFileRes getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<StreamFileRes>(create);
@@ -508,7 +528,7 @@ class GetEviFilesReq extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GetEviFilesReq clone() => GetEviFilesReq()..mergeFromMessage(this);
+  GetEviFilesReq clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   GetEviFilesReq copyWith(void Function(GetEviFilesReq) updates) =>
       super.copyWith((message) => updates(message as GetEviFilesReq))
@@ -521,8 +541,6 @@ class GetEviFilesReq extends $pb.GeneratedMessage {
   static GetEviFilesReq create() => GetEviFilesReq._();
   @$core.override
   GetEviFilesReq createEmptyInstance() => create();
-  static $pb.PbList<GetEviFilesReq> createRepeated() =>
-      $pb.PbList<GetEviFilesReq>();
   @$core.pragma('dart2js:noInline')
   static GetEviFilesReq getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<GetEviFilesReq>(create);
@@ -557,12 +575,12 @@ class GetEviFilesRes extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..aOB(1, _omitFieldNames ? '' : 'done')
     ..aOS(2, _omitFieldNames ? '' : 'err')
-    ..pc<BaseFile>(3, _omitFieldNames ? '' : 'eviFile', $pb.PbFieldType.PM,
+    ..pPM<BaseFile>(3, _omitFieldNames ? '' : 'eviFile',
         subBuilder: BaseFile.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GetEviFilesRes clone() => GetEviFilesRes()..mergeFromMessage(this);
+  GetEviFilesRes clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   GetEviFilesRes copyWith(void Function(GetEviFilesRes) updates) =>
       super.copyWith((message) => updates(message as GetEviFilesRes))
@@ -575,8 +593,6 @@ class GetEviFilesRes extends $pb.GeneratedMessage {
   static GetEviFilesRes create() => GetEviFilesRes._();
   @$core.override
   GetEviFilesRes createEmptyInstance() => create();
-  static $pb.PbList<GetEviFilesRes> createRepeated() =>
-      $pb.PbList<GetEviFilesRes>();
   @$core.pragma('dart2js:noInline')
   static GetEviFilesRes getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<GetEviFilesRes>(create);
@@ -604,8 +620,8 @@ class GetEviFilesRes extends $pb.GeneratedMessage {
   $pb.PbList<BaseFile> get eviFile => $_getList(2);
 }
 
-class GetPartitionFilesReq extends $pb.GeneratedMessage {
-  factory GetPartitionFilesReq({
+class GetPartiFilesReq extends $pb.GeneratedMessage {
+  factory GetPartiFilesReq({
     $core.String? eviFileId,
   }) {
     final result = create();
@@ -613,43 +629,40 @@ class GetPartitionFilesReq extends $pb.GeneratedMessage {
     return result;
   }
 
-  GetPartitionFilesReq._();
+  GetPartiFilesReq._();
 
-  factory GetPartitionFilesReq.fromBuffer($core.List<$core.int> data,
+  factory GetPartiFilesReq.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory GetPartitionFilesReq.fromJson($core.String json,
+  factory GetPartiFilesReq.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'GetPartitionFilesReq',
+      _omitMessageNames ? '' : 'GetPartiFilesReq',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'dues'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'eviFileId')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GetPartitionFilesReq clone() =>
-      GetPartitionFilesReq()..mergeFromMessage(this);
+  GetPartiFilesReq clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GetPartitionFilesReq copyWith(void Function(GetPartitionFilesReq) updates) =>
-      super.copyWith((message) => updates(message as GetPartitionFilesReq))
-          as GetPartitionFilesReq;
+  GetPartiFilesReq copyWith(void Function(GetPartiFilesReq) updates) =>
+      super.copyWith((message) => updates(message as GetPartiFilesReq))
+          as GetPartiFilesReq;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static GetPartitionFilesReq create() => GetPartitionFilesReq._();
+  static GetPartiFilesReq create() => GetPartiFilesReq._();
   @$core.override
-  GetPartitionFilesReq createEmptyInstance() => create();
-  static $pb.PbList<GetPartitionFilesReq> createRepeated() =>
-      $pb.PbList<GetPartitionFilesReq>();
+  GetPartiFilesReq createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static GetPartitionFilesReq getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetPartitionFilesReq>(create);
-  static GetPartitionFilesReq? _defaultInstance;
+  static GetPartiFilesReq getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetPartiFilesReq>(create);
+  static GetPartiFilesReq? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get eviFileId => $_getSZ(0);
@@ -661,8 +674,8 @@ class GetPartitionFilesReq extends $pb.GeneratedMessage {
   void clearEviFileId() => $_clearField(1);
 }
 
-class GetPartitionFilesRes extends $pb.GeneratedMessage {
-  factory GetPartitionFilesRes({
+class GetPartiFilesRes extends $pb.GeneratedMessage {
+  factory GetPartiFilesRes({
     $core.bool? done,
     $core.String? err,
     $core.Iterable<BaseFile>? partitionFile,
@@ -674,47 +687,43 @@ class GetPartitionFilesRes extends $pb.GeneratedMessage {
     return result;
   }
 
-  GetPartitionFilesRes._();
+  GetPartiFilesRes._();
 
-  factory GetPartitionFilesRes.fromBuffer($core.List<$core.int> data,
+  factory GetPartiFilesRes.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory GetPartitionFilesRes.fromJson($core.String json,
+  factory GetPartiFilesRes.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'GetPartitionFilesRes',
+      _omitMessageNames ? '' : 'GetPartiFilesRes',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'dues'),
       createEmptyInstance: create)
     ..aOB(1, _omitFieldNames ? '' : 'done')
     ..aOS(2, _omitFieldNames ? '' : 'err')
-    ..pc<BaseFile>(
-        3, _omitFieldNames ? '' : 'partitionFile', $pb.PbFieldType.PM,
+    ..pPM<BaseFile>(3, _omitFieldNames ? '' : 'partitionFile',
         subBuilder: BaseFile.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GetPartitionFilesRes clone() =>
-      GetPartitionFilesRes()..mergeFromMessage(this);
+  GetPartiFilesRes clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GetPartitionFilesRes copyWith(void Function(GetPartitionFilesRes) updates) =>
-      super.copyWith((message) => updates(message as GetPartitionFilesRes))
-          as GetPartitionFilesRes;
+  GetPartiFilesRes copyWith(void Function(GetPartiFilesRes) updates) =>
+      super.copyWith((message) => updates(message as GetPartiFilesRes))
+          as GetPartiFilesRes;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static GetPartitionFilesRes create() => GetPartitionFilesRes._();
+  static GetPartiFilesRes create() => GetPartiFilesRes._();
   @$core.override
-  GetPartitionFilesRes createEmptyInstance() => create();
-  static $pb.PbList<GetPartitionFilesRes> createRepeated() =>
-      $pb.PbList<GetPartitionFilesRes>();
+  GetPartiFilesRes createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static GetPartitionFilesRes getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetPartitionFilesRes>(create);
-  static GetPartitionFilesRes? _defaultInstance;
+  static GetPartiFilesRes getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetPartiFilesRes>(create);
+  static GetPartiFilesRes? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.bool get done => $_getBF(0);
@@ -738,8 +747,8 @@ class GetPartitionFilesRes extends $pb.GeneratedMessage {
   $pb.PbList<BaseFile> get partitionFile => $_getList(2);
 }
 
-class GetIndexedFilesReq extends $pb.GeneratedMessage {
-  factory GetIndexedFilesReq({
+class GetIdxFilesReq extends $pb.GeneratedMessage {
+  factory GetIdxFilesReq({
     $core.String? partiFileId,
   }) {
     final result = create();
@@ -747,42 +756,40 @@ class GetIndexedFilesReq extends $pb.GeneratedMessage {
     return result;
   }
 
-  GetIndexedFilesReq._();
+  GetIdxFilesReq._();
 
-  factory GetIndexedFilesReq.fromBuffer($core.List<$core.int> data,
+  factory GetIdxFilesReq.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory GetIndexedFilesReq.fromJson($core.String json,
+  factory GetIdxFilesReq.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'GetIndexedFilesReq',
+      _omitMessageNames ? '' : 'GetIdxFilesReq',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'dues'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'partiFileId')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GetIndexedFilesReq clone() => GetIndexedFilesReq()..mergeFromMessage(this);
+  GetIdxFilesReq clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GetIndexedFilesReq copyWith(void Function(GetIndexedFilesReq) updates) =>
-      super.copyWith((message) => updates(message as GetIndexedFilesReq))
-          as GetIndexedFilesReq;
+  GetIdxFilesReq copyWith(void Function(GetIdxFilesReq) updates) =>
+      super.copyWith((message) => updates(message as GetIdxFilesReq))
+          as GetIdxFilesReq;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static GetIndexedFilesReq create() => GetIndexedFilesReq._();
+  static GetIdxFilesReq create() => GetIdxFilesReq._();
   @$core.override
-  GetIndexedFilesReq createEmptyInstance() => create();
-  static $pb.PbList<GetIndexedFilesReq> createRepeated() =>
-      $pb.PbList<GetIndexedFilesReq>();
+  GetIdxFilesReq createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static GetIndexedFilesReq getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetIndexedFilesReq>(create);
-  static GetIndexedFilesReq? _defaultInstance;
+  static GetIdxFilesReq getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetIdxFilesReq>(create);
+  static GetIdxFilesReq? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get partiFileId => $_getSZ(0);
@@ -794,8 +801,8 @@ class GetIndexedFilesReq extends $pb.GeneratedMessage {
   void clearPartiFileId() => $_clearField(1);
 }
 
-class GetIndexedFilesRes extends $pb.GeneratedMessage {
-  factory GetIndexedFilesRes({
+class GetIdxFilesRes extends $pb.GeneratedMessage {
+  factory GetIdxFilesRes({
     $core.bool? done,
     $core.String? err,
     $core.Iterable<BaseFile>? indexedFile,
@@ -807,45 +814,43 @@ class GetIndexedFilesRes extends $pb.GeneratedMessage {
     return result;
   }
 
-  GetIndexedFilesRes._();
+  GetIdxFilesRes._();
 
-  factory GetIndexedFilesRes.fromBuffer($core.List<$core.int> data,
+  factory GetIdxFilesRes.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory GetIndexedFilesRes.fromJson($core.String json,
+  factory GetIdxFilesRes.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'GetIndexedFilesRes',
+      _omitMessageNames ? '' : 'GetIdxFilesRes',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'dues'),
       createEmptyInstance: create)
     ..aOB(1, _omitFieldNames ? '' : 'done')
     ..aOS(2, _omitFieldNames ? '' : 'err')
-    ..pc<BaseFile>(3, _omitFieldNames ? '' : 'indexedFile', $pb.PbFieldType.PM,
+    ..pPM<BaseFile>(3, _omitFieldNames ? '' : 'indexedFile',
         subBuilder: BaseFile.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GetIndexedFilesRes clone() => GetIndexedFilesRes()..mergeFromMessage(this);
+  GetIdxFilesRes clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  GetIndexedFilesRes copyWith(void Function(GetIndexedFilesRes) updates) =>
-      super.copyWith((message) => updates(message as GetIndexedFilesRes))
-          as GetIndexedFilesRes;
+  GetIdxFilesRes copyWith(void Function(GetIdxFilesRes) updates) =>
+      super.copyWith((message) => updates(message as GetIdxFilesRes))
+          as GetIdxFilesRes;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static GetIndexedFilesRes create() => GetIndexedFilesRes._();
+  static GetIdxFilesRes create() => GetIdxFilesRes._();
   @$core.override
-  GetIndexedFilesRes createEmptyInstance() => create();
-  static $pb.PbList<GetIndexedFilesRes> createRepeated() =>
-      $pb.PbList<GetIndexedFilesRes>();
+  GetIdxFilesRes createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static GetIndexedFilesRes getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetIndexedFilesRes>(create);
-  static GetIndexedFilesRes? _defaultInstance;
+  static GetIdxFilesRes getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetIdxFilesRes>(create);
+  static GetIdxFilesRes? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.bool get done => $_getBF(0);
@@ -895,7 +900,7 @@ class SearchReq extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  SearchReq clone() => SearchReq()..mergeFromMessage(this);
+  SearchReq clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   SearchReq copyWith(void Function(SearchReq) updates) =>
       super.copyWith((message) => updates(message as SearchReq)) as SearchReq;
@@ -907,7 +912,6 @@ class SearchReq extends $pb.GeneratedMessage {
   static SearchReq create() => SearchReq._();
   @$core.override
   SearchReq createEmptyInstance() => create();
-  static $pb.PbList<SearchReq> createRepeated() => $pb.PbList<SearchReq>();
   @$core.pragma('dart2js:noInline')
   static SearchReq getDefault() =>
       _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SearchReq>(create);
@@ -962,7 +966,7 @@ class SearchRes extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  SearchRes clone() => SearchRes()..mergeFromMessage(this);
+  SearchRes clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   SearchRes copyWith(void Function(SearchRes) updates) =>
       super.copyWith((message) => updates(message as SearchRes)) as SearchRes;
@@ -974,7 +978,6 @@ class SearchRes extends $pb.GeneratedMessage {
   static SearchRes create() => SearchRes._();
   @$core.override
   SearchRes createEmptyInstance() => create();
-  static $pb.PbList<SearchRes> createRepeated() => $pb.PbList<SearchRes>();
   @$core.pragma('dart2js:noInline')
   static SearchRes getDefault() =>
       _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SearchRes>(create);

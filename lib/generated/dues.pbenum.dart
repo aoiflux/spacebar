@@ -1,6 +1,6 @@
 // This is a generated file - do not edit.
 //
-// Generated from protos/dues.proto.
+// Generated from dues.proto.
 
 // @dart = 3.3
 

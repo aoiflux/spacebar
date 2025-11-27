@@ -5,7 +5,11 @@ import 'package:spacebar/generated/dues.pb.dart';
 class EvidenceFileModel extends Evidence {
   EvidenceFileModel({
     required super.fileName,
+<<<<<<< Updated upstream
     required super.filePath,
+=======
+    required super.fileId,
+>>>>>>> Stashed changes
     required super.totalSize,
     required super.sha256Hash,
     required super.compressedSize,

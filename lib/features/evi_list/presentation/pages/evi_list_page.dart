@@ -37,6 +37,7 @@ class EviListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+<<<<<<< Updated upstream
 
     return Scaffold(
       appBar: AppBar(
@@ -64,6 +65,49 @@ class EviListPage extends StatelessWidget {
         onPressed: () => store(context),
         icon: const Icon(Icons.upload_file),
         label: const Text('Upload Evidence'),
+=======
+    
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.storage_rounded,
+                color: colorScheme.onPrimaryContainer,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "DUES",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "File Indexer",
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                ),
+              ],
+            ),
+          ],
+        ),
+        elevation: 0,
+        scrolledUnderElevation: 2,
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => store(context),
+        icon: const Icon(Icons.upload_file_rounded),
+        label: const Text('Upload File'),
+        elevation: 4,
+>>>>>>> Stashed changes
       ),
       body: BlocConsumer<EviBloc, EviState>(
         listener: (context, state) {
@@ -87,6 +131,24 @@ class EviListPage extends StatelessWidget {
               ),
             );
           }
+          if (state is EviStoreSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  children: [
+                    Icon(Icons.check_circle_rounded, color: Colors.white),
+                    const SizedBox(width: 12),
+                    const Text('File uploaded successfully!'),
+                  ],
+                ),
+                backgroundColor: Colors.green[700],
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            );
+          }
         },
         builder: (context, state) {
           if (state is EviHashingFile) {
@@ -102,6 +164,7 @@ class EviListPage extends StatelessWidget {
           }
 
           if (state is EviLoading) {
+<<<<<<< Updated upstream
             return const Center(child: Loader());
           }
 
@@ -114,11 +177,45 @@ class EviListPage extends StatelessWidget {
           }
 
           return _buildEmptyState(context);
+=======
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Loader(),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Processing file...',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Computing hash and uploading',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+          if (state is EviStoreSuccess) {
+            return _buildSuccessView(context, state.evidence);
+          }
+          if (state is EviListSuccess) {
+            return _buildListView(context, state.evidenceList);
+          }
+          return _buildInitialView(context);
+>>>>>>> Stashed changes
         },
       ),
     );
   }
 
+<<<<<<< Updated upstream
   Widget _buildHashingState(BuildContext context, EviHashingFile state) {
     final colorScheme = Theme.of(context).colorScheme;
     
@@ -188,10 +285,48 @@ class EviListPage extends StatelessWidget {
             ),
           ),
         ),
+=======
+  Widget _buildInitialView(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer.withOpacity(0.3),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.cloud_upload_rounded,
+              size: 80,
+              color: colorScheme.primary,
+            ),
+          ),
+          const SizedBox(height: 32),
+          Text(
+            'Upload a file to get started',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Click the upload button below to index your first file',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+>>>>>>> Stashed changes
       ),
     );
   }
 
+<<<<<<< Updated upstream
   Widget _buildCheckingState(BuildContext context, EviCheckingExists state) {
     final colorScheme = Theme.of(context).colorScheme;
     
@@ -260,6 +395,61 @@ class EviListPage extends StatelessWidget {
                         '${state.sha256Hash.substring(0, 32)}...',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           fontFamily: 'monospace',
+=======
+  Widget _buildSuccessView(BuildContext context, evidence) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Success banner
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.green[400]!,
+                  Colors.green[600]!,
+                ],
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.check_circle_rounded,
+                    color: Colors.white,
+                    size: 32,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Upload Complete',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'File indexed successfully',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 14,
+>>>>>>> Stashed changes
                         ),
                       ),
                     ],
@@ -268,6 +458,7 @@ class EviListPage extends StatelessWidget {
               ],
             ),
           ),
+<<<<<<< Updated upstream
         ),
       ),
     );
@@ -322,10 +513,36 @@ class EviListPage extends StatelessWidget {
                           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
+=======
+          const SizedBox(height: 24),
+          
+          // File Information Card
+          Card(
+            elevation: 0,
+            color: colorScheme.surfaceContainerHighest,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.description_rounded,
+                        color: colorScheme.primary,
+                        size: 24,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'File Information',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+>>>>>>> Stashed changes
                         ),
                       ),
                     ],
                   ),
+<<<<<<< Updated upstream
                 ),
                 const SizedBox(height: 32),
                 LinearProgressIndicator(
@@ -500,10 +717,104 @@ class EviListPage extends StatelessWidget {
             ),
           ],
         ),
+=======
+                  const SizedBox(height: 20),
+                  _buildInfoRow(context, 'File Name', evidence.fileName, Icons.insert_drive_file_rounded),
+                  const Divider(height: 24),
+                  _buildInfoRow(
+                    context,
+                    'Total Size',
+                    '${(evidence.totalSize / 1024 / 1024).toStringAsFixed(2)} MB',
+                    Icons.data_usage_rounded,
+                  ),
+                  const Divider(height: 24),
+                  _buildInfoRow(context, 'Chunks', '${evidence.chunkMap.length}', Icons.grid_view_rounded),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          
+          // Chunk Map Section
+          Row(
+            children: [
+              Icon(
+                Icons.view_module_rounded,
+                color: colorScheme.primary,
+                size: 24,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Chunk Map',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          
+          // Chunks List
+          ...evidence.chunkMap.entries.map((entry) {
+            final index = evidence.chunkMap.keys.toList().indexOf(entry.key);
+            return Card(
+              margin: const EdgeInsets.only(bottom: 12),
+              elevation: 0,
+              color: colorScheme.surfaceContainerHighest,
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                leading: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '${index + 1}',
+                      style: TextStyle(
+                        color: colorScheme.onPrimaryContainer,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+                title: Text(
+                  entry.key.length > 20 
+                    ? '${entry.key.substring(0, 20)}...' 
+                    : entry.key,
+                  style: const TextStyle(
+                    fontFamily: 'monospace',
+                    fontSize: 13,
+                  ),
+                ),
+                subtitle: Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    '${(entry.value / 1024).toStringAsFixed(2)} KB',
+                    style: TextStyle(
+                      color: colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                trailing: Icon(
+                  Icons.check_circle_rounded,
+                  color: Colors.green[600],
+                  size: 20,
+                ),
+              ),
+            );
+          }).toList(),
+        ],
+>>>>>>> Stashed changes
       ),
     );
   }
 
+<<<<<<< Updated upstream
   Widget _buildStatItem(BuildContext context, IconData icon, String label, String value) {
     final colorScheme = Theme.of(context).colorScheme;
     
@@ -529,11 +840,22 @@ class EviListPage extends StatelessWidget {
   }
 
   Widget _buildInfoRow(BuildContext context, IconData icon, String label, String value) {
+=======
+  Widget _buildInfoRow(BuildContext context, String label, String value, IconData icon) {
+>>>>>>> Stashed changes
     final colorScheme = Theme.of(context).colorScheme;
     
     return Row(
       children: [
+<<<<<<< Updated upstream
         Icon(icon, size: 20, color: colorScheme.primary),
+=======
+        Icon(
+          icon,
+          size: 20,
+          color: colorScheme.onSurfaceVariant,
+        ),
+>>>>>>> Stashed changes
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -541,6 +863,7 @@ class EviListPage extends StatelessWidget {
             children: [
               Text(
                 label,
+<<<<<<< Updated upstream
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                     ),
@@ -548,6 +871,19 @@ class EviListPage extends StatelessWidget {
               Text(
                 value,
                 style: Theme.of(context).textTheme.bodyMedium,
+=======
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+>>>>>>> Stashed changes
                 overflow: TextOverflow.ellipsis,
               ),
             ],
@@ -556,4 +892,103 @@ class EviListPage extends StatelessWidget {
       ],
     );
   }
+<<<<<<< Updated upstream
+=======
+
+  Widget _buildListView(BuildContext context, List<dynamic> evidenceList) {
+    if (evidenceList.isEmpty) {
+      return _buildInitialView(context);
+    }
+
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(20),
+      itemCount: evidenceList.length,
+      itemBuilder: (context, index) {
+        final evidence = evidenceList[index];
+        return Card(
+          margin: const EdgeInsets.only(bottom: 16),
+          elevation: 0,
+          color: colorScheme.surfaceContainerHighest,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () {
+              // Navigate to detail view
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.insert_drive_file_rounded,
+                      color: colorScheme.onPrimaryContainer,
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          evidence.fileName,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.data_usage_rounded,
+                              size: 16,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${(evidence.totalSize / 1024 / 1024).toStringAsFixed(2)} MB',
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Icon(
+                              Icons.grid_view_rounded,
+                              size: 16,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${evidence.chunkMap.length} chunks',
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+>>>>>>> Stashed changes
 }

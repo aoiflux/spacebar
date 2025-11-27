@@ -1,8 +1,13 @@
+import 'dart:io';
 import 'package:fpdart/fpdart.dart';
 import 'package:spacebar/core/common/entities/evidence.dart';
 import 'package:spacebar/core/error/except.dart';
 import 'package:spacebar/core/error/failure.dart';
+<<<<<<< Updated upstream
 import 'package:spacebar/core/utils/file_hash_util.dart';
+=======
+import 'package:spacebar/core/utils/file_type_detector.dart';
+>>>>>>> Stashed changes
 import 'package:spacebar/features/evi_list/data/sources/grpc_impl.dart';
 import 'package:spacebar/features/evi_list/domain/entities/upload_progress.dart';
 import 'package:spacebar/features/evi_list/domain/repo/ievirepo.dart';
@@ -25,29 +30,44 @@ class EviRepoImpl implements IEviRepo {
     }
   }
 
-  @override
-  Future<Either<Failure, Evidence>> getEvidenceFiles() {
-    // TODO: implement getEvidenceFiles
-    throw UnimplementedError();
+  Future<Either<Failure, List<Evidence>>> _getEvidenceList(
+    Future<List<Evidence>> Function() fn,
+  ) async {
+    try {
+      final evidenceList = await fn();
+      return right(evidenceList);
+    } on ServerException catch (e) {
+      logger.log(Level.error, e);
+      return left(Failure(e.message));
+    }
   }
 
   @override
-  Future<Either<Failure, Evidence>> getIndexedFiles({
+  Future<Either<Failure, List<Evidence>>> getEvidenceFiles() async {
+    return _getEvidenceList(() async {
+      final files = await rds.getEviFiles();
+      return files;
+    });
+  }
+
+  @override
+  Future<Either<Failure, List<Evidence>>> getIndexedFiles({
     required String partiFileId,
-  }) {
-    // TODO: implement getIndexedFiles
-    throw UnimplementedError();
+  }) async {
+    // Not yet implemented on backend
+    return left(Failure('GetIndexedFiles not yet implemented on backend'));
   }
 
   @override
-  Future<Either<Failure, Evidence>> getPartitionFiles({
+  Future<Either<Failure, List<Evidence>>> getPartitionFiles({
     required String eviFileId,
-  }) {
-    // TODO: implement getPartitionFiles
-    throw UnimplementedError();
+  }) async {
+    // Not yet implemented on backend
+    return left(Failure('GetPartitionFiles not yet implemented on backend'));
   }
 
   @override
+<<<<<<< Updated upstream
   Future<Either<Failure, Evidence>> storeEvidence({
     required String eviPath,
     Function(UploadProgress, UploadStatus)? onProgress,
@@ -121,5 +141,37 @@ class EviRepoImpl implements IEviRepo {
       logger.log(Level.info, 'File uploaded successfully');
       return evidence;
     });
+=======
+  Future<Either<Failure, Evidence>> storeEvidence({required String eviPath}) async {
+    return _getEvidence(() async {
+      logger.i('Computing file hash for: $eviPath');
+      final fileHash = await GrpcImpl.computeFileHash(eviPath);
+      
+      logger.i('Checking if file exists...');
+      try {
+        // Try to append if exists
+        final evidence = await rds.appendIfExists(eviPath, fileHash);
+        logger.i('File already exists in database');
+        return evidence;
+      } catch (e) {
+        // File doesn't exist, upload it
+        logger.i('File not found, uploading...');
+        final fileType = FileTypeDetector.detectFileType(eviPath);
+        final file = await rds.streamFile(
+          fileType,
+          eviPath,
+          fileHash,
+          await _getFileSize(eviPath),
+        );
+        logger.i('File uploaded successfully');
+        return file;
+      }
+    });
+  }
+
+  Future<int> _getFileSize(String filePath) async {
+    final file = await File(filePath).stat();
+    return file.size;
+>>>>>>> Stashed changes
   }
 }

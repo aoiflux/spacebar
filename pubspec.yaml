@@ -14,11 +14,11 @@ dependencies:
   flutter_bloc: ^9.0.0
   fpdart: ^1.1.0
   get_it: ^8.0.2
-  grpc: ^4.0.1
+  grpc: ^5.0.0
   image_picker: ^1.1.2
   logger: ^2.4.0
-  protobuf: ^4.0.0
-  protoc_plugin: ^22.0.0
+  pointycastle: ^3.9.1
+  protobuf: ^5.1.0
 
 dev_dependencies:
   flutter_test:

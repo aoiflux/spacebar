@@ -36,7 +36,11 @@ class EviBloc extends Bloc<EviEvent, EviState> {
     
     res.fold(
       (fail) => emit(EviFailure(fail.message)),
+<<<<<<< Updated upstream
       (evidence) => emit(EviUploadSuccess(evidence)),
+=======
+      (evidence) => emit(EviStoreSuccess(evidence)),
+>>>>>>> Stashed changes
     );
   }
 
@@ -45,7 +49,7 @@ class EviBloc extends Bloc<EviEvent, EviState> {
     final res = await _eviFilesCase(EviFilesParams());
     res.fold(
       (fail) => emit(EviFailure(fail.message)),
-      (evidence) => emit(EviSuccess(evidence)),
+      (evidenceList) => emit(EviListSuccess(evidenceList)),
     );
   }
 
