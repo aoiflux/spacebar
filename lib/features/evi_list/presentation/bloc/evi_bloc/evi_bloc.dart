@@ -12,9 +12,14 @@ class EviBloc extends Bloc<EviEvent, EviState> {
   final EviStoreCase _eviStoreCase;
   final EviFilesCase _eviFilesCase;
 
+  EviBloc(this._eviFilesCase, this._eviStoreCase) : super(EviInitial()) {
+    on<EviStore>(_eviStore);
+    on<EviList>(_eviList);
+  }
+
   Future<void> _eviStore(EviStore event, Emitter<EviState> emit) async {
     emit(EviHashingFile(event.eviPath));
-    
+
     final res = await _eviStoreCase(
       EvidenceStoreParams(event.eviPath),
       onProgress: (progress, status) {
@@ -33,14 +38,10 @@ class EviBloc extends Bloc<EviEvent, EviState> {
         }
       },
     );
-    
+
     res.fold(
       (fail) => emit(EviFailure(fail.message)),
-<<<<<<< Updated upstream
-      (evidence) => emit(EviUploadSuccess(evidence)),
-=======
       (evidence) => emit(EviStoreSuccess(evidence)),
->>>>>>> Stashed changes
     );
   }
 
@@ -51,10 +52,5 @@ class EviBloc extends Bloc<EviEvent, EviState> {
       (fail) => emit(EviFailure(fail.message)),
       (evidenceList) => emit(EviListSuccess(evidenceList)),
     );
-  }
-
-  EviBloc(this._eviFilesCase, this._eviStoreCase) : super(EviInitial()) {
-    on<EviStore>(_eviStore);
-    on<EviList>(_eviList);
   }
 }

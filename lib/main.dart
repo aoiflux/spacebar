@@ -7,9 +7,12 @@ import 'package:spacebar/init_deps.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initDeps();
+
   runApp(
     MultiBlocProvider(
-      providers: [BlocProvider(create: (_) => serviceLocator<EviBloc>())],
+      providers: [
+        BlocProvider(create: (_) => serviceLocator<EviBloc>()),
+      ],
       child: const MainApp(),
     ),
   );
@@ -21,16 +24,6 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-<<<<<<< Updated upstream
-      title: 'DUES - Evidence Manager',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-=======
       title: 'DUES File Indexer',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -39,26 +32,12 @@ class MainApp extends StatelessWidget {
           seedColor: const Color(0xFF1976D2),
           brightness: Brightness.light,
         ),
->>>>>>> Stashed changes
         cardTheme: CardThemeData(
           elevation: 2,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
         ),
-<<<<<<< Updated upstream
-        appBarTheme: const AppBarTheme(
-          centerTitle: true,
-          elevation: 0,
-        ),
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-=======
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -71,23 +50,16 @@ class MainApp extends StatelessWidget {
           seedColor: const Color(0xFF1976D2),
           brightness: Brightness.dark,
         ),
->>>>>>> Stashed changes
         cardTheme: CardThemeData(
           elevation: 2,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
         ),
-<<<<<<< Updated upstream
-        appBarTheme: const AppBarTheme(
-          centerTitle: true,
-          elevation: 0,
-=======
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
->>>>>>> Stashed changes
         ),
       ),
       themeMode: ThemeMode.system,

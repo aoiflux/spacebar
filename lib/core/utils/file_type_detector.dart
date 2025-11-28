@@ -28,9 +28,6 @@ class FileTypeDetector {
   }
 
   static Future<String> detectFileSystem(String filePath) async {
-    // This is a placeholder - actual filesystem detection would require
-    // reading file headers and analyzing partition tables
-    // For now, return unknown
     return 'unknown';
   }
 

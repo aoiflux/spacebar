@@ -7,7 +7,6 @@ final class EviInitial extends EviState {}
 
 final class EviLoading extends EviState {}
 
-<<<<<<< Updated upstream
 final class EviHashingFile extends EviState {
   final String filePath;
   EviHashingFile(this.filePath);
@@ -37,24 +36,14 @@ final class EviUploading extends EviState {
   double get progress => totalBytes > 0 ? uploadedBytes / totalBytes : 0.0;
 }
 
-final class EviUploadSuccess extends EviState {
-  final Evidence evidence;
-  EviUploadSuccess(this.evidence);
-}
-
-final class EviSuccess extends EviState {
-  final Evidence evidence;
-  EviSuccess(this.evidence);
-=======
 final class EviStoreSuccess extends EviState {
   final Evidence evidence;
-  const EviStoreSuccess(this.evidence);
+  EviStoreSuccess(this.evidence);
 }
 
 final class EviListSuccess extends EviState {
   final List<Evidence> evidenceList;
-  const EviListSuccess(this.evidenceList);
->>>>>>> Stashed changes
+  EviListSuccess(this.evidenceList);
 }
 
 final class EviFailure extends EviState {

@@ -5,25 +5,20 @@ import 'package:spacebar/generated/dues.pb.dart';
 class EvidenceFileModel extends Evidence {
   EvidenceFileModel({
     required super.fileName,
-<<<<<<< Updated upstream
     required super.filePath,
-=======
     required super.fileId,
->>>>>>> Stashed changes
     required super.totalSize,
     required super.sha256Hash,
     required super.compressedSize,
     required super.chunkMap,
-    super.exists,
-    super.fullyUploaded,
   });
 
-  factory EvidenceFileModel.fromProto(BaseFile baseFile, {
+  factory EvidenceFileModel.fromProto(
+    BaseFile baseFile, {
     String? filePath,
+    String? fileId,
     String? sha256Hash,
     int? totalSize,
-    bool exists = false,
-    bool fullyUploaded = false,
   }) {
     final chunkMap = HashMap<String, int>();
     baseFile.chunkMap.forEach((key, value) {
@@ -36,12 +31,11 @@ class EvidenceFileModel extends Evidence {
     return EvidenceFileModel(
       fileName: fileName,
       filePath: filePath ?? baseFile.filePath,
+      fileId: fileId ?? baseFile.fileId,
       totalSize: totalSize ?? compressedSize,
       sha256Hash: sha256Hash ?? '',
       compressedSize: compressedSize,
       chunkMap: chunkMap,
-      exists: exists,
-      fullyUploaded: fullyUploaded,
     );
   }
 }

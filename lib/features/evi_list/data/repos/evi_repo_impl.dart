@@ -3,11 +3,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:spacebar/core/common/entities/evidence.dart';
 import 'package:spacebar/core/error/except.dart';
 import 'package:spacebar/core/error/failure.dart';
-<<<<<<< Updated upstream
-import 'package:spacebar/core/utils/file_hash_util.dart';
-=======
 import 'package:spacebar/core/utils/file_type_detector.dart';
->>>>>>> Stashed changes
 import 'package:spacebar/features/evi_list/data/sources/grpc_impl.dart';
 import 'package:spacebar/features/evi_list/domain/entities/upload_progress.dart';
 import 'package:spacebar/features/evi_list/domain/repo/ievirepo.dart';
@@ -54,7 +50,6 @@ class EviRepoImpl implements IEviRepo {
   Future<Either<Failure, List<Evidence>>> getIndexedFiles({
     required String partiFileId,
   }) async {
-    // Not yet implemented on backend
     return left(Failure('GetIndexedFiles not yet implemented on backend'));
   }
 
@@ -62,18 +57,15 @@ class EviRepoImpl implements IEviRepo {
   Future<Either<Failure, List<Evidence>>> getPartitionFiles({
     required String eviFileId,
   }) async {
-    // Not yet implemented on backend
     return left(Failure('GetPartitionFiles not yet implemented on backend'));
   }
 
   @override
-<<<<<<< Updated upstream
   Future<Either<Failure, Evidence>> storeEvidence({
     required String eviPath,
     Function(UploadProgress, UploadStatus)? onProgress,
   }) async {
     return _getEvidence(() async {
-      // Step 1: Calculate file hash
       onProgress?.call(
         UploadProgress(
           filePath: eviPath,
@@ -83,54 +75,64 @@ class EviRepoImpl implements IEviRepo {
         UploadStatus.hashing,
       );
 
-      final sha256Hash = await FileHashUtil.calculateSha256(eviPath);
-      final fileSize = await FileHashUtil.getFileSize(eviPath);
+      final fileHash = await GrpcImpl.computeFileHash(eviPath);
+      final fileSize = await _getFileSize(eviPath);
 
-      logger.log(Level.info, 'File hash: $sha256Hash, size: $fileSize');
+      logger.i('File hash: $fileHash, size: $fileSize');
 
-      // Step 2: Check if file exists
       onProgress?.call(
         UploadProgress(
           filePath: eviPath,
-          sha256Hash: sha256Hash,
+          sha256Hash: fileHash,
           totalBytes: fileSize,
           status: UploadStatus.checkingExists,
         ),
         UploadStatus.checkingExists,
       );
 
-      final existsResult = await rds.appendIfExists(eviPath, sha256Hash);
-
-      // If file exists and is fully uploaded, return immediately
-      if (existsResult.exists && existsResult.fullyUploaded) {
-        logger.log(Level.info, 'File already exists and is fully uploaded');
-        return existsResult;
+      try {
+        final existsResult = await rds.appendIfExists(eviPath, fileHash);
+        
+        logger.i('File already exists in database, path appended');
+        return Evidence(
+          fileName: existsResult.fileName,
+          filePath: existsResult.filePath,
+          fileId: existsResult.fileId,
+          totalSize: existsResult.totalSize,
+          sha256Hash: fileHash, // Use locally computed hash
+          compressedSize: existsResult.compressedSize,
+          chunkMap: existsResult.chunkMap,
+        );
+      } on ServerException catch (e) {
+        logger.i('File does not exist, proceeding with upload: ${e.message}');
       }
 
-      // Step 3: Upload file
       onProgress?.call(
         UploadProgress(
           filePath: eviPath,
-          sha256Hash: sha256Hash,
+          sha256Hash: fileHash,
           totalBytes: fileSize,
           status: UploadStatus.uploading,
         ),
         UploadStatus.uploading,
       );
 
+      final fileType = FileTypeDetector.detectFileType(eviPath);
+
       final evidence = await rds.streamFile(
-        filePath: eviPath,
-        sha256Hash: sha256Hash,
-        fileSize: fileSize,
+        fileType,
+        eviPath,
+        fileHash,
+        fileSize,
         onProgress: (uploadedBytes, uploadedChunks, totalChunks) {
           onProgress?.call(
             UploadProgress(
               filePath: eviPath,
-              sha256Hash: sha256Hash,
+              sha256Hash: fileHash,
               totalBytes: fileSize,
               uploadedBytes: uploadedBytes,
-              totalChunks: totalChunks,
               uploadedChunks: uploadedChunks,
+              totalChunks: totalChunks,
               status: UploadStatus.uploading,
             ),
             UploadStatus.uploading,
@@ -138,40 +140,21 @@ class EviRepoImpl implements IEviRepo {
         },
       );
 
-      logger.log(Level.info, 'File uploaded successfully');
-      return evidence;
-    });
-=======
-  Future<Either<Failure, Evidence>> storeEvidence({required String eviPath}) async {
-    return _getEvidence(() async {
-      logger.i('Computing file hash for: $eviPath');
-      final fileHash = await GrpcImpl.computeFileHash(eviPath);
-      
-      logger.i('Checking if file exists...');
-      try {
-        // Try to append if exists
-        final evidence = await rds.appendIfExists(eviPath, fileHash);
-        logger.i('File already exists in database');
-        return evidence;
-      } catch (e) {
-        // File doesn't exist, upload it
-        logger.i('File not found, uploading...');
-        final fileType = FileTypeDetector.detectFileType(eviPath);
-        final file = await rds.streamFile(
-          fileType,
-          eviPath,
-          fileHash,
-          await _getFileSize(eviPath),
-        );
-        logger.i('File uploaded successfully');
-        return file;
-      }
+      logger.i('File uploaded successfully');
+      return Evidence(
+        fileName: evidence.fileName,
+        filePath: evidence.filePath,
+        fileId: evidence.fileId,
+        totalSize: evidence.totalSize,
+        sha256Hash: fileHash, // Use locally computed hash
+        compressedSize: evidence.compressedSize,
+        chunkMap: evidence.chunkMap,
+      );
     });
   }
 
   Future<int> _getFileSize(String filePath) async {
     final file = await File(filePath).stat();
     return file.size;
->>>>>>> Stashed changes
   }
 }
