@@ -7,5 +7,3 @@ final class EviStore extends EviEvent {
   final String eviPath;
   EviStore({required this.eviPath});
 }
-
-final class EviList extends EviEvent {}

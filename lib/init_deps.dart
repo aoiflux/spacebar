@@ -2,12 +2,12 @@ import 'package:grpc/grpc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:spacebar/core/cnst/cnst.dart';
-import 'package:spacebar/features/evi_list/data/repos/evi_repo_impl.dart';
-import 'package:spacebar/features/evi_list/data/sources/grpc_impl.dart';
-import 'package:spacebar/features/evi_list/domain/repo/ievirepo.dart';
-import 'package:spacebar/features/evi_list/domain/usecases/evi_get_evi_case.dart';
-import 'package:spacebar/features/evi_list/domain/usecases/evi_store_case.dart';
-import 'package:spacebar/features/evi_list/presentation/bloc/evi_bloc/evi_bloc.dart';
+import 'package:spacebar/features/evi_store/data/repos/evi_repo_impl.dart';
+import 'package:spacebar/features/evi_store/data/sources/grpc_impl.dart';
+import 'package:spacebar/features/evi_store/domain/repo/ievirepo.dart';
+import 'package:spacebar/features/evi_store/domain/usecases/evi_get_evi_case.dart';
+import 'package:spacebar/features/evi_store/domain/usecases/evi_store_case.dart';
+import 'package:spacebar/features/evi_store/presentation/bloc/evi_store_bloc/evi_bloc.dart';
 import 'package:spacebar/generated/dues.pbgrpc.dart';
 
 final serviceLocator = GetIt.instance;
@@ -33,10 +33,9 @@ void _initEviClient() {
     ..registerFactory<IEviRemoteDataSource>(
       () => GrpcImpl(serviceLocator(), serviceLocator()),
     )
-    ..registerFactory<IEviRepo>(
-      () => EviRepoImpl(serviceLocator(), serviceLocator()),
+    ..registerFactory<IEviStoreRepo>(
+      () => EviStoreRepoImpl(serviceLocator(), serviceLocator()),
     )
-    ..registerFactory(() => EviFilesCase(serviceLocator()))
     ..registerFactory(() => EviStoreCase(serviceLocator()))
-    ..registerLazySingleton(() => EviBloc(serviceLocator(), serviceLocator()));
+    ..registerLazySingleton(() => EviBloc(serviceLocator()));
 }

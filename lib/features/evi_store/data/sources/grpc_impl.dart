@@ -5,7 +5,7 @@ import 'package:fixnum/fixnum.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:logger/logger.dart';
 import 'package:spacebar/core/utils/util.dart';
-import 'package:spacebar/features/evi_list/data/models/stream_evidence_model.dart';
+import 'package:spacebar/features/evi_store/data/models/stream_evidence_model.dart';
 import 'package:spacebar/generated/dues.pbgrpc.dart';
 
 abstract interface class IEviRemoteDataSource {

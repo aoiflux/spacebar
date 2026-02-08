@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spacebar/core/common/widgets/loader.dart';
 import 'package:spacebar/core/utils/show_snackbar.dart';
-import 'package:spacebar/features/evi_list/presentation/bloc/evi_bloc/evi_bloc.dart';
+import 'package:spacebar/features/evi_store/presentation/bloc/evi_store_bloc/evi_bloc.dart';
 
 class EviListPage extends StatelessWidget {
   const EviListPage({super.key});
@@ -33,21 +33,18 @@ class EviListPage extends StatelessWidget {
         onPressed: () => store(context),
         child: Icon(Icons.add),
       ),
-      body: BlocConsumer<EviBloc, EviState>(
+      body: BlocConsumer<EviBloc, EviStoreState>(
         listener: (context, state) {
-          if (state is EviFailure) {
+          if (state is EviStoreFailure) {
             showSnackBar(context, state.msg);
           }
         },
 
         builder: (context, state) {
-          if (state is EviLoading) {
+          if (state is EviStoreLoading) {
             return Loader();
           }
-          if (state is EviSuccessStore) {
-            return Placeholder();
-          }
-          if (state is EviSuccessList) {
+          if (state is EviStoreSuccess) {
             return Placeholder();
           }
           return Placeholder();
