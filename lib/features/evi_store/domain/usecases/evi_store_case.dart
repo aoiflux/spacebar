@@ -10,11 +10,15 @@ class EviStoreCase implements IUseCase<Evidence, EvidenceStoreParams> {
 
   @override
   Future<Either<Failure, Evidence>> call(EvidenceStoreParams params) async {
-    return await repo.storeEvidence(eviPath: params.evipath);
+    return await repo.storeEvidence(
+      eviPath: params.evipath,
+      onProgress: params.onProgress,
+    );
   }
 }
 
 class EvidenceStoreParams {
   final String evipath;
-  EvidenceStoreParams(this.evipath);
+  final OnProgressChanged? onProgress;
+  EvidenceStoreParams(this.evipath, {this.onProgress});
 }

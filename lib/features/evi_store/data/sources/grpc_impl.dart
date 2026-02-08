@@ -4,13 +4,22 @@ import 'dart:io';
 import 'package:fixnum/fixnum.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:logger/logger.dart';
+import 'package:spacebar/core/common/models/progress_state.dart';
 import 'package:spacebar/core/utils/util.dart';
 import 'package:spacebar/features/evi_store/data/models/stream_evidence_model.dart';
+import 'package:spacebar/features/evi_store/domain/repo/ievirepo.dart';
 import 'package:spacebar/generated/dues.pbgrpc.dart';
 
 abstract interface class IEviRemoteDataSource {
-  Future<EvidenceFileModel?> appendIfExists(String filePath);
-  Future<EvidenceFileModel> streamFile(String fileType, String filePath);
+  Future<EvidenceFileModel?> appendIfExists(
+    String filePath, {
+    OnProgressChanged? onProgress,
+  });
+  Future<EvidenceFileModel> streamFile(
+    String fileType,
+    String filePath, {
+    OnProgressChanged? onProgress,
+  });
 }
 
 class GrpcImpl implements IEviRemoteDataSource {
@@ -22,11 +31,20 @@ class GrpcImpl implements IEviRemoteDataSource {
   int _fileSize = 0;
 
   @override
-  Future<EvidenceFileModel?> appendIfExists(String filePath) async {
+  Future<EvidenceFileModel?> appendIfExists(
+    String filePath, {
+    OnProgressChanged? onProgress,
+  }) async {
+    onProgress?.call(ProgressUpdate(stage: ProgressStage.hashing));
+
     final fileHashResult = await getFileHash(filePath);
     fileHashResult.match((l) => _fileHash = "", (r) => _fileHash = r);
 
+    onProgress?.call(ProgressUpdate(stage: ProgressStage.hashDone));
+
     _fileSize = getFileSize(filePath).getRight().getOrElse(() => 0);
+
+    onProgress?.call(ProgressUpdate(stage: ProgressStage.appendCheck));
 
     AppendIfExistsReq req = AppendIfExistsReq(
       filePath: filePath,
@@ -54,11 +72,17 @@ class GrpcImpl implements IEviRemoteDataSource {
   }
 
   @override
-  Future<EvidenceFileModel> streamFile(String fileType, String filePath) async {
+  Future<EvidenceFileModel> streamFile(
+    String fileType,
+    String filePath, {
+    OnProgressChanged? onProgress,
+  }) async {
     // Prepare file metadata
     if (_fileHash.isEmpty) {
+      onProgress?.call(ProgressUpdate(stage: ProgressStage.hashing));
       final fileHashResult = await getFileHash(filePath);
       fileHashResult.match((l) => _fileHash = "", (r) => _fileHash = r);
+      onProgress?.call(ProgressUpdate(stage: ProgressStage.hashDone));
     }
     if (_fileSize == 0) {
       _fileSize = getFileSize(filePath).getRight().getOrElse(() => 0);
@@ -82,6 +106,8 @@ class GrpcImpl implements IEviRemoteDataSource {
       yield StreamFileReq(fileMeta: metadata);
       logger.d('Sent metadata: $filePath, size: $_fileSize, type: $fileType');
 
+      onProgress?.call(ProgressUpdate(stage: ProgressStage.streaming));
+
       // Then stream file chunks with 256KB chunk size
       const chunkSize = 256 * 1024; // 256KB chunks
       final raf = await file.open(mode: FileMode.read);
@@ -94,6 +120,16 @@ class GrpcImpl implements IEviRemoteDataSource {
         while ((bytesRead = await raf.readInto(buffer)) > 0) {
           yield StreamFileReq(file: buffer.sublist(0, bytesRead));
           sentBytes += bytesRead;
+
+          // Report streaming progress
+          final progress = _fileSize > 0 ? sentBytes / _fileSize : 0.0;
+          onProgress?.call(
+            ProgressUpdate(
+              stage: ProgressStage.streaming,
+              progress: progress,
+              message: '${(sentBytes ~/ 1024)} / ${(_fileSize ~/ 1024)} KB',
+            ),
+          );
 
           // Optional: log progress
           if (sentBytes % (1024 * 1024) == 0 || sentBytes == _fileSize) {
@@ -117,6 +153,8 @@ class GrpcImpl implements IEviRemoteDataSource {
       if (res.err.isNotEmpty) {
         throw Exception('Server error: ${res.err}');
       }
+
+      onProgress?.call(ProgressUpdate(stage: ProgressStage.streamDone));
 
       HashMap<String, Int64> resMap = HashMap.from(res.eviFile.chunkMap);
       HashMap<String, int> chunkMap = HashMap();

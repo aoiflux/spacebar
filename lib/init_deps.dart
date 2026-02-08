@@ -1,23 +1,20 @@
-import 'package:grpc/grpc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:spacebar/core/cnst/cnst.dart';
+import 'package:spacebar/core/utils/grpc_channel_stub.dart'
+    if (dart.library.html) 'package:spacebar/core/utils/grpc_channel_web.dart'
+    if (dart.library.io) 'package:spacebar/core/utils/grpc_channel_io.dart';
 import 'package:spacebar/features/evi_store/data/repos/evi_repo_impl.dart';
 import 'package:spacebar/features/evi_store/data/sources/grpc_impl.dart';
 import 'package:spacebar/features/evi_store/domain/repo/ievirepo.dart';
 import 'package:spacebar/features/evi_store/domain/usecases/evi_store_case.dart';
-import 'package:spacebar/features/evi_store/presentation/bloc/evi_store_bloc/evi_bloc.dart';
+import 'package:spacebar/features/evi_store/presentation/bloc/evi_store_bloc/evi_store_bloc.dart';
 import 'package:spacebar/generated/dues.pbgrpc.dart';
 
 final serviceLocator = GetIt.instance;
 Future<void> initDeps() async {
-  late final DuesServiceClient client;
-  final channel = ClientChannel(
-    GrpCnst.host,
-    port: GrpCnst.port,
-    options: const ChannelOptions(credentials: ChannelCredentials.insecure()),
-  );
-  client = DuesServiceClient(channel);
+  final channel = createGrpcChannel(GrpCnst.host, GrpCnst.port);
+  final client = DuesServiceClient(channel);
   final logger = Logger();
 
   serviceLocator

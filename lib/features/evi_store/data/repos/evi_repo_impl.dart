@@ -14,14 +14,19 @@ class EviStoreRepoImpl implements IEviStoreRepo {
   @override
   Future<Either<Failure, Evidence>> storeEvidence({
     required String eviPath,
+    OnProgressChanged? onProgress,
   }) async {
-    final appendRes = await rds.appendIfExists(eviPath);
+    final appendRes = await rds.appendIfExists(eviPath, onProgress: onProgress);
     if (appendRes != null) {
       return right((appendRes));
     }
 
     try {
-      final storeRes = await rds.streamFile(FileType.evi, eviPath);
+      final storeRes = await rds.streamFile(
+        FileType.evi,
+        eviPath,
+        onProgress: onProgress,
+      );
       return right(storeRes);
     } catch (e) {
       return left(Failure(e.toString()));

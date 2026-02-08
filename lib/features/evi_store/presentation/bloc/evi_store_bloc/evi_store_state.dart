@@ -1,4 +1,4 @@
-part of 'evi_bloc.dart';
+part of 'evi_store_bloc.dart';
 
 @immutable
 sealed class EviStoreState {
@@ -7,7 +7,10 @@ sealed class EviStoreState {
 
 final class EviStoreInitial extends EviStoreState {}
 
-final class EviStoreLoading extends EviStoreState {}
+final class EviStoreLoading extends EviStoreState {
+  final ProgressUpdate progress;
+  const EviStoreLoading(this.progress);
+}
 
 final class EviStoreSuccess extends EviStoreState {
   final Evidence evidence;
