@@ -5,7 +5,6 @@ import 'package:spacebar/core/cnst/cnst.dart';
 import 'package:spacebar/features/evi_store/data/repos/evi_repo_impl.dart';
 import 'package:spacebar/features/evi_store/data/sources/grpc_impl.dart';
 import 'package:spacebar/features/evi_store/domain/repo/ievirepo.dart';
-import 'package:spacebar/features/evi_store/domain/usecases/evi_get_evi_case.dart';
 import 'package:spacebar/features/evi_store/domain/usecases/evi_store_case.dart';
 import 'package:spacebar/features/evi_store/presentation/bloc/evi_store_bloc/evi_bloc.dart';
 import 'package:spacebar/generated/dues.pbgrpc.dart';
