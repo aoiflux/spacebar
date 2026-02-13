@@ -10,16 +10,15 @@ class EviStoreSuccessView extends StatelessWidget {
   String _formatBytes(int bytes) {
     if (bytes <= 0) return '0 B';
     const suffixes = ['B', 'KB', 'MB', 'GB', 'TB'];
-    var i = (bytes.toString().length - 1) ~/ 3;
-    return '${(bytes / (1000 * pow(1000, i))).toStringAsFixed(2)} ${suffixes[i]}';
-  }
+    const k = 1024;
 
-  int pow(int base, int exponent) {
-    int result = 1;
-    for (int i = 0; i < exponent; i++) {
-      result *= base;
-    }
-    return result;
+    if (bytes < k) return '$bytes B';
+
+    final i = (log(bytes) / log(k)).floor();
+    final index = i < suffixes.length ? i : suffixes.length - 1;
+    final size = bytes / pow(k, index);
+
+    return '${size.toStringAsFixed(2)} ${suffixes[index]}';
   }
 
   double _getCompressionRatio() {
