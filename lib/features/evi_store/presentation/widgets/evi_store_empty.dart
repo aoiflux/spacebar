@@ -21,41 +21,36 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 48.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildUploadIcon(context),
-              const SizedBox(height: 32),
-              _buildTitle(context),
-              const SizedBox(height: 8),
-              _buildDescription(context),
-              const SizedBox(height: 48),
-              _buildDragDropArea(context),
-              const SizedBox(height: 48),
-              _buildFeatures(context),
-              const SizedBox(height: 32),
-              _buildHint(context),
-            ],
-          ),
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      child: Column(
+        children: [
+          _buildUploadIcon(context),
+          const SizedBox(height: 12),
+          _buildTitle(context),
+          const SizedBox(height: 2),
+          _buildDescription(context),
+          const SizedBox(height: 12),
+          Expanded(child: _buildDragDropArea(context)),
+          const SizedBox(height: 12),
+          _buildFeatures(context),
+          const SizedBox(height: 8),
+          _buildHint(context),
+        ],
       ),
     );
   }
 
   Widget _buildUploadIcon(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.85),
         shape: BoxShape.circle,
       ),
       child: Icon(
         Icons.cloud_upload_outlined,
-        size: 56,
+        size: 40,
         color: Theme.of(context).colorScheme.primary,
       ),
     );
@@ -109,7 +104,7 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 32),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
           decoration: BoxDecoration(
             border: Border.all(
               color: _isDragHovering
@@ -143,7 +138,7 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
                 duration: const Duration(milliseconds: 200),
                 child: Icon(
                   Icons.folder_open_outlined,
-                  size: 48,
+                  size: 36,
                   color: Theme.of(context).colorScheme.primary.withValues(
                     alpha: _isDragHovering ? 1.0 : 0.5,
                   ),
@@ -195,7 +190,7 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 32),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
             decoration: BoxDecoration(
               border: Border.all(
                 color: _isDragHovering
@@ -233,7 +228,7 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
                   duration: const Duration(milliseconds: 200),
                   child: Icon(
                     Icons.folder_open_outlined,
-                    size: 48,
+                    size: 36,
                     color: Theme.of(context).colorScheme.primary.withValues(
                       alpha: _isDragHovering ? 1.0 : 0.5,
                     ),
@@ -307,7 +302,7 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
                 description: 'Military-grade encryption keeps your data secure',
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 8),
             Expanded(
               child: _buildFeatureCard(
                 context,
@@ -318,7 +313,7 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         Row(
           children: [
             Expanded(
@@ -329,7 +324,7 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
                 description: 'Advanced compression reduces storage needs',
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 8),
             Expanded(
               child: _buildFeatureCard(
                 context,
@@ -351,7 +346,7 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
     required String description,
   }) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(8),
@@ -362,8 +357,8 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 28, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(height: 8),
+          Icon(icon, size: 24, color: Theme.of(context).colorScheme.primary),
+          const SizedBox(height: 6),
           Text(
             title,
             style: Theme.of(

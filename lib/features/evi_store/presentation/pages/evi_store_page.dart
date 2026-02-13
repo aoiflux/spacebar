@@ -5,6 +5,7 @@ import 'package:spacebar/core/common/widgets/step_progress_widget.dart';
 import 'package:spacebar/core/utils/show_snackbar.dart';
 import 'package:spacebar/features/evi_store/presentation/bloc/evi_store_bloc/evi_store_bloc.dart';
 import 'package:spacebar/features/evi_store/presentation/widgets/evi_store_empty.dart';
+import 'package:spacebar/features/evi_store/presentation/widgets/evi_store_success.dart';
 
 class EviListPage extends StatelessWidget {
   const EviListPage({super.key});
@@ -56,7 +57,7 @@ class EviListPage extends StatelessWidget {
             return StepProgressWidget(currentProgress: state.progress);
           }
           if (state is EviStoreSuccess) {
-            return Placeholder();
+            return EviStoreSuccessView(evidence: state.evidence);
           }
           return EviStoreEmpty(
             onStorePressed: () => store(context),
