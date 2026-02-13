@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spacebar/core/common/widgets/step_progress_widget.dart';
 import 'package:spacebar/core/utils/show_snackbar.dart';
 import 'package:spacebar/features/evi_store/presentation/bloc/evi_store_bloc/evi_store_bloc.dart';
+import 'package:spacebar/features/evi_store/presentation/widgets/evi_store_empty.dart';
 
 class EviListPage extends StatelessWidget {
   const EviListPage({super.key});
@@ -15,6 +16,16 @@ class EviListPage extends StatelessWidget {
       return;
     }
     bloc.add(EviStore(eviPath: path));
+  }
+
+  void _handleDroppedFile(BuildContext context, String path) {
+    if (path.isEmpty) {
+      return;
+    }
+    final bloc = context.read<EviBloc>();
+    if (path.isNotEmpty) {
+      bloc.add(EviStore(eviPath: path));
+    }
   }
 
   Future<String> _pickFile() async {
@@ -47,7 +58,10 @@ class EviListPage extends StatelessWidget {
           if (state is EviStoreSuccess) {
             return Placeholder();
           }
-          return Placeholder();
+          return EviStoreEmpty(
+            onStorePressed: () => store(context),
+            onFilesDropped: (filePath) => _handleDroppedFile(context, filePath),
+          );
         },
       ),
     );
