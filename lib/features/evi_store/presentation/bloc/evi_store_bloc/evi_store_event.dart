@@ -4,8 +4,8 @@ part of 'evi_store_bloc.dart';
 sealed class EviStoreEvent {}
 
 final class EviStore extends EviStoreEvent {
-  final String eviPath;
-  EviStore({required this.eviPath});
+  final PickedFileData eviData;
+  EviStore({required this.eviData});
 }
 
 final class EviStoreProgressUpdate extends EviStoreEvent {

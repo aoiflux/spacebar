@@ -504,8 +504,8 @@ class EviStoreSuccessView extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(
             colors: [
-              Colors.orange.withOpacity(0.05),
-              Colors.orange.withOpacity(0.02),
+              Colors.orange.withValues(alpha: 0.05),
+              Colors.orange.withValues(alpha: 0.02),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,

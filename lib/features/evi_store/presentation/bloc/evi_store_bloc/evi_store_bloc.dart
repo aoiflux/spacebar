@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spacebar/core/common/entities/evidence.dart';
+import 'package:spacebar/core/common/models/picked_file_data.dart';
 import 'package:spacebar/core/common/models/progress_state.dart';
 import 'package:spacebar/features/evi_store/domain/usecases/evi_store_case.dart';
 
@@ -15,7 +16,7 @@ class EviBloc extends Bloc<EviStoreEvent, EviStoreState> {
     try {
       final res = await _eviStoreCase(
         EvidenceStoreParams(
-          event.eviPath,
+          event.eviData,
           onProgress: (progress) {
             add(EviStoreProgressUpdate(progress));
           },

@@ -22,6 +22,8 @@ dependencies:
   pointycastle: ^4.0.0
   protobuf: ^5.1.0
   protoc_plugin: ^24.0.0
+  web: ^1.1.0
+  flutter_dropzone: ^4.0.0
   flutter_web_plugins:
     sdk: flutter
 

@@ -1,40 +1,28 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spacebar/core/common/models/picked_file_data.dart';
 import 'package:spacebar/core/common/widgets/step_progress_widget.dart';
+import 'package:spacebar/core/utils/file_picker.dart';
 import 'package:spacebar/core/utils/show_snackbar.dart';
 import 'package:spacebar/features/evi_store/presentation/bloc/evi_store_bloc/evi_store_bloc.dart';
 import 'package:spacebar/features/evi_store/presentation/widgets/evi_store_empty.dart';
 import 'package:spacebar/features/evi_store/presentation/widgets/evi_store_success.dart';
 
-class EviListPage extends StatelessWidget {
-  const EviListPage({super.key});
+class EviStorePage extends StatelessWidget {
+  const EviStorePage({super.key});
 
   void store(BuildContext context) async {
     final bloc = context.read<EviBloc>();
-    final path = await _pickFile();
-    if (path.isEmpty) {
+    final data = await pickFile();
+    if (data == null) {
       return;
     }
-    bloc.add(EviStore(eviPath: path));
+    bloc.add(EviStore(eviData: data));
   }
 
-  void _handleDroppedFile(BuildContext context, String path) {
-    if (path.isEmpty) {
-      return;
-    }
+  void _handleDroppedFile(BuildContext context, PickedFileData data) {
     final bloc = context.read<EviBloc>();
-    if (path.isNotEmpty) {
-      bloc.add(EviStore(eviPath: path));
-    }
-  }
-
-  Future<String> _pickFile() async {
-    final result = await FilePicker.platform.pickFiles();
-    if (result != null && result.files.single.path != null) {
-      return result.files.single.path!;
-    }
-    return "";
+    bloc.add(EviStore(eviData: data));
   }
 
   @override

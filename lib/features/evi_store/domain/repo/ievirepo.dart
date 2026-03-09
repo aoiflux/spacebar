@@ -1,5 +1,7 @@
 import 'package:fpdart/fpdart.dart';
+
 import 'package:spacebar/core/common/entities/evidence.dart';
+import 'package:spacebar/core/common/models/picked_file_data.dart';
 import 'package:spacebar/core/common/models/progress_state.dart';
 import 'package:spacebar/core/error/failure.dart';
 
@@ -14,7 +16,7 @@ abstract class IEviStoreRepo {
   //   required String partiFileId,
   // });
   Future<Either<Failure, Evidence>> storeEvidence({
-    required String eviPath,
+    required PickedFileData eviData,
     OnProgressChanged? onProgress,
   });
 }

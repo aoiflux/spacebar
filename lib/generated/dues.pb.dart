@@ -8,7 +8,7 @@
 // ignore_for_file: constant_identifier_names
 // ignore_for_file: curly_braces_in_flow_control_structures
 // ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
 
 import 'dart:core' as $core;
 
@@ -21,11 +21,13 @@ class BaseFile extends $pb.GeneratedMessage {
   factory BaseFile({
     $core.String? filePath,
     $core.String? fileId,
+    $fixnum.Int64? fileSize,
     $core.Iterable<$core.MapEntry<$core.String, $fixnum.Int64>>? chunkMap,
   }) {
     final result = create();
     if (filePath != null) result.filePath = filePath;
     if (fileId != null) result.fileId = fileId;
+    if (fileSize != null) result.fileSize = fileSize;
     if (chunkMap != null) result.chunkMap.addEntries(chunkMap);
     return result;
   }
@@ -45,7 +47,8 @@ class BaseFile extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'filePath')
     ..aOS(2, _omitFieldNames ? '' : 'fileId')
-    ..m<$core.String, $fixnum.Int64>(3, _omitFieldNames ? '' : 'chunkMap',
+    ..aInt64(3, _omitFieldNames ? '' : 'fileSize')
+    ..m<$core.String, $fixnum.Int64>(4, _omitFieldNames ? '' : 'chunkMap',
         entryClassName: 'BaseFile.ChunkMapEntry',
         keyFieldType: $pb.PbFieldType.OS,
         valueFieldType: $pb.PbFieldType.O6,
@@ -89,7 +92,16 @@ class BaseFile extends $pb.GeneratedMessage {
   void clearFileId() => $_clearField(2);
 
   @$pb.TagNumber(3)
-  $pb.PbMap<$core.String, $fixnum.Int64> get chunkMap => $_getMap(2);
+  $fixnum.Int64 get fileSize => $_getI64(2);
+  @$pb.TagNumber(3)
+  set fileSize($fixnum.Int64 value) => $_setInt64(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasFileSize() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearFileSize() => $_clearField(3);
+
+  @$pb.TagNumber(4)
+  $pb.PbMap<$core.String, $fixnum.Int64> get chunkMap => $_getMap(3);
 }
 
 class AppendIfExistsReq extends $pb.GeneratedMessage {
@@ -254,13 +266,11 @@ class AppendIfExistsRes extends $pb.GeneratedMessage {
 class StreamFileMeta extends $pb.GeneratedMessage {
   factory StreamFileMeta({
     $core.String? filePath,
-    $fixnum.Int64? fileSize,
     $core.String? fileType,
     $core.String? fileHash,
   }) {
     final result = create();
     if (filePath != null) result.filePath = filePath;
-    if (fileSize != null) result.fileSize = fileSize;
     if (fileType != null) result.fileType = fileType;
     if (fileHash != null) result.fileHash = fileHash;
     return result;
@@ -280,9 +290,8 @@ class StreamFileMeta extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'dues'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'filePath')
-    ..aInt64(2, _omitFieldNames ? '' : 'fileSize')
-    ..aOS(3, _omitFieldNames ? '' : 'fileType')
-    ..aOS(4, _omitFieldNames ? '' : 'fileHash')
+    ..aOS(2, _omitFieldNames ? '' : 'fileType')
+    ..aOS(3, _omitFieldNames ? '' : 'fileHash')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -314,31 +323,22 @@ class StreamFileMeta extends $pb.GeneratedMessage {
   void clearFilePath() => $_clearField(1);
 
   @$pb.TagNumber(2)
-  $fixnum.Int64 get fileSize => $_getI64(1);
+  $core.String get fileType => $_getSZ(1);
   @$pb.TagNumber(2)
-  set fileSize($fixnum.Int64 value) => $_setInt64(1, value);
+  set fileType($core.String value) => $_setString(1, value);
   @$pb.TagNumber(2)
-  $core.bool hasFileSize() => $_has(1);
+  $core.bool hasFileType() => $_has(1);
   @$pb.TagNumber(2)
-  void clearFileSize() => $_clearField(2);
+  void clearFileType() => $_clearField(2);
 
   @$pb.TagNumber(3)
-  $core.String get fileType => $_getSZ(2);
+  $core.String get fileHash => $_getSZ(2);
   @$pb.TagNumber(3)
-  set fileType($core.String value) => $_setString(2, value);
+  set fileHash($core.String value) => $_setString(2, value);
   @$pb.TagNumber(3)
-  $core.bool hasFileType() => $_has(2);
+  $core.bool hasFileHash() => $_has(2);
   @$pb.TagNumber(3)
-  void clearFileType() => $_clearField(3);
-
-  @$pb.TagNumber(4)
-  $core.String get fileHash => $_getSZ(3);
-  @$pb.TagNumber(4)
-  set fileHash($core.String value) => $_setString(3, value);
-  @$pb.TagNumber(4)
-  $core.bool hasFileHash() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearFileHash() => $_clearField(4);
+  void clearFileHash() => $_clearField(3);
 }
 
 enum StreamFileReq_Payload { file, fileMeta, notSet }

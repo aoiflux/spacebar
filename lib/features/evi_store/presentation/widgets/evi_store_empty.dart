@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:desktop_drop/desktop_drop.dart';
+import 'package:flutter_dropzone/flutter_dropzone.dart';
+import 'package:spacebar/core/common/models/picked_file_data.dart';
 
 class EviStoreEmpty extends StatefulWidget {
   final VoidCallback onStorePressed;
-  final Function(String)? onFilesDropped;
+  final Function(PickedFileData)? onFilesDropped;
 
   const EviStoreEmpty({
     super.key,
@@ -81,9 +83,8 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
   Widget _buildDragDropArea(BuildContext context) {
     if (kIsWeb) {
       return _buildWebDropZone(context);
-    } else {
-      return _buildDesktopDropZone(context);
     }
+    return _buildDesktopDropZone(context);
   }
 
   Widget _buildDesktopDropZone(BuildContext context) {
@@ -92,7 +93,10 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
       onDragExited: (_) => setState(() => _isDragHovering = false),
       onDragDone: (value) {
         setState(() => _isDragHovering = false);
-        _handleDroppedFile(value.files.first.path);
+
+        final picked = value.files.first;
+        final pickedFile = PickedFileData(name: picked.name, path: picked.path);
+        _handleDroppedFile(pickedFile);
       },
       child: MouseRegion(
         onEnter: (_) {
@@ -171,99 +175,107 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
   }
 
   Widget _buildWebDropZone(BuildContext context) {
-    return DragTarget<Object>(
-      onWillAcceptWithDetails: (details) {
-        setState(() => _isDragHovering = true);
-        return true;
-      },
-      onLeave: (data) {
-        setState(() => _isDragHovering = false);
-      },
-      onAcceptWithDetails: (details) {
-        setState(() => _isDragHovering = false);
-        _handleDroppedFile(details.data.toString());
-      },
-      builder: (context, candidateData, rejectedData) {
-        return MouseRegion(
-          onEnter: (_) => setState(() => _isDragHovering = true),
-          onExit: (_) => setState(() => _isDragHovering = false),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-            decoration: BoxDecoration(
-              border: Border.all(
+    return Stack(
+      children: [
+        DropzoneView(
+          onCreated: (controller) {},
+          onHover: () {
+            setState(() => _isDragHovering = true);
+          },
+          onLeave: () {
+            setState(() => _isDragHovering = false);
+          },
+          onDropFile: (file) {
+            setState(() => _isDragHovering = false);
+            final pickedFile = PickedFileData(
+              name: file.name,
+              platformFile: file.getNative(),
+            );
+            _handleDroppedFile(pickedFile);
+          },
+        ),
+        IgnorePointer(
+          child: MouseRegion(
+            onEnter: (_) => setState(() => _isDragHovering = true),
+            onExit: (_) => setState(() => _isDragHovering = false),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: _isDragHovering
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.2),
+                  width: 1.5,
+                ),
+                borderRadius: BorderRadius.circular(8),
                 color: _isDragHovering
-                    ? Theme.of(context).colorScheme.primary
+                    ? Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.04)
                     : Theme.of(
                         context,
-                      ).colorScheme.primary.withValues(alpha: 0.2),
-                width: 1.5,
+                      ).colorScheme.primary.withValues(alpha: 0.02),
+                boxShadow: _isDragHovering
+                    ? [
+                        BoxShadow(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: 0.08),
+                          blurRadius: 12,
+                          spreadRadius: 0,
+                        ),
+                      ]
+                    : null,
               ),
-              borderRadius: BorderRadius.circular(8),
-              color: _isDragHovering
-                  ? Theme.of(
-                      context,
-                    ).colorScheme.primary.withValues(alpha: 0.04)
-                  : Theme.of(
-                      context,
-                    ).colorScheme.primary.withValues(alpha: 0.02),
-              boxShadow: _isDragHovering
-                  ? [
-                      BoxShadow(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.primary.withValues(alpha: 0.08),
-                        blurRadius: 12,
-                        spreadRadius: 0,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AnimatedScale(
+                    scale: _isDragHovering ? 1.1 : 1.0,
+                    duration: const Duration(milliseconds: 200),
+                    child: Icon(
+                      Icons.folder_open_outlined,
+                      size: 36,
+                      color: Theme.of(context).colorScheme.primary.withValues(
+                        alpha: _isDragHovering ? 1.0 : 0.5,
                       ),
-                    ]
-                  : null,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AnimatedScale(
-                  scale: _isDragHovering ? 1.1 : 1.0,
-                  duration: const Duration(milliseconds: 200),
-                  child: Icon(
-                    Icons.folder_open_outlined,
-                    size: 36,
-                    color: Theme.of(context).colorScheme.primary.withValues(
-                      alpha: _isDragHovering ? 1.0 : 0.5,
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Drag & drop files here',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w500,
+                  const SizedBox(height: 16),
+                  Text(
+                    'Drag & drop files here',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'or tap the button below',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.5),
+                  const SizedBox(height: 4),
+                  Text(
+                    'or tap the button below',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.5),
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        );
-      },
+        ),
+      ],
     );
   }
 
-  void _handleDroppedFile(String filePath) {
+  void _handleDroppedFile(PickedFileData fileData) {
     if (widget.onFilesDropped != null) {
-      widget.onFilesDropped!(filePath);
+      widget.onFilesDropped!(fileData);
     } else {
       widget.onStorePressed();
     }

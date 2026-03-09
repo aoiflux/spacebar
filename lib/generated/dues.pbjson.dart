@@ -8,7 +8,8 @@
 // ignore_for_file: constant_identifier_names
 // ignore_for_file: curly_braces_in_flow_control_structures
 // ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
-// ignore_for_file: non_constant_identifier_names, unused_import
+// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
+// ignore_for_file: unused_import
 
 import 'dart:convert' as $convert;
 import 'dart:core' as $core;
@@ -20,9 +21,10 @@ const BaseFile$json = {
   '2': [
     {'1': 'file_path', '3': 1, '4': 1, '5': 9, '10': 'filePath'},
     {'1': 'file_id', '3': 2, '4': 1, '5': 9, '10': 'fileId'},
+    {'1': 'file_size', '3': 3, '4': 1, '5': 3, '10': 'fileSize'},
     {
       '1': 'chunk_map',
-      '3': 3,
+      '3': 4,
       '4': 3,
       '5': 11,
       '6': '.dues.BaseFile.ChunkMapEntry',
@@ -45,9 +47,9 @@ const BaseFile_ChunkMapEntry$json = {
 /// Descriptor for `BaseFile`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List baseFileDescriptor = $convert.base64Decode(
     'CghCYXNlRmlsZRIbCglmaWxlX3BhdGgYASABKAlSCGZpbGVQYXRoEhcKB2ZpbGVfaWQYAiABKA'
-    'lSBmZpbGVJZBI5CgljaHVua19tYXAYAyADKAsyHC5kdWVzLkJhc2VGaWxlLkNodW5rTWFwRW50'
-    'cnlSCGNodW5rTWFwGjsKDUNodW5rTWFwRW50cnkSEAoDa2V5GAEgASgJUgNrZXkSFAoFdmFsdW'
-    'UYAiABKANSBXZhbHVlOgI4AQ==');
+    'lSBmZpbGVJZBIbCglmaWxlX3NpemUYAyABKANSCGZpbGVTaXplEjkKCWNodW5rX21hcBgEIAMo'
+    'CzIcLmR1ZXMuQmFzZUZpbGUuQ2h1bmtNYXBFbnRyeVIIY2h1bmtNYXAaOwoNQ2h1bmtNYXBFbn'
+    'RyeRIQCgNrZXkYASABKAlSA2tleRIUCgV2YWx1ZRgCIAEoA1IFdmFsdWU6AjgB');
 
 @$core.Deprecated('Use appendIfExistsReqDescriptor instead')
 const AppendIfExistsReq$json = {
@@ -92,17 +94,15 @@ const StreamFileMeta$json = {
   '1': 'StreamFileMeta',
   '2': [
     {'1': 'file_path', '3': 1, '4': 1, '5': 9, '10': 'filePath'},
-    {'1': 'file_size', '3': 2, '4': 1, '5': 3, '10': 'fileSize'},
-    {'1': 'file_type', '3': 3, '4': 1, '5': 9, '10': 'fileType'},
-    {'1': 'file_hash', '3': 4, '4': 1, '5': 9, '10': 'fileHash'},
+    {'1': 'file_type', '3': 2, '4': 1, '5': 9, '10': 'fileType'},
+    {'1': 'file_hash', '3': 3, '4': 1, '5': 9, '10': 'fileHash'},
   ],
 };
 
 /// Descriptor for `StreamFileMeta`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List streamFileMetaDescriptor = $convert.base64Decode(
-    'Cg5TdHJlYW1GaWxlTWV0YRIbCglmaWxlX3BhdGgYASABKAlSCGZpbGVQYXRoEhsKCWZpbGVfc2'
-    'l6ZRgCIAEoA1IIZmlsZVNpemUSGwoJZmlsZV90eXBlGAMgASgJUghmaWxlVHlwZRIbCglmaWxl'
-    'X2hhc2gYBCABKAlSCGZpbGVIYXNo');
+    'Cg5TdHJlYW1GaWxlTWV0YRIbCglmaWxlX3BhdGgYASABKAlSCGZpbGVQYXRoEhsKCWZpbGVfdH'
+    'lwZRgCIAEoCVIIZmlsZVR5cGUSGwoJZmlsZV9oYXNoGAMgASgJUghmaWxlSGFzaA==');
 
 @$core.Deprecated('Use streamFileReqDescriptor instead')
 const StreamFileReq$json = {

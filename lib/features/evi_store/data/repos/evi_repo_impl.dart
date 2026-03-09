@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:spacebar/core/cnst/cnst.dart';
 import 'package:spacebar/core/common/entities/evidence.dart';
+import 'package:spacebar/core/common/models/picked_file_data.dart';
 import 'package:spacebar/core/error/failure.dart';
 import 'package:spacebar/features/evi_store/data/sources/grpc_impl.dart';
 import 'package:spacebar/features/evi_store/domain/repo/ievirepo.dart';
@@ -13,10 +14,10 @@ class EviStoreRepoImpl implements IEviStoreRepo {
 
   @override
   Future<Either<Failure, Evidence>> storeEvidence({
-    required String eviPath,
+    required PickedFileData eviData,
     OnProgressChanged? onProgress,
   }) async {
-    final appendRes = await rds.appendIfExists(eviPath, onProgress: onProgress);
+    final appendRes = await rds.appendIfExists(eviData, onProgress: onProgress);
     if (appendRes != null) {
       return right((appendRes));
     }
@@ -24,7 +25,7 @@ class EviStoreRepoImpl implements IEviStoreRepo {
     try {
       final storeRes = await rds.streamFile(
         FileType.evi,
-        eviPath,
+        eviData,
         onProgress: onProgress,
       );
       return right(storeRes);

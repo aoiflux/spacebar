@@ -5,6 +5,7 @@ import 'dart:typed_data';
 
 import 'package:fpdart/fpdart.dart';
 import 'package:pointycastle/digests/sha3.dart';
+import 'package:spacebar/core/common/models/picked_file_data.dart';
 import 'package:spacebar/core/error/err.dart';
 
 String _computeHashSync(String filePath) {
@@ -28,20 +29,13 @@ String _computeHashSync(String filePath) {
   return base64Encode(out);
 }
 
-Future<Either<FileError, String>> getFileHash(String filePath) async {
+Future<Either<FileError, String>> getFileHashDesktop(
+  PickedFileData fileData,
+) async {
   try {
+    final filePath = fileData.path!;
     final hash = await Isolate.run(() => _computeHashSync(filePath));
     return Right(hash);
-  } catch (e) {
-    return Left(FileError(e.toString()));
-  }
-}
-
-Either<FileError, int> getFileSize(String filePath) {
-  try {
-    final file = File(filePath);
-    final size = file.lengthSync();
-    return Right(size);
   } catch (e) {
     return Left(FileError(e.toString()));
   }
