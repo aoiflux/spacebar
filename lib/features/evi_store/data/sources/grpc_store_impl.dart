@@ -12,7 +12,7 @@ import 'package:spacebar/features/evi_store/data/sources/stream_file_web.dart';
 import 'package:spacebar/features/evi_store/domain/repos/istorerepo.dart';
 import 'package:spacebar/generated/dues.pbgrpc.dart';
 
-abstract interface class IEviRemoteDataSource {
+abstract interface class IEviStoreRemoteDataSource {
   Future<EvidenceFileModel?> appendIfExists(
     PickedFileData fileData, {
     OnProgressChanged? onProgress,
@@ -24,10 +24,10 @@ abstract interface class IEviRemoteDataSource {
   });
 }
 
-class GrpcImpl implements IEviRemoteDataSource {
+class GrpcStoreImpl implements IEviStoreRemoteDataSource {
   final Logger logger;
   late final DuesServiceClient client;
-  GrpcImpl(this.client, this.logger);
+  GrpcStoreImpl(this.logger, this.client);
 
   String _fileHash = "";
 
