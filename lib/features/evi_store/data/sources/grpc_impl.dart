@@ -2,14 +2,14 @@ import 'dart:collection';
 
 import 'package:fixnum/fixnum.dart';
 import 'package:logger/logger.dart';
+import 'package:spacebar/core/common/models/evidence_file_model.dart';
 import 'package:spacebar/core/common/models/picked_file_data.dart';
 import 'package:spacebar/core/common/models/progress_state.dart';
 import 'package:spacebar/core/utils/util_io.dart';
 import 'package:spacebar/core/utils/util_web.dart';
-import 'package:spacebar/features/evi_store/data/models/stream_evidence_model.dart';
 import 'package:spacebar/features/evi_store/data/sources/stream_file_io.dart';
 import 'package:spacebar/features/evi_store/data/sources/stream_file_web.dart';
-import 'package:spacebar/features/evi_store/domain/repo/ievirepo.dart';
+import 'package:spacebar/features/evi_store/domain/repos/istorerepo.dart';
 import 'package:spacebar/generated/dues.pbgrpc.dart';
 
 abstract interface class IEviRemoteDataSource {

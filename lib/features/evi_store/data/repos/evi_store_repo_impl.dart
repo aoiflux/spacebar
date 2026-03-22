@@ -4,7 +4,7 @@ import 'package:spacebar/core/common/entities/evidence.dart';
 import 'package:spacebar/core/common/models/picked_file_data.dart';
 import 'package:spacebar/core/error/failure.dart';
 import 'package:spacebar/features/evi_store/data/sources/grpc_impl.dart';
-import 'package:spacebar/features/evi_store/domain/repo/ievirepo.dart';
+import 'package:spacebar/features/evi_store/domain/repos/istorerepo.dart';
 import 'package:logger/logger.dart';
 
 class EviStoreRepoImpl implements IEviStoreRepo {

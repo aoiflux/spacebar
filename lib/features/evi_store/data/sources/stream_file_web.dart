@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:logger/logger.dart';
 import 'package:spacebar/core/common/models/picked_file_data.dart';
 import 'package:spacebar/core/common/models/progress_state.dart';
-import 'package:spacebar/features/evi_store/domain/repo/ievirepo.dart';
+import 'package:spacebar/features/evi_store/domain/repos/istorerepo.dart';
 import 'package:spacebar/generated/dues.pbgrpc.dart';
 
 Stream<StreamFileReq> streamFileWeb({
