@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:spacebar/core/common/models/picked_file_data.dart';
+import 'package:spacebar/features/evi_list/presentation/pages/evi_list_page.dart';
 
 class EviStoreEmpty extends StatefulWidget {
   final VoidCallback onStorePressed;
@@ -38,6 +39,22 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
           _buildFeatures(context),
           const SizedBox(height: 8),
           _buildHint(context),
+          const SizedBox(height: 16),
+
+          // Navigation Button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const EviListPage())),
+              icon: const Icon(Icons.list_outlined),
+              label: const Text('View Evidence List'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ),
         ],
       ),
     );

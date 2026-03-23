@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:spacebar/core/common/entities/evidence.dart';
 import 'package:spacebar/core/utils/util.dart';
 import 'package:spacebar/features/evi_list/presentation/widgets/evi_list_idx_tile.dart';
+import 'package:spacebar/features/evi_store/presentation/pages/evi_store_page.dart';
 
 class EviListPartiTile extends StatefulWidget {
   final Evidence parti;
@@ -33,6 +34,14 @@ class _EviListPartiTileState extends State<EviListPartiTile> {
     }
   }
 
+  void _navigateToStore(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => EviStorePage(initialEvidence: widget.parti),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -54,119 +63,128 @@ class _EviListPartiTileState extends State<EviListPartiTile> {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(14),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: _toggle,
-              borderRadius: BorderRadius.circular(14),
-              splashColor: _tint.withValues(alpha: 0.08),
-              highlightColor: _tint.withValues(alpha: 0.04),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 11,
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 34,
-                          height: 34,
-                          decoration: BoxDecoration(
-                            color: _tint.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(9),
-                          ),
-                          child: const Icon(
-                            Icons.storage_outlined,
-                            color: _tint,
-                            size: 18,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.parti.fileName,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF1C2430),
-                                ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 11,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => _navigateToStore(context),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 34,
+                              height: 34,
+                              decoration: BoxDecoration(
+                                color: _tint.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(9),
                               ),
-                              const SizedBox(height: 1),
-                              Text(
-                                widget.parti.fileId,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: theme.textTheme.labelSmall?.copyWith(
-                                  color: const Color(
-                                    0xFF364254,
-                                  ).withValues(alpha: 0.55),
-                                  letterSpacing: 0.1,
-                                ),
+                              child: const Icon(
+                                Icons.storage_outlined,
+                                color: _tint,
+                                size: 18,
                               ),
-                              const SizedBox(height: 6),
-                              Wrap(
-                                spacing: 6,
-                                runSpacing: 4,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  _chip(
-                                    Icons.compress_rounded,
-                                    fmtBytes(widget.parti.compressedSize),
-                                    _tint,
-                                  ),
-                                  _chip(
-                                    Icons.trending_down_rounded,
-                                    _ratio(
-                                      widget.parti.totalSize,
-                                      widget.parti.compressedSize,
+                                  Text(
+                                    widget.parti.fileName,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFF1C2430),
                                     ),
-                                    _tint,
                                   ),
-                                  _chip(
-                                    Icons.grid_view_rounded,
-                                    '${widget.parti.chunkMap.length} chunks',
-                                    _tint,
+                                  const SizedBox(height: 1),
+                                  Text(
+                                    widget.parti.fileId,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: theme.textTheme.labelSmall?.copyWith(
+                                      color: const Color(
+                                        0xFF364254,
+                                      ).withValues(alpha: 0.55),
+                                      letterSpacing: 0.1,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Wrap(
+                                    spacing: 6,
+                                    runSpacing: 4,
+                                    children: [
+                                      _chip(
+                                        Icons.compress_rounded,
+                                        fmtBytes(widget.parti.compressedSize),
+                                        _tint,
+                                      ),
+                                      _chip(
+                                        Icons.trending_down_rounded,
+                                        _ratio(
+                                          widget.parti.totalSize,
+                                          widget.parti.compressedSize,
+                                        ),
+                                        _tint,
+                                      ),
+                                      _chip(
+                                        Icons.grid_view_rounded,
+                                        '${widget.parti.chunkMap.length} chunks',
+                                        _tint,
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                            ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    if (widget.idxLoading)
+                      const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: _tint,
+                        ),
+                      )
+                    else ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 9,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _tint.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          fmtBytes(widget.parti.totalSize),
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: _tint,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        if (widget.idxLoading)
-                          const SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: _tint,
-                            ),
-                          )
-                        else ...[
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 9,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: _tint.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              fmtBytes(widget.parti.totalSize),
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: _tint,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          AnimatedRotation(
+                      ),
+                      const SizedBox(width: 6),
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: _toggle,
+                          borderRadius: BorderRadius.circular(4),
+                          splashColor: _tint.withValues(alpha: 0.08),
+                          highlightColor: _tint.withValues(alpha: 0.04),
+                          child: AnimatedRotation(
                             turns: _expanded ? 0.5 : 0,
                             duration: const Duration(milliseconds: 200),
                             child: const Icon(
@@ -175,20 +193,20 @@ class _EviListPartiTileState extends State<EviListPartiTile> {
                               size: 20,
                             ),
                           ),
-                        ],
-                      ],
-                    ),
-                  ),
-                  AnimatedSize(
-                    duration: const Duration(milliseconds: 220),
-                    curve: Curves.easeOutCubic,
-                    child: _expanded
-                        ? _buildChildren(theme)
-                        : const SizedBox(width: double.infinity),
-                  ),
-                ],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ),
-            ),
+              AnimatedSize(
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOutCubic,
+                child: _expanded
+                    ? _buildChildren(theme)
+                    : const SizedBox(width: double.infinity),
+              ),
+            ],
           ),
         ),
       ),

@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:spacebar/core/common/entities/evidence.dart';
+import 'package:spacebar/features/evi_list/presentation/pages/evi_list_page.dart';
 
 class EviStoreSuccessView extends StatelessWidget {
   final Evidence evidence;
@@ -119,6 +120,25 @@ class EviStoreSuccessView extends StatelessWidget {
 
                 // Size Comparison Section
                 _buildSizeComparisonSection(context),
+                const SizedBox(height: 24),
+
+                // Navigation Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (_) => const EviListPage()),
+                      (route) => false,
+                    ),
+                    icon: const Icon(Icons.list_outlined),
+                    label: const Text('View Evidence List'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

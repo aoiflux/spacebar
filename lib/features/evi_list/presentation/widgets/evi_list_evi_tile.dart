@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:spacebar/core/common/entities/evidence.dart';
 import 'package:spacebar/core/utils/util.dart';
 import 'package:spacebar/features/evi_list/presentation/widgets/evi_list_parti_tile.dart';
+import 'package:spacebar/features/evi_store/presentation/pages/evi_store_page.dart';
 
 class EviListEviTile extends StatefulWidget {
   final Evidence evi;
@@ -40,6 +41,14 @@ class _EviListEviTileState extends State<EviListEviTile> {
     if (_expanded && widget.partiFiles == null && !widget.partiLoading) {
       widget.onExpand();
     }
+  }
+
+  void _navigateToStore(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => EviStorePage(initialEvidence: widget.evi),
+      ),
+    );
   }
 
   @override
@@ -83,118 +92,132 @@ class _EviListEviTileState extends State<EviListEviTile> {
               filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
               child: Material(
                 color: Colors.transparent,
-                child: InkWell(
-                  onTap: _toggle,
-                  borderRadius: BorderRadius.circular(18),
-                  splashColor: _tint.withValues(alpha: 0.08),
-                  highlightColor: _tint.withValues(alpha: 0.04),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 18,
-                          vertical: 14,
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 42,
-                              height: 42,
-                              decoration: BoxDecoration(
-                                color: _tint.withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(
-                                Icons.inventory_2_outlined,
-                                color: _tint,
-                                size: 22,
-                              ),
-                            ),
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 14,
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => _navigateToStore(context),
+                              child: Row(
                                 children: [
-                                  Text(
-                                    widget.evi.fileName,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: theme.textTheme.titleSmall?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      color: const Color(0xFF1C2430),
-                                      letterSpacing: 0.1,
+                                  Container(
+                                    width: 42,
+                                    height: 42,
+                                    decoration: BoxDecoration(
+                                      color: _tint.withValues(alpha: 0.12),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: const Icon(
+                                      Icons.inventory_2_outlined,
+                                      color: _tint,
+                                      size: 22,
                                     ),
                                   ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    widget.evi.fileId,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: theme.textTheme.labelSmall?.copyWith(
-                                      color: const Color(
-                                        0xFF364254,
-                                      ).withValues(alpha: 0.55),
-                                      letterSpacing: 0.2,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Wrap(
-                                    spacing: 6,
-                                    runSpacing: 4,
-                                    children: [
-                                      _chip(
-                                        Icons.compress_rounded,
-                                        fmtBytes(widget.evi.compressedSize),
-                                        _tint,
-                                      ),
-                                      _chip(
-                                        Icons.trending_down_rounded,
-                                        _ratio(
-                                          widget.evi.totalSize,
-                                          widget.evi.compressedSize,
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          widget.evi.fileName,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: theme.textTheme.titleSmall
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w700,
+                                                color: const Color(0xFF1C2430),
+                                                letterSpacing: 0.1,
+                                              ),
                                         ),
-                                        _tint,
-                                      ),
-                                      _chip(
-                                        Icons.grid_view_rounded,
-                                        '${widget.evi.chunkMap.length} chunks',
-                                        _tint,
-                                      ),
-                                    ],
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          widget.evi.fileId,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: theme.textTheme.labelSmall
+                                              ?.copyWith(
+                                                color: const Color(
+                                                  0xFF364254,
+                                                ).withValues(alpha: 0.55),
+                                                letterSpacing: 0.2,
+                                              ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Wrap(
+                                          spacing: 6,
+                                          runSpacing: 4,
+                                          children: [
+                                            _chip(
+                                              Icons.compress_rounded,
+                                              fmtBytes(
+                                                widget.evi.compressedSize,
+                                              ),
+                                              _tint,
+                                            ),
+                                            _chip(
+                                              Icons.trending_down_rounded,
+                                              _ratio(
+                                                widget.evi.totalSize,
+                                                widget.evi.compressedSize,
+                                              ),
+                                              _tint,
+                                            ),
+                                            _chip(
+                                              Icons.grid_view_rounded,
+                                              '${widget.evi.chunkMap.length} chunks',
+                                              _tint,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 10),
-                            if (widget.partiLoading)
-                              const SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
+                          ),
+                          const SizedBox(width: 10),
+                          if (widget.partiLoading)
+                            const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: _tint,
+                              ),
+                            )
+                          else ...[
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _tint.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                fmtBytes(widget.evi.totalSize),
+                                style: theme.textTheme.labelSmall?.copyWith(
                                   color: _tint,
-                                ),
-                              )
-                            else ...[
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: _tint.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  fmtBytes(widget.evi.totalSize),
-                                  style: theme.textTheme.labelSmall?.copyWith(
-                                    color: _tint,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              AnimatedRotation(
+                            ),
+                            const SizedBox(width: 8),
+                            InkWell(
+                              onTap: _toggle,
+                              borderRadius: BorderRadius.circular(4),
+                              splashColor: _tint.withValues(alpha: 0.08),
+                              highlightColor: _tint.withValues(alpha: 0.04),
+                              child: AnimatedRotation(
                                 turns: _expanded ? 0.5 : 0,
                                 duration: const Duration(milliseconds: 200),
                                 child: const Icon(
@@ -202,19 +225,19 @@ class _EviListEviTileState extends State<EviListEviTile> {
                                   color: _tint,
                                 ),
                               ),
-                            ],
+                            ),
                           ],
-                        ),
+                        ],
                       ),
-                      AnimatedSize(
-                        duration: const Duration(milliseconds: 230),
-                        curve: Curves.easeOutCubic,
-                        child: _expanded
-                            ? _buildChildren(theme)
-                            : const SizedBox(width: double.infinity),
-                      ),
-                    ],
-                  ),
+                    ),
+                    AnimatedSize(
+                      duration: const Duration(milliseconds: 230),
+                      curve: Curves.easeOutCubic,
+                      child: _expanded
+                          ? _buildChildren(theme)
+                          : const SizedBox(width: double.infinity),
+                    ),
+                  ],
                 ),
               ),
             ),

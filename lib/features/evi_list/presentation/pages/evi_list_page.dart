@@ -10,6 +10,10 @@ class EviListPage extends StatelessWidget {
 
   static const _tint = Color(0xFF2D7FF9);
 
+  void _goHome(BuildContext context) {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<EviListBloc>();
@@ -51,6 +55,11 @@ class EviListPage extends StatelessWidget {
           ],
         ),
         actions: [
+          IconButton(
+            onPressed: () => _goHome(context),
+            icon: const Icon(Icons.home_outlined, color: _tint),
+            tooltip: 'Home',
+          ),
           IconButton(
             onPressed: () => bloc.add(EviListLoad()),
             icon: const Icon(Icons.refresh_rounded, color: _tint),
