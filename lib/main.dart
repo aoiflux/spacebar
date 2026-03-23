@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spacebar/features/evi_list/presentation/bloc/evi_list_bloc.dart';
 import 'package:spacebar/features/home/presentation/pages/home_page.dart';
 import 'package:spacebar/features/evi_store/presentation/bloc/evi_store_bloc/evi_store_bloc.dart';
 import 'package:spacebar/init_deps.dart';
@@ -9,7 +10,10 @@ void main() async {
   await initDeps();
   runApp(
     MultiBlocProvider(
-      providers: [BlocProvider(create: (_) => serviceLocator<EviBloc>())],
+      providers: [
+        BlocProvider(create: (_) => serviceLocator<EviBloc>()),
+        BlocProvider(create: (_) => serviceLocator<EviListBloc>()),
+      ],
       child: const MainApp(),
     ),
   );

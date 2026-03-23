@@ -4,6 +4,13 @@ import 'package:spacebar/core/cnst/cnst.dart';
 import 'package:spacebar/core/utils/grpc_channel_stub.dart'
     if (dart.library.html) 'package:spacebar/core/utils/grpc_channel_web.dart'
     if (dart.library.io) 'package:spacebar/core/utils/grpc_channel_io.dart';
+import 'package:spacebar/features/evi_list/data/repos/evi_list_repo_impl.dart';
+import 'package:spacebar/features/evi_list/data/sources/grpc_list_impl.dart';
+import 'package:spacebar/features/evi_list/domain/repo/ievlistirepo.dart';
+import 'package:spacebar/features/evi_list/domain/usecases/evi_get_evi_case.dart';
+import 'package:spacebar/features/evi_list/domain/usecases/evi_get_idx_case.dart';
+import 'package:spacebar/features/evi_list/domain/usecases/evi_get_parti_case.dart';
+import 'package:spacebar/features/evi_list/presentation/bloc/evi_list_bloc.dart';
 import 'package:spacebar/features/evi_store/data/repos/evi_store_repo_impl.dart';
 import 'package:spacebar/features/evi_store/data/sources/grpc_store_impl.dart';
 import 'package:spacebar/features/evi_store/domain/repos/istorerepo.dart';
@@ -32,6 +39,18 @@ void _initEviClient() {
     ..registerFactory<IEviStoreRepo>(
       () => EviStoreRepoImpl(serviceLocator(), serviceLocator()),
     )
+    ..registerFactory<IEviListRemoteDataSource>(
+      () => GrpcListImpl(serviceLocator(), serviceLocator()),
+    )
+    ..registerFactory<IEviListRepo>(
+      () => EviListRepoImpl(serviceLocator(), serviceLocator()),
+    )
     ..registerFactory(() => EviStoreCase(serviceLocator()))
+    ..registerFactory(() => EviFilesCase(serviceLocator()))
+    ..registerFactory(() => PartiFilesCase(serviceLocator()))
+    ..registerFactory(() => IdxFilesCase(serviceLocator()))
+    ..registerLazySingleton(
+      () => EviListBloc(serviceLocator(), serviceLocator(), serviceLocator()),
+    )
     ..registerLazySingleton(() => EviBloc(serviceLocator()));
 }

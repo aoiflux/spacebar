@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spacebar/features/evi_list/presentation/evi_list_page.dart';
+import 'package:spacebar/features/evi_list/presentation/pages/evi_list_page.dart';
 import 'package:spacebar/features/evi_store/presentation/pages/evi_store_page.dart';
 import 'package:spacebar/features/home/presentation/widgets/home_action_pane.dart';
 import 'package:spacebar/features/home/presentation/widgets/home_command_surface.dart';
