@@ -12,6 +12,9 @@ class EviListEviTile extends StatefulWidget {
   final bool partiLoading;
   final Map<String, List<Evidence>> idxFilesByParti;
   final Set<String> idxLoadingIds;
+  final bool selectionMode;
+  final bool selected;
+  final VoidCallback onSelectionToggle;
   final VoidCallback onExpand;
   final void Function(String partiFileId) onPartiExpand;
 
@@ -22,6 +25,9 @@ class EviListEviTile extends StatefulWidget {
     required this.partiLoading,
     required this.idxFilesByParti,
     required this.idxLoadingIds,
+    required this.selectionMode,
+    required this.selected,
+    required this.onSelectionToggle,
     required this.onExpand,
     required this.onPartiExpand,
   });
@@ -43,7 +49,12 @@ class _EviListEviTileState extends State<EviListEviTile> {
     }
   }
 
-  void _navigateToStore(BuildContext context) {
+  void _onPrimaryTap(BuildContext context) {
+    if (widget.selectionMode) {
+      widget.onSelectionToggle();
+      return;
+    }
+
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => EviStorePage(initialEvidence: widget.evi),
@@ -103,7 +114,7 @@ class _EviListEviTileState extends State<EviListEviTile> {
                         children: [
                           Expanded(
                             child: GestureDetector(
-                              onTap: () => _navigateToStore(context),
+                              onTap: () => _onPrimaryTap(context),
                               child: Row(
                                 children: [
                                   Container(
@@ -184,6 +195,12 @@ class _EviListEviTileState extends State<EviListEviTile> {
                             ),
                           ),
                           const SizedBox(width: 10),
+                          if (widget.selectionMode)
+                            Checkbox(
+                              value: widget.selected,
+                              activeColor: _tint,
+                              onChanged: (_) => widget.onSelectionToggle(),
+                            ),
                           if (widget.partiLoading)
                             const SizedBox(
                               width: 18,

@@ -1,17 +1,109 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spacebar/core/common/entities/evidence.dart';
 import 'package:spacebar/core/utils/show_snackbar.dart';
+import 'package:spacebar/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:spacebar/features/evi_list/presentation/bloc/evi_list_bloc.dart';
 import 'package:spacebar/features/evi_list/presentation/widgets/evi_list_empty.dart';
 import 'package:spacebar/features/evi_list/presentation/widgets/evi_list_evi_tile.dart';
 
-class EviListPage extends StatelessWidget {
+class EviListPage extends StatefulWidget {
   const EviListPage({super.key});
 
+  @override
+  State<EviListPage> createState() => _EviListPageState();
+}
+
+class _EviListPageState extends State<EviListPage> {
   static const _tint = Color(0xFF2D7FF9);
+
+  final Set<String> _selectedEviIds = <String>{};
+  bool _selectionMode = false;
 
   void _goHome(BuildContext context) {
     Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  void _toggleSelectionMode(EviListState state) {
+    if (state is! EviListLoaded || state.eviFiles.isEmpty) {
+      showSnackBar(context, 'Load evidence first to enable file selection.');
+      return;
+    }
+
+    setState(() {
+      _selectionMode = !_selectionMode;
+      if (!_selectionMode) {
+        _selectedEviIds.clear();
+      }
+    });
+  }
+
+  void _selectAll(List<String> fileIds) {
+    setState(() {
+      _selectedEviIds
+        ..clear()
+        ..addAll(fileIds);
+    });
+  }
+
+  void _toggleFileSelection(String fileId) {
+    setState(() {
+      if (_selectedEviIds.contains(fileId)) {
+        _selectedEviIds.remove(fileId);
+      } else {
+        _selectedEviIds.add(fileId);
+      }
+    });
+  }
+
+  void _openDashboard(EviListState state) {
+    if (state is! EviListLoaded) {
+      showSnackBar(context, 'Load evidence first to view dashboard stats.');
+      return;
+    }
+
+    final selectedIds = _selectedEviIds;
+    if (_selectionMode && selectedIds.isEmpty) {
+      showSnackBar(context, 'Select at least one evidence file for dashboard.');
+      return;
+    }
+
+    final useSelection = _selectionMode && selectedIds.isNotEmpty;
+    final eviFiles = useSelection
+        ? state.eviFiles
+              .where((evi) => selectedIds.contains(evi.fileId))
+              .toList()
+        : state.eviFiles;
+
+    final partiFilesByEvi = <String, List<Evidence>>{};
+    for (final evi in eviFiles) {
+      final parti = state.partiFilesByEvi[evi.fileId];
+      if (parti != null) {
+        partiFilesByEvi[evi.fileId] = parti;
+      }
+    }
+
+    final selectedPartiIds = partiFilesByEvi.values
+        .expand((files) => files)
+        .map((file) => file.fileId)
+        .toSet();
+
+    final idxFilesByParti = <String, List<Evidence>>{};
+    for (final entry in state.idxFilesByParti.entries) {
+      if (selectedPartiIds.contains(entry.key)) {
+        idxFilesByParti[entry.key] = entry.value;
+      }
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => DashboardPage(
+          eviFiles: eviFiles,
+          partiFilesByEvi: partiFilesByEvi,
+          idxFilesByParti: idxFilesByParti,
+        ),
+      ),
+    );
   }
 
   @override
@@ -45,7 +137,9 @@ class EviListPage extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Text(
-              'Evidence List',
+              _selectionMode
+                  ? 'Evidence List (${_selectedEviIds.length} selected)'
+                  : 'Evidence List',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF1C2430),
@@ -56,12 +150,41 @@ class EviListPage extends StatelessWidget {
         ),
         actions: [
           IconButton(
+            onPressed: () => _openDashboard(bloc.state),
+            icon: const Icon(Icons.dashboard_outlined, color: _tint),
+            tooltip: 'Dashboard',
+          ),
+          if (_selectionMode)
+            IconButton(
+              onPressed: () {
+                final state = bloc.state;
+                if (state is! EviListLoaded) return;
+                _selectAll(state.eviFiles.map((evi) => evi.fileId).toList());
+              },
+              icon: const Icon(Icons.select_all_rounded, color: _tint),
+              tooltip: 'Select all',
+            ),
+          IconButton(
+            onPressed: () => _toggleSelectionMode(bloc.state),
+            icon: Icon(
+              _selectionMode ? Icons.close_rounded : Icons.checklist_rounded,
+              color: _tint,
+            ),
+            tooltip: _selectionMode ? 'Exit selection mode' : 'Select files',
+          ),
+          IconButton(
             onPressed: () => _goHome(context),
             icon: const Icon(Icons.home_outlined, color: _tint),
             tooltip: 'Home',
           ),
           IconButton(
-            onPressed: () => bloc.add(EviListLoad()),
+            onPressed: () {
+              setState(() {
+                _selectedEviIds.clear();
+                _selectionMode = false;
+              });
+              bloc.add(EviListLoad());
+            },
             icon: const Icon(Icons.refresh_rounded, color: _tint),
             tooltip: 'Refresh',
           ),
@@ -160,6 +283,10 @@ class EviListPage extends StatelessWidget {
           }
 
           if (state is EviListLoaded) {
+            _selectedEviIds.retainWhere(
+              (id) => state.eviFiles.any((evi) => evi.fileId == id),
+            );
+
             if (state.eviFiles.isEmpty) {
               return EviListEmpty(onRefresh: () => bloc.add(EviListLoad()));
             }
@@ -176,6 +303,9 @@ class EviListPage extends StatelessWidget {
                   partiLoading: state.partiLoadingIds.contains(evi.fileId),
                   idxFilesByParti: state.idxFilesByParti,
                   idxLoadingIds: state.idxLoadingIds,
+                  selectionMode: _selectionMode,
+                  selected: _selectedEviIds.contains(evi.fileId),
+                  onSelectionToggle: () => _toggleFileSelection(evi.fileId),
                   onExpand: () => bloc.add(EviPartiLoad(eviFileId: evi.fileId)),
                   onPartiExpand: (partiId) =>
                       bloc.add(EviIdxLoad(partiFileId: partiId)),
