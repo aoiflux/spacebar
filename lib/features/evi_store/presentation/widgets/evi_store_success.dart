@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:spacebar/core/common/entities/evidence.dart';
+import 'package:spacebar/core/utils/util.dart';
 import 'package:spacebar/features/evi_list/presentation/pages/evi_list_page.dart';
 
 class EviStoreSuccessView extends StatelessWidget {
@@ -8,24 +9,10 @@ class EviStoreSuccessView extends StatelessWidget {
 
   const EviStoreSuccessView({super.key, required this.evidence});
 
-  String _formatBytes(int bytes) {
-    if (bytes <= 0) return '0 B';
-    const suffixes = ['B', 'KB', 'MB', 'GB', 'TB'];
-    const k = 1024;
-
-    if (bytes < k) return '$bytes B';
-
-    final i = (log(bytes) / log(k)).floor();
-    final index = i < suffixes.length ? i : suffixes.length - 1;
-    final size = bytes / pow(k, index);
-
-    return '${size.toStringAsFixed(2)} ${suffixes[index]}';
-  }
-
   String _formatSignedBytes(int bytes) {
     if (bytes == 0) return '0 B';
     final prefix = bytes > 0 ? '+' : '-';
-    return '$prefix${_formatBytes(bytes.abs())}';
+    return '$prefix${fmtBytes(bytes.abs())}';
   }
 
   double _getCompressionRatio() {
@@ -504,7 +491,7 @@ class EviStoreSuccessView extends StatelessWidget {
               _buildSizeBreakdownRow(
                 context,
                 label: 'Original',
-                value: _formatBytes(evidence.totalSize),
+                value: fmtBytes(evidence.totalSize),
                 color: Colors.grey,
               ),
 
@@ -513,7 +500,7 @@ class EviStoreSuccessView extends StatelessWidget {
               _buildSizeBreakdownRow(
                 context,
                 label: 'Compressed',
-                value: _formatBytes(evidence.compressedSize),
+                value: fmtBytes(evidence.compressedSize),
                 color: Colors.blue,
               ),
 
@@ -524,7 +511,7 @@ class EviStoreSuccessView extends StatelessWidget {
                 label: evidence.totalSize >= evidence.compressedSize
                     ? 'Reduced By'
                     : 'Increased By',
-                value: _formatBytes(
+                value: fmtBytes(
                   (evidence.totalSize - evidence.compressedSize).abs(),
                 ),
                 color: evidence.totalSize >= evidence.compressedSize
@@ -598,7 +585,7 @@ class EviStoreSuccessView extends StatelessWidget {
                 label: 'Original Size',
                 percentage: 100,
                 color: Colors.grey,
-                value: _formatBytes(totalSize),
+                value: fmtBytes(totalSize),
               ),
               const SizedBox(height: 12),
               // Compressed Size Bar
@@ -607,7 +594,7 @@ class EviStoreSuccessView extends StatelessWidget {
                 label: 'Compressed Size',
                 percentage: (ratio * 100).toInt(),
                 color: Colors.blue,
-                value: _formatBytes(compressedSize),
+                value: fmtBytes(compressedSize),
               ),
               const SizedBox(height: 16),
               // Summary Row
@@ -623,7 +610,7 @@ class EviStoreSuccessView extends StatelessWidget {
                     _buildSummaryMetric(
                       context,
                       label: 'Total Saved',
-                      value: _formatBytes(totalSize - compressedSize),
+                      value: fmtBytes(totalSize - compressedSize),
                     ),
                     Container(
                       width: 1,
