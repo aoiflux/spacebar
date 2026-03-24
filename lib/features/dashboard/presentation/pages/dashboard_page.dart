@@ -389,7 +389,7 @@ class _MetricGrid extends StatelessWidget {
         ),
         _MetricCard(
           icon: Icons.description_outlined,
-          label: 'IDX Files',
+          label: 'Indexed Files',
           value: stats.idxCount.toString(),
           tint: const Color(0xFF7048E8),
         ),
@@ -508,7 +508,7 @@ class _MiniChartsPanel extends StatelessWidget {
                       color: const Color(0xFF0CA678),
                     ),
                     _ChartItem(
-                      label: 'IDX',
+                      label: 'Indexed',
                       value: stats.idxCount,
                       color: const Color(0xFF7048E8),
                     ),
@@ -530,7 +530,7 @@ class _MiniChartsPanel extends StatelessWidget {
                       color: const Color(0xFF0CA678),
                     ),
                     _ChartItem(
-                      label: 'IDX',
+                      label: 'Indexed',
                       value: stats.idxChunks,
                       color: const Color(0xFF7048E8),
                     ),
@@ -578,7 +578,7 @@ class _MiniChartsPanel extends StatelessWidget {
                       color: const Color(0xFF0CA678),
                     ),
                     _ChartItem(
-                      label: 'IDX',
+                      label: 'Indexed',
                       value: stats.idxCount,
                       color: const Color(0xFF7048E8),
                     ),
@@ -602,7 +602,7 @@ class _MiniChartsPanel extends StatelessWidget {
                       color: const Color(0xFF0CA678),
                     ),
                     _ChartItem(
-                      label: 'IDX',
+                      label: 'Indexed',
                       value: stats.idxChunks,
                       color: const Color(0xFF7048E8),
                     ),
@@ -779,7 +779,7 @@ class _CoverageCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           _ProgressRow(
-            label: 'Partitions with IDX children',
+            label: 'Partitions with Indexed children',
             details:
                 '${stats.partitionsWithIdx}/${stats.partitionCount} partitions',
             progress: stats.partitionWithIdxRate,

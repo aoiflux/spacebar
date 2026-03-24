@@ -22,6 +22,12 @@ class EviStoreSuccessView extends StatelessWidget {
     return '${size.toStringAsFixed(2)} ${suffixes[index]}';
   }
 
+  String _formatSignedBytes(int bytes) {
+    if (bytes == 0) return '0 B';
+    final prefix = bytes > 0 ? '+' : '-';
+    return '$prefix${_formatBytes(bytes.abs())}';
+  }
+
   double _getCompressionRatio() {
     if (evidence.totalSize == 0) return 0;
     return (1 - evidence.compressedSize / evidence.totalSize);
@@ -152,15 +158,19 @@ class EviStoreSuccessView extends StatelessWidget {
     int savedBytes,
     double ratio,
   ) {
+    final hasNegativeSavings = savedBytes < 0;
+
     return Row(
       children: [
         Expanded(
           child: _buildStatBox(
             context,
-            icon: Icons.trending_down,
-            title: 'Space Saved',
-            value: _formatBytes(savedBytes),
-            color: Colors.green,
+            icon: hasNegativeSavings
+                ? Icons.warning_amber_rounded
+                : Icons.trending_down,
+            title: hasNegativeSavings ? 'Space Increased' : 'Space Saved',
+            value: _formatSignedBytes(savedBytes),
+            color: hasNegativeSavings ? Colors.red : Colors.green,
           ),
         ),
         const SizedBox(width: 12),
@@ -234,6 +244,9 @@ class EviStoreSuccessView extends StatelessWidget {
   }
 
   Widget _buildCompressionGaugeCard(BuildContext context, double ratio) {
+    final hasNegativeSavings = ratio < 0;
+    final clampedSavedRatio = ratio.clamp(0.0, 1.0);
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -298,10 +311,12 @@ class EviStoreSuccessView extends StatelessWidget {
                           height: gaugeSize,
                           child: CustomPaint(
                             painter: _DualArcGaugePainter(
-                              usedRatio: 1 - ratio,
-                              savedRatio: ratio,
+                              usedRatio: 1 - clampedSavedRatio,
+                              savedRatio: clampedSavedRatio,
                               usedColor: Colors.grey,
-                              savedColor: Colors.green,
+                              savedColor: hasNegativeSavings
+                                  ? Colors.red
+                                  : Colors.green,
                               backgroundColor: Theme.of(
                                 context,
                               ).colorScheme.surfaceContainerHighest,
@@ -311,9 +326,13 @@ class EviStoreSuccessView extends StatelessWidget {
 
                         // Center icon indicator
                         Icon(
-                          Icons.check_circle,
+                          hasNegativeSavings
+                              ? Icons.warning_amber_rounded
+                              : Icons.check_circle,
                           size: gaugeSize * 0.15,
-                          color: Colors.green.withValues(alpha: 0.8),
+                          color:
+                              (hasNegativeSavings ? Colors.red : Colors.green)
+                                  .withValues(alpha: 0.8),
                         ),
                       ],
                     ),
@@ -341,10 +360,13 @@ class EviStoreSuccessView extends StatelessWidget {
                   ),
                   _buildGaugeLegend(
                     context,
-                    color: Colors.green,
-                    icon: Icons.savings,
-                    prefix: 'Saved: ',
-                    percentage: (ratio * 100).toStringAsFixed(0),
+                    color: hasNegativeSavings ? Colors.red : Colors.green,
+                    icon: hasNegativeSavings
+                        ? Icons.warning_amber_rounded
+                        : Icons.savings,
+                    prefix: hasNegativeSavings ? 'Overhead: ' : 'Saved: ',
+                    percentage: (ratio.abs() * 100).toStringAsFixed(0),
+                    isWarning: hasNegativeSavings,
                   ),
                 ],
               ),
@@ -361,6 +383,7 @@ class EviStoreSuccessView extends StatelessWidget {
     required IconData icon,
     required String prefix,
     required String percentage,
+    bool isWarning = false,
   }) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -381,7 +404,7 @@ class EviStoreSuccessView extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          '$prefix$percentage%',
+          '$prefix${isWarning ? '+' : ''}$percentage%',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
             color: color,
@@ -498,11 +521,15 @@ class EviStoreSuccessView extends StatelessWidget {
 
               _buildSizeBreakdownRow(
                 context,
-                label: 'Reduced By',
+                label: evidence.totalSize >= evidence.compressedSize
+                    ? 'Reduced By'
+                    : 'Increased By',
                 value: _formatBytes(
-                  evidence.totalSize - evidence.compressedSize,
+                  (evidence.totalSize - evidence.compressedSize).abs(),
                 ),
-                color: Colors.green,
+                color: evidence.totalSize >= evidence.compressedSize
+                    ? Colors.green
+                    : Colors.red,
               ),
             ],
           ),
