@@ -6,6 +6,7 @@ import 'package:spacebar/core/common/widgets/step_progress_widget.dart';
 import 'package:spacebar/core/utils/file_picker.dart';
 import 'package:spacebar/core/utils/show_snackbar.dart';
 import 'package:spacebar/features/evi_list/presentation/pages/evi_list_page.dart';
+import 'package:spacebar/features/home/presentation/pages/home_page.dart';
 import 'package:spacebar/features/evi_store/presentation/bloc/evi_store_bloc/evi_store_bloc.dart';
 import 'package:spacebar/features/evi_store/presentation/widgets/evi_store_empty.dart';
 import 'package:spacebar/features/evi_store/presentation/widgets/evi_store_success.dart';
@@ -36,7 +37,15 @@ class EviStorePage extends StatelessWidget {
   }
 
   void _goHome(BuildContext context) {
-    Navigator.of(context).popUntil((route) => route.isFirst);
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      navigator.popUntil((route) => route.isFirst);
+      return;
+    }
+
+    navigator.pushReplacement(
+      MaterialPageRoute(builder: (_) => const HomePage()),
+    );
   }
 
   @override

@@ -6,6 +6,7 @@ import 'package:spacebar/features/dashboard/presentation/pages/dashboard_page.da
 import 'package:spacebar/features/evi_list/presentation/bloc/evi_list_bloc.dart';
 import 'package:spacebar/features/evi_list/presentation/widgets/evi_list_empty.dart';
 import 'package:spacebar/features/evi_list/presentation/widgets/evi_list_evi_tile.dart';
+import 'package:spacebar/features/home/presentation/pages/home_page.dart';
 
 class EviListPage extends StatefulWidget {
   const EviListPage({super.key});
@@ -21,7 +22,15 @@ class _EviListPageState extends State<EviListPage> {
   bool _selectionMode = false;
 
   void _goHome(BuildContext context) {
-    Navigator.of(context).popUntil((route) => route.isFirst);
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      navigator.popUntil((route) => route.isFirst);
+      return;
+    }
+
+    navigator.pushReplacement(
+      MaterialPageRoute(builder: (_) => const HomePage()),
+    );
   }
 
   void _toggleSelectionMode(EviListState state) {
