@@ -7,17 +7,25 @@ environment:
   sdk: ^3.9.0
 
 dependencies:
+  crypto: ^3.0.7
+  desktop_drop: ^0.4.4
   file_picker: ^10.0.0
+  fixnum: ^1.1.1
   flutter:
     sdk: flutter
   flutter_bloc: ^9.0.0
   fpdart: ^1.1.0
-  get_it: ^8.0.2
-  grpc: ^4.0.1
+  get_it: ^9.1.0
+  grpc: ^5.0.0
   image_picker: ^1.1.2
   logger: ^2.4.0
-  protobuf: ^4.0.0
-  protoc_plugin: ^22.0.0
+  pointycastle: ^4.0.0
+  protobuf: ^5.1.0
+  protoc_plugin: ^24.0.0
+  web: ^1.1.0
+  flutter_dropzone: ^4.0.0
+  flutter_web_plugins:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:

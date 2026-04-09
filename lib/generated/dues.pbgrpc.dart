@@ -8,7 +8,7 @@
 // ignore_for_file: constant_identifier_names
 // ignore_for_file: curly_braces_in_flow_control_structures
 // ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
 
 import 'dart:async' as $async;
 import 'dart:core' as $core;
@@ -53,18 +53,18 @@ class DuesServiceClient extends $grpc.Client {
     return $createUnaryCall(_$getEviFiles, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.GetPartitionFilesRes> getPartitionFiles(
-    $0.GetPartitionFilesReq request, {
+  $grpc.ResponseFuture<$0.GetPartiFilesRes> getPartiFiles(
+    $0.GetPartiFilesReq request, {
     $grpc.CallOptions? options,
   }) {
-    return $createUnaryCall(_$getPartitionFiles, request, options: options);
+    return $createUnaryCall(_$getPartiFiles, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.GetIndexedFilesRes> getIndexedFiles(
-    $0.GetIndexedFilesReq request, {
+  $grpc.ResponseFuture<$0.GetIdxFilesRes> getIdxFiles(
+    $0.GetIdxFilesReq request, {
     $grpc.CallOptions? options,
   }) {
-    return $createUnaryCall(_$getIndexedFiles, request, options: options);
+    return $createUnaryCall(_$getIdxFiles, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.SearchRes> search(
@@ -91,16 +91,16 @@ class DuesServiceClient extends $grpc.Client {
           '/dues.DuesService/GetEviFiles',
           ($0.GetEviFilesReq value) => value.writeToBuffer(),
           $0.GetEviFilesRes.fromBuffer);
-  static final _$getPartitionFiles =
-      $grpc.ClientMethod<$0.GetPartitionFilesReq, $0.GetPartitionFilesRes>(
-          '/dues.DuesService/GetPartitionFiles',
-          ($0.GetPartitionFilesReq value) => value.writeToBuffer(),
-          $0.GetPartitionFilesRes.fromBuffer);
-  static final _$getIndexedFiles =
-      $grpc.ClientMethod<$0.GetIndexedFilesReq, $0.GetIndexedFilesRes>(
-          '/dues.DuesService/GetIndexedFiles',
-          ($0.GetIndexedFilesReq value) => value.writeToBuffer(),
-          $0.GetIndexedFilesRes.fromBuffer);
+  static final _$getPartiFiles =
+      $grpc.ClientMethod<$0.GetPartiFilesReq, $0.GetPartiFilesRes>(
+          '/dues.DuesService/GetPartiFiles',
+          ($0.GetPartiFilesReq value) => value.writeToBuffer(),
+          $0.GetPartiFilesRes.fromBuffer);
+  static final _$getIdxFiles =
+      $grpc.ClientMethod<$0.GetIdxFilesReq, $0.GetIdxFilesRes>(
+          '/dues.DuesService/GetIdxFiles',
+          ($0.GetIdxFilesReq value) => value.writeToBuffer(),
+          $0.GetIdxFilesRes.fromBuffer);
   static final _$search = $grpc.ClientMethod<$0.SearchReq, $0.SearchRes>(
       '/dues.DuesService/Search',
       ($0.SearchReq value) => value.writeToBuffer(),
@@ -133,24 +133,20 @@ abstract class DuesServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.GetEviFilesReq.fromBuffer(value),
         ($0.GetEviFilesRes value) => value.writeToBuffer()));
-    $addMethod(
-        $grpc.ServiceMethod<$0.GetPartitionFilesReq, $0.GetPartitionFilesRes>(
-            'GetPartitionFiles',
-            getPartitionFiles_Pre,
-            false,
-            false,
-            ($core.List<$core.int> value) =>
-                $0.GetPartitionFilesReq.fromBuffer(value),
-            ($0.GetPartitionFilesRes value) => value.writeToBuffer()));
-    $addMethod(
-        $grpc.ServiceMethod<$0.GetIndexedFilesReq, $0.GetIndexedFilesRes>(
-            'GetIndexedFiles',
-            getIndexedFiles_Pre,
-            false,
-            false,
-            ($core.List<$core.int> value) =>
-                $0.GetIndexedFilesReq.fromBuffer(value),
-            ($0.GetIndexedFilesRes value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.GetPartiFilesReq, $0.GetPartiFilesRes>(
+        'GetPartiFiles',
+        getPartiFiles_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.GetPartiFilesReq.fromBuffer(value),
+        ($0.GetPartiFilesRes value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.GetIdxFilesReq, $0.GetIdxFilesRes>(
+        'GetIdxFiles',
+        getIdxFiles_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.GetIdxFilesReq.fromBuffer(value),
+        ($0.GetIdxFilesRes value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.SearchReq, $0.SearchRes>(
         'Search',
         search_Pre,
@@ -180,23 +176,21 @@ abstract class DuesServiceBase extends $grpc.Service {
   $async.Future<$0.GetEviFilesRes> getEviFiles(
       $grpc.ServiceCall call, $0.GetEviFilesReq request);
 
-  $async.Future<$0.GetPartitionFilesRes> getPartitionFiles_Pre(
-      $grpc.ServiceCall $call,
-      $async.Future<$0.GetPartitionFilesReq> $request) async {
-    return getPartitionFiles($call, await $request);
+  $async.Future<$0.GetPartiFilesRes> getPartiFiles_Pre($grpc.ServiceCall $call,
+      $async.Future<$0.GetPartiFilesReq> $request) async {
+    return getPartiFiles($call, await $request);
   }
 
-  $async.Future<$0.GetPartitionFilesRes> getPartitionFiles(
-      $grpc.ServiceCall call, $0.GetPartitionFilesReq request);
+  $async.Future<$0.GetPartiFilesRes> getPartiFiles(
+      $grpc.ServiceCall call, $0.GetPartiFilesReq request);
 
-  $async.Future<$0.GetIndexedFilesRes> getIndexedFiles_Pre(
-      $grpc.ServiceCall $call,
-      $async.Future<$0.GetIndexedFilesReq> $request) async {
-    return getIndexedFiles($call, await $request);
+  $async.Future<$0.GetIdxFilesRes> getIdxFiles_Pre($grpc.ServiceCall $call,
+      $async.Future<$0.GetIdxFilesReq> $request) async {
+    return getIdxFiles($call, await $request);
   }
 
-  $async.Future<$0.GetIndexedFilesRes> getIndexedFiles(
-      $grpc.ServiceCall call, $0.GetIndexedFilesReq request);
+  $async.Future<$0.GetIdxFilesRes> getIdxFiles(
+      $grpc.ServiceCall call, $0.GetIdxFilesReq request);
 
   $async.Future<$0.SearchRes> search_Pre(
       $grpc.ServiceCall $call, $async.Future<$0.SearchReq> $request) async {

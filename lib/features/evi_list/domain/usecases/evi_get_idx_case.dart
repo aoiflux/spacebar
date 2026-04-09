@@ -2,15 +2,15 @@ import 'package:fpdart/fpdart.dart';
 import 'package:spacebar/core/common/entities/evidence.dart';
 import 'package:spacebar/core/error/failure.dart';
 import 'package:spacebar/core/iusecase/iusecase.dart';
-import 'package:spacebar/features/evi_list/domain/repo/ievirepo.dart';
+import 'package:spacebar/features/evi_list/domain/repo/ievlistirepo.dart';
 
-class IdxFilesCase implements IUseCase<Evidence, IdxFilesParams> {
-  final IEviRepo repo;
+class IdxFilesCase implements IUseCase<List<Evidence>, IdxFilesParams> {
+  final IEviListRepo repo;
   IdxFilesCase(this.repo);
 
   @override
-  Future<Either<Failure, Evidence>> call(IdxFilesParams params) async {
-    return await repo.getEvidenceFiles();
+  Future<Either<Failure, List<Evidence>>> call(IdxFilesParams params) async {
+    return await repo.getIdxFiles(partiFileId: params.partiFileId);
   }
 }
 

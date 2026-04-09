@@ -8,7 +8,8 @@
 // ignore_for_file: constant_identifier_names
 // ignore_for_file: curly_braces_in_flow_control_structures
 // ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
-// ignore_for_file: non_constant_identifier_names, unused_import
+// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
+// ignore_for_file: unused_import
 
 import 'dart:convert' as $convert;
 import 'dart:core' as $core;
@@ -19,9 +20,11 @@ const BaseFile$json = {
   '1': 'BaseFile',
   '2': [
     {'1': 'file_path', '3': 1, '4': 1, '5': 9, '10': 'filePath'},
+    {'1': 'file_id', '3': 2, '4': 1, '5': 9, '10': 'fileId'},
+    {'1': 'file_size', '3': 3, '4': 1, '5': 3, '10': 'fileSize'},
     {
       '1': 'chunk_map',
-      '3': 2,
+      '3': 4,
       '4': 3,
       '5': 11,
       '6': '.dues.BaseFile.ChunkMapEntry',
@@ -43,9 +46,10 @@ const BaseFile_ChunkMapEntry$json = {
 
 /// Descriptor for `BaseFile`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List baseFileDescriptor = $convert.base64Decode(
-    'CghCYXNlRmlsZRIbCglmaWxlX3BhdGgYASABKAlSCGZpbGVQYXRoEjkKCWNodW5rX21hcBgCIA'
-    'MoCzIcLmR1ZXMuQmFzZUZpbGUuQ2h1bmtNYXBFbnRyeVIIY2h1bmtNYXAaOwoNQ2h1bmtNYXBF'
-    'bnRyeRIQCgNrZXkYASABKAlSA2tleRIUCgV2YWx1ZRgCIAEoA1IFdmFsdWU6AjgB');
+    'CghCYXNlRmlsZRIbCglmaWxlX3BhdGgYASABKAlSCGZpbGVQYXRoEhcKB2ZpbGVfaWQYAiABKA'
+    'lSBmZpbGVJZBIbCglmaWxlX3NpemUYAyABKANSCGZpbGVTaXplEjkKCWNodW5rX21hcBgEIAMo'
+    'CzIcLmR1ZXMuQmFzZUZpbGUuQ2h1bmtNYXBFbnRyeVIIY2h1bmtNYXAaOwoNQ2h1bmtNYXBFbn'
+    'RyeRIQCgNrZXkYASABKAlSA2tleRIUCgV2YWx1ZRgCIAEoA1IFdmFsdWU6AjgB');
 
 @$core.Deprecated('Use appendIfExistsReqDescriptor instead')
 const AppendIfExistsReq$json = {
@@ -67,31 +71,38 @@ const AppendIfExistsRes$json = {
   '2': [
     {'1': 'exists', '3': 1, '4': 1, '5': 8, '10': 'exists'},
     {'1': 'appended', '3': 2, '4': 1, '5': 8, '10': 'appended'},
-    {'1': 'err', '3': 3, '4': 1, '5': 9, '10': 'err'},
+    {
+      '1': 'evi_file',
+      '3': 3,
+      '4': 1,
+      '5': 11,
+      '6': '.dues.BaseFile',
+      '10': 'eviFile'
+    },
+    {'1': 'err', '3': 4, '4': 1, '5': 9, '10': 'err'},
   ],
 };
 
 /// Descriptor for `AppendIfExistsRes`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List appendIfExistsResDescriptor = $convert.base64Decode(
     'ChFBcHBlbmRJZkV4aXN0c1JlcxIWCgZleGlzdHMYASABKAhSBmV4aXN0cxIaCghhcHBlbmRlZB'
-    'gCIAEoCFIIYXBwZW5kZWQSEAoDZXJyGAMgASgJUgNlcnI=');
+    'gCIAEoCFIIYXBwZW5kZWQSKQoIZXZpX2ZpbGUYAyABKAsyDi5kdWVzLkJhc2VGaWxlUgdldmlG'
+    'aWxlEhAKA2VychgEIAEoCVIDZXJy');
 
 @$core.Deprecated('Use streamFileMetaDescriptor instead')
 const StreamFileMeta$json = {
   '1': 'StreamFileMeta',
   '2': [
     {'1': 'file_path', '3': 1, '4': 1, '5': 9, '10': 'filePath'},
-    {'1': 'file_size', '3': 2, '4': 1, '5': 3, '10': 'fileSize'},
-    {'1': 'file_type', '3': 3, '4': 1, '5': 9, '10': 'fileType'},
-    {'1': 'file_hash', '3': 4, '4': 1, '5': 9, '10': 'fileHash'},
+    {'1': 'file_type', '3': 2, '4': 1, '5': 9, '10': 'fileType'},
+    {'1': 'file_hash', '3': 3, '4': 1, '5': 9, '10': 'fileHash'},
   ],
 };
 
 /// Descriptor for `StreamFileMeta`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List streamFileMetaDescriptor = $convert.base64Decode(
-    'Cg5TdHJlYW1GaWxlTWV0YRIbCglmaWxlX3BhdGgYASABKAlSCGZpbGVQYXRoEhsKCWZpbGVfc2'
-    'l6ZRgCIAEoA1IIZmlsZVNpemUSGwoJZmlsZV90eXBlGAMgASgJUghmaWxlVHlwZRIbCglmaWxl'
-    'X2hhc2gYBCABKAlSCGZpbGVIYXNo');
+    'Cg5TdHJlYW1GaWxlTWV0YRIbCglmaWxlX3BhdGgYASABKAlSCGZpbGVQYXRoEhsKCWZpbGVfdH'
+    'lwZRgCIAEoCVIIZmlsZVR5cGUSGwoJZmlsZV9oYXNoGAMgASgJUghmaWxlSGFzaA==');
 
 @$core.Deprecated('Use streamFileReqDescriptor instead')
 const StreamFileReq$json = {
@@ -171,21 +182,21 @@ final $typed_data.Uint8List getEviFilesResDescriptor = $convert.base64Decode(
     'Cg5HZXRFdmlGaWxlc1JlcxISCgRkb25lGAEgASgIUgRkb25lEhAKA2VychgCIAEoCVIDZXJyEi'
     'kKCGV2aV9maWxlGAMgAygLMg4uZHVlcy5CYXNlRmlsZVIHZXZpRmlsZQ==');
 
-@$core.Deprecated('Use getPartitionFilesReqDescriptor instead')
-const GetPartitionFilesReq$json = {
-  '1': 'GetPartitionFilesReq',
+@$core.Deprecated('Use getPartiFilesReqDescriptor instead')
+const GetPartiFilesReq$json = {
+  '1': 'GetPartiFilesReq',
   '2': [
     {'1': 'evi_file_id', '3': 1, '4': 1, '5': 9, '10': 'eviFileId'},
   ],
 };
 
-/// Descriptor for `GetPartitionFilesReq`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getPartitionFilesReqDescriptor = $convert.base64Decode(
-    'ChRHZXRQYXJ0aXRpb25GaWxlc1JlcRIeCgtldmlfZmlsZV9pZBgBIAEoCVIJZXZpRmlsZUlk');
+/// Descriptor for `GetPartiFilesReq`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getPartiFilesReqDescriptor = $convert.base64Decode(
+    'ChBHZXRQYXJ0aUZpbGVzUmVxEh4KC2V2aV9maWxlX2lkGAEgASgJUglldmlGaWxlSWQ=');
 
-@$core.Deprecated('Use getPartitionFilesResDescriptor instead')
-const GetPartitionFilesRes$json = {
-  '1': 'GetPartitionFilesRes',
+@$core.Deprecated('Use getPartiFilesResDescriptor instead')
+const GetPartiFilesRes$json = {
+  '1': 'GetPartiFilesRes',
   '2': [
     {'1': 'done', '3': 1, '4': 1, '5': 8, '10': 'done'},
     {'1': 'err', '3': 2, '4': 1, '5': 9, '10': 'err'},
@@ -200,28 +211,26 @@ const GetPartitionFilesRes$json = {
   ],
 };
 
-/// Descriptor for `GetPartitionFilesRes`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getPartitionFilesResDescriptor = $convert.base64Decode(
-    'ChRHZXRQYXJ0aXRpb25GaWxlc1JlcxISCgRkb25lGAEgASgIUgRkb25lEhAKA2VychgCIAEoCV'
-    'IDZXJyEjUKDnBhcnRpdGlvbl9maWxlGAMgAygLMg4uZHVlcy5CYXNlRmlsZVINcGFydGl0aW9u'
-    'RmlsZQ==');
+/// Descriptor for `GetPartiFilesRes`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getPartiFilesResDescriptor = $convert.base64Decode(
+    'ChBHZXRQYXJ0aUZpbGVzUmVzEhIKBGRvbmUYASABKAhSBGRvbmUSEAoDZXJyGAIgASgJUgNlcn'
+    'ISNQoOcGFydGl0aW9uX2ZpbGUYAyADKAsyDi5kdWVzLkJhc2VGaWxlUg1wYXJ0aXRpb25GaWxl');
 
-@$core.Deprecated('Use getIndexedFilesReqDescriptor instead')
-const GetIndexedFilesReq$json = {
-  '1': 'GetIndexedFilesReq',
+@$core.Deprecated('Use getIdxFilesReqDescriptor instead')
+const GetIdxFilesReq$json = {
+  '1': 'GetIdxFilesReq',
   '2': [
     {'1': 'parti_file_id', '3': 1, '4': 1, '5': 9, '10': 'partiFileId'},
   ],
 };
 
-/// Descriptor for `GetIndexedFilesReq`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getIndexedFilesReqDescriptor = $convert.base64Decode(
-    'ChJHZXRJbmRleGVkRmlsZXNSZXESIgoNcGFydGlfZmlsZV9pZBgBIAEoCVILcGFydGlGaWxlSW'
-    'Q=');
+/// Descriptor for `GetIdxFilesReq`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getIdxFilesReqDescriptor = $convert.base64Decode(
+    'Cg5HZXRJZHhGaWxlc1JlcRIiCg1wYXJ0aV9maWxlX2lkGAEgASgJUgtwYXJ0aUZpbGVJZA==');
 
-@$core.Deprecated('Use getIndexedFilesResDescriptor instead')
-const GetIndexedFilesRes$json = {
-  '1': 'GetIndexedFilesRes',
+@$core.Deprecated('Use getIdxFilesResDescriptor instead')
+const GetIdxFilesRes$json = {
+  '1': 'GetIdxFilesRes',
   '2': [
     {'1': 'done', '3': 1, '4': 1, '5': 8, '10': 'done'},
     {'1': 'err', '3': 2, '4': 1, '5': 9, '10': 'err'},
@@ -236,10 +245,10 @@ const GetIndexedFilesRes$json = {
   ],
 };
 
-/// Descriptor for `GetIndexedFilesRes`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getIndexedFilesResDescriptor = $convert.base64Decode(
-    'ChJHZXRJbmRleGVkRmlsZXNSZXMSEgoEZG9uZRgBIAEoCFIEZG9uZRIQCgNlcnIYAiABKAlSA2'
-    'VychIxCgxpbmRleGVkX2ZpbGUYAyADKAsyDi5kdWVzLkJhc2VGaWxlUgtpbmRleGVkRmlsZQ==');
+/// Descriptor for `GetIdxFilesRes`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getIdxFilesResDescriptor = $convert.base64Decode(
+    'Cg5HZXRJZHhGaWxlc1JlcxISCgRkb25lGAEgASgIUgRkb25lEhAKA2VychgCIAEoCVIDZXJyEj'
+    'EKDGluZGV4ZWRfZmlsZRgDIAMoCzIOLmR1ZXMuQmFzZUZpbGVSC2luZGV4ZWRGaWxl');
 
 @$core.Deprecated('Use searchReqDescriptor instead')
 const SearchReq$json = {
