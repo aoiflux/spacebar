@@ -23,7 +23,7 @@ Stream<StreamFileReq> streamFileWeb({
   );
 
   final fileSize = platformFile.size;
-  // yield StreamFileReq(fileMeta: metadata);
+  yield StreamFileReq(fileMeta: metadata);
   logger.d(
     'Sent metadata: ${metadata.filePath}, size: $fileSize, type: $fileType',
   );

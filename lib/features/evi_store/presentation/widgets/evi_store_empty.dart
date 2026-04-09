@@ -70,7 +70,7 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
       child: Icon(
         Icons.cloud_upload_outlined,
         size: 40,
-        color: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).colorScheme.onPrimary,
       ),
     );
   }

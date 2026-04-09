@@ -528,7 +528,10 @@ class EviStoreSuccessView extends StatelessWidget {
   Widget _buildSizeComparisonSection(BuildContext context) {
     final totalSize = evidence.totalSize;
     final compressedSize = evidence.compressedSize;
-    final ratio = compressedSize / totalSize;
+    double ratio = 0;
+    if (evidence.totalSize > 0) {
+      ratio = compressedSize / totalSize;
+    }
 
     return Card(
       elevation: 2,

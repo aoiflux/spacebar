@@ -19,6 +19,13 @@ class _EviListPageState extends State<EviListPage> {
   static const _tint = Color(0xFF2D7FF9);
 
   final Set<String> _selectedEviIds = <String>{};
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<EviListBloc>().add(EviListLoad());
+  }
+
   bool _selectionMode = false;
 
   void _goHome(BuildContext context) {
@@ -213,7 +220,6 @@ class _EviListPageState extends State<EviListPage> {
         },
         builder: (context, state) {
           if (state is EviListInitial) {
-            bloc.add(EviListLoad());
             return const Center(child: CircularProgressIndicator(color: _tint));
           }
 
