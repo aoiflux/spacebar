@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:spacebar/core/cnst/cnst.dart';
 import 'package:spacebar/core/utils/grpc_channel_stub.dart'
@@ -20,9 +21,40 @@ import 'package:spacebar/generated/dues.pbgrpc.dart';
 
 final serviceLocator = GetIt.instance;
 Future<void> initDeps() async {
-  final channel = createGrpcChannel(GrpCnst.host, GrpCnst.port);
-  final client = DuesServiceClient(channel);
   final logger = Logger();
+
+  final defaultHost = GrpCnst.host;
+  final defaultPort = GrpCnst.port;
+
+  final host = const String.fromEnvironment(
+    'GRPC_HOST',
+    defaultValue: '',
+  ).trim();
+  const port = int.fromEnvironment('GRPC_PORT', defaultValue: -1);
+  final webUrl = const String.fromEnvironment(
+    'GRPC_WEB_URL',
+    defaultValue: '',
+  ).trim();
+
+  final resolvedHost = host.isNotEmpty
+      ? host
+      : (kIsWeb && defaultHost == 'localhost' && Uri.base.host.isNotEmpty
+            ? Uri.base.host
+            : defaultHost);
+  final resolvedPort = port > 0 ? port : defaultPort;
+
+  if (kIsWeb && webUrl.isNotEmpty) {
+    logger.i('Using gRPC web endpoint: $webUrl');
+  } else {
+    logger.i('Using gRPC endpoint: $resolvedHost:$resolvedPort');
+  }
+
+  final channel = createGrpcChannel(
+    resolvedHost,
+    resolvedPort,
+    webUrl: webUrl,
+  );
+  final client = DuesServiceClient(channel);
 
   serviceLocator
     ..registerLazySingleton(() => logger)

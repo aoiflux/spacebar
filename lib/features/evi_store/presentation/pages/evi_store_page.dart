@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spacebar/core/common/entities/evidence.dart';
 import 'package:spacebar/core/common/models/picked_file_data.dart';
@@ -92,10 +93,12 @@ class EviStorePage extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => store(context),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: !kIsWeb
+          ? FloatingActionButton(
+              onPressed: () => store(context),
+              child: const Icon(Icons.add),
+            )
+          : null,
       body: BlocConsumer<EviBloc, EviStoreState>(
         listener: (context, state) {
           if (state is EviStoreFailure) {
