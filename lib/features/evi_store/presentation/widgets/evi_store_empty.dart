@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:desktop_drop/desktop_drop.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:spacebar/core/common/models/picked_file_data.dart';
 import 'package:spacebar/features/evi_list/presentation/pages/evi_list_page.dart';
@@ -21,6 +22,7 @@ class EviStoreEmpty extends StatefulWidget {
 
 class _EviStoreEmptyState extends State<EviStoreEmpty> {
   bool _isDragHovering = false;
+  DropzoneViewController? _dropzoneController;
 
   @override
   Widget build(BuildContext context) {
@@ -195,18 +197,34 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
     return Stack(
       children: [
         DropzoneView(
-          onCreated: (controller) {},
+          onCreated: (controller) {
+            _dropzoneController = controller;
+          },
           onHover: () {
             setState(() => _isDragHovering = true);
           },
           onLeave: () {
             setState(() => _isDragHovering = false);
           },
-          onDropFile: (file) {
+          onDropFile: (file) async {
             setState(() => _isDragHovering = false);
+            final controller = _dropzoneController;
+            if (controller == null) {
+              return;
+            }
+
+            final size = await controller.getFileSize(file);
+            final stream = controller.getFileStream(file);
+
+            final platformFile = PlatformFile(
+              name: file.name,
+              size: size,
+              readStream: stream,
+            );
+
             final pickedFile = PickedFileData(
               name: file.name,
-              platformFile: file.getNative(),
+              platformFile: platformFile,
             );
             _handleDroppedFile(pickedFile);
           },
@@ -273,7 +291,7 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'or tap the button below',
+                    'or use the button below',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Theme.of(
                         context,
@@ -286,6 +304,19 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
             ),
           ),
         ),
+        // Clickable overlay for web file picker
+        if (kIsWeb)
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: _onWebDropzoneClicked,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Container(
+                  color: Colors.transparent,
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -295,6 +326,40 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
       widget.onFilesDropped!(fileData);
     } else {
       widget.onStorePressed();
+    }
+  }
+
+  Future<void> _onWebDropzoneClicked() async {
+    final controller = _dropzoneController;
+    if (controller == null) {
+      return;
+    }
+
+    try {
+      final uploadedFiles = await controller.pickFiles();
+      if (uploadedFiles.isEmpty) {
+        return;
+      }
+
+      for (final file in uploadedFiles) {
+        final size = await controller.getFileSize(file);
+        final stream = controller.getFileStream(file);
+
+        final platformFile = PlatformFile(
+          name: file.name,
+          size: size,
+          readStream: stream,
+        );
+
+        final pickedFile = PickedFileData(
+          name: file.name,
+          platformFile: platformFile,
+        );
+        _handleDroppedFile(pickedFile);
+      }
+    } catch (e) {
+      // File picker was cancelled or error occurred
+      debugPrint('File picker error: $e');
     }
   }
 

@@ -10,6 +10,8 @@ Stream<StreamFileReq> streamFileDesktop({
   required String fileType,
   required PickedFileData fileData,
   required String fileHash,
+  required String metadataFilePath,
+  bool stageToTempCopy = false,
   required Logger logger,
   OnProgressChanged? onProgress,
 }) async* {
@@ -18,34 +20,45 @@ Stream<StreamFileReq> streamFileDesktop({
     throw Exception('File path is null or empty for desktop streaming.');
   }
 
-  final file = File(filePath);
-  if (!await file.exists()) {
+  final sourceFile = File(filePath);
+  if (!await sourceFile.exists()) {
     throw Exception('File not found: $filePath');
   }
 
+  File file = sourceFile;
+  Directory? stagedDir;
+  if (stageToTempCopy) {
+    stagedDir = await Directory.systemTemp.createTemp('spacebar_upload_');
+    final safeName = fileData.name.trim().isNotEmpty
+        ? fileData.name.trim()
+        : 'upload.bin';
+    final stagedPath = '${stagedDir.path}${Platform.pathSeparator}$safeName';
+    logger.w('Staging upload file to temp copy: $stagedPath');
+    file = await sourceFile.copy(stagedPath);
+  }
+
   final metadata = StreamFileMeta(
-    filePath: filePath,
+    filePath: metadataFilePath,
     fileType: fileType,
     fileHash: fileHash,
   );
 
-  final fileSize = await file.length();
-  yield StreamFileReq(fileMeta: metadata);
-  logger.d(
-    'Sent metadata: ${metadata.filePath}, size: $fileSize, type: $fileType',
-  );
-
-  const chunkSize = 256 * 1024;
-  final raf = await file.open(mode: FileMode.read);
-
   try {
-    final buffer = List<int>.filled(chunkSize, 0);
-    int sentBytes = 0;
-    int bytesRead;
+    final fileSize = await file.length();
+    yield StreamFileReq(fileMeta: metadata);
+    logger.d(
+      'Sent metadata: ${metadata.filePath}, size: $fileSize, type: $fileType',
+    );
 
-    while ((bytesRead = await raf.readInto(buffer)) > 0) {
-      yield StreamFileReq(file: buffer.sublist(0, bytesRead));
-      sentBytes += bytesRead;
+    int sentBytes = 0;
+    await for (final chunk in file.openRead(0, fileSize)) {
+      if (chunk.isEmpty) {
+        continue;
+      }
+
+      final List<int> bytes = chunk;
+      yield StreamFileReq(file: bytes);
+      sentBytes += bytes.length;
 
       final progress = fileSize > 0 ? sentBytes / fileSize : 0.0;
       onProgress?.call(
@@ -60,9 +73,15 @@ Stream<StreamFileReq> streamFileDesktop({
         logger.d('Streamed: $sentBytes / $fileSize bytes');
       }
     }
-  } finally {
-    await raf.close();
-  }
 
-  logger.d('File streaming completed: ${metadata.filePath}');
+    logger.d('File streaming completed: ${metadata.filePath}');
+  } finally {
+    if (stagedDir != null) {
+      try {
+        await stagedDir.delete(recursive: true);
+      } catch (_) {
+        // Best-effort cleanup for temp staged upload files.
+      }
+    }
+  }
 }

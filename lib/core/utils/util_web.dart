@@ -12,14 +12,44 @@ Future<Either<FileError, String>> getFileHashWeb(
 ) async {
   try {
     final platformFile = fileData.webFile;
-    final readStream = platformFile.readStream!;
-
     final digest = SHA3Digest(256);
+    final yieldWatch = Stopwatch()..start();
 
-    await readStream.forEach((stream) {
-      final bytes = Uint8List.fromList(stream);
-      digest.update(bytes, 0, bytes.length);
-    });
+    Future<void> maybeYield() async {
+      // Keep hashing responsive by yielding at ~1 frame budget.
+      if (yieldWatch.elapsedMilliseconds >= 8) {
+        yieldWatch
+          ..reset()
+          ..start();
+        await Future<void>.delayed(Duration.zero);
+      }
+    }
+
+    final bytes = platformFile.bytes;
+    if (bytes != null && bytes.isNotEmpty) {
+      const chunkSize = 256 * 1024;
+      for (int offset = 0; offset < bytes.length; offset += chunkSize) {
+        final end =
+            (offset + chunkSize < bytes.length) ? offset + chunkSize : bytes.length;
+        digest.update(bytes, offset, end - offset);
+        await maybeYield();
+      }
+    } else {
+      final readStream = platformFile.readStream;
+      if (readStream == null) {
+        return Left(
+          FileError(
+            'Cannot compute hash: both bytes and readStream are unavailable.',
+          ),
+        );
+      }
+
+      await for (final stream in readStream) {
+        final chunk = stream is Uint8List ? stream : Uint8List.fromList(stream);
+        digest.update(chunk, 0, chunk.length);
+        await maybeYield();
+      }
+    }
 
     final out = Uint8List(digest.digestSize);
     digest.doFinal(out, 0);
