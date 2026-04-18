@@ -83,35 +83,32 @@ class GrpcStoreImpl implements IEviStoreRemoteDataSource {
         (msg.contains('must be opened') || msg.contains('failed to execute'));
   }
 
-        bool _isRetryableWebChunkFailure(http.Response res) {
-          // Keep retry policy conservative and idempotent-friendly.
-          return res.statusCode == 408 ||
-          res.statusCode == 409 ||
-          res.statusCode == 425 ||
-          res.statusCode == 429 ||
-          res.statusCode >= 500;
-        }
+  bool _isRetryableWebChunkFailure(http.Response res) {
+    // Keep retry policy conservative and idempotent-friendly.
+    return res.statusCode == 408 ||
+        res.statusCode == 409 ||
+        res.statusCode == 425 ||
+        res.statusCode == 429 ||
+        res.statusCode >= 500;
+  }
 
-    String _shortBody(String body) {
-      final normalized = body.replaceAll('\n', ' ').trim();
-      if (normalized.length <= 280) {
-        return normalized;
-      }
-      return '${normalized.substring(0, 280)}...';
+  String _shortBody(String body) {
+    final normalized = body.replaceAll('\n', ' ').trim();
+    if (normalized.length <= 280) {
+      return normalized;
     }
+    return '${normalized.substring(0, 280)}...';
+  }
 
   Future<void> _prepareFileHash(PickedFileData fileData) async {
     final fileHashResult = fileData.isWeb
         ? await getFileHashWeb(fileData)
         : await getFileHashDesktop(fileData);
 
-    fileHashResult.match(
-      (error) {
-        _fileHash = "";
-        throw Exception('Failed to compute file hash: ${error.message}');
-      },
-      (hash) => _fileHash = hash,
-    );
+    fileHashResult.match((error) {
+      _fileHash = "";
+      throw Exception('Failed to compute file hash: ${error.message}');
+    }, (hash) => _fileHash = hash);
 
     if (_fileHash.trim().isEmpty) {
       throw Exception('File hash is empty. Please retry selecting the file.');
@@ -168,7 +165,9 @@ class GrpcStoreImpl implements IEviStoreRemoteDataSource {
     final uploadRoot = basePath.endsWith('/web/upload')
         ? basePath
         : '$basePath/web/upload';
-    final normalizedRoot = uploadRoot.startsWith('/') ? uploadRoot : '/$uploadRoot';
+    final normalizedRoot = uploadRoot.startsWith('/')
+        ? uploadRoot
+        : '/$uploadRoot';
     return baseUri.replace(path: '$normalizedRoot/$leaf');
   }
 
@@ -184,8 +183,7 @@ class GrpcStoreImpl implements IEviStoreRemoteDataSource {
       'WEB_UPLOAD_RESUMABLE_HEADERS',
       defaultValue: false,
     );
-    final idempotencyKey =
-        '$uploadId-$chunkIndex-$chunkOffset-${chunk.length}';
+    final idempotencyKey = '$uploadId-$chunkIndex-$chunkOffset-${chunk.length}';
 
     for (int attempt = 1; attempt <= maxAttempts; attempt++) {
       final sw = Stopwatch()..start();
@@ -267,6 +265,8 @@ class GrpcStoreImpl implements IEviStoreRemoteDataSource {
       );
 
       if (_fileHash.trim().isEmpty) {
+        onProgress?.call(ProgressUpdate(stage: ProgressStage.hashing));
+
         final inMemoryBytes = platformFile.bytes;
         if (inMemoryBytes != null && inMemoryBytes.isNotEmpty) {
           final bytes = Uint8List.fromList(inMemoryBytes);
@@ -299,6 +299,7 @@ class GrpcStoreImpl implements IEviStoreRemoteDataSource {
         final out = Uint8List(digest.digestSize);
         digest.doFinal(out, 0);
         _fileHash = base64Encode(out);
+        onProgress?.call(ProgressUpdate(stage: ProgressStage.hashDone));
       } else {
         final inMemoryBytes = platformFile.bytes;
         if (inMemoryBytes != null && inMemoryBytes.isNotEmpty) {
@@ -360,77 +361,81 @@ class GrpcStoreImpl implements IEviStoreRemoteDataSource {
       }
       logger.i('Web upload session started: uploadId=$uploadId');
 
-    const minChunkSize = 1 * 1024 * 1024;
-    const maxChunkSize = 8 * 1024 * 1024;
-    const chunkStep = 1 * 1024 * 1024;
-    int adaptiveChunkSize = 2 * 1024 * 1024;
+      const minChunkSize = 1 * 1024 * 1024;
+      const maxChunkSize = 8 * 1024 * 1024;
+      const chunkStep = 1 * 1024 * 1024;
+      int adaptiveChunkSize = 2 * 1024 * 1024;
 
-    final pending = BytesBuilder(copy: false);
-    int sentBytes = 0;
-    int chunkIndex = 0;
+      onProgress?.call(ProgressUpdate(stage: ProgressStage.streaming));
 
-    Future<void> flushPending({required bool forceAll}) async {
-      var data = pending.takeBytes();
-      int cursor = 0;
+      final pending = BytesBuilder(copy: false);
+      int sentBytes = 0;
+      int chunkIndex = 0;
 
-      while (cursor < data.length) {
-        final remaining = data.length - cursor;
-        if (!forceAll && remaining < adaptiveChunkSize) {
-          final left = data.sublist(cursor);
-          pending.add(left);
-          return;
-        }
+      Future<void> flushPending({required bool forceAll}) async {
+        var data = pending.takeBytes();
+        int cursor = 0;
 
-        final take = forceAll
-            ? remaining
-            : (remaining < adaptiveChunkSize ? remaining : adaptiveChunkSize);
-        final chunk = data.sublist(cursor, cursor + take);
-        final elapsedMs = await _postWebChunkWithRetry(
-          baseUri: baseUri,
-          uploadId: uploadId,
-          chunk: chunk,
-          chunkIndex: chunkIndex,
-          chunkOffset: sentBytes,
-        );
-
-        sentBytes += chunk.length;
-        chunkIndex++;
-
-        if (elapsedMs < 350 && adaptiveChunkSize < maxChunkSize) {
-          adaptiveChunkSize += chunkStep;
-          if (adaptiveChunkSize > maxChunkSize) {
-            adaptiveChunkSize = maxChunkSize;
+        while (cursor < data.length) {
+          final remaining = data.length - cursor;
+          if (!forceAll && remaining < adaptiveChunkSize) {
+            final left = data.sublist(cursor);
+            pending.add(left);
+            return;
           }
-        } else if (elapsedMs > 1800 && adaptiveChunkSize > minChunkSize) {
-          adaptiveChunkSize -= chunkStep;
-          if (adaptiveChunkSize < minChunkSize) {
-            adaptiveChunkSize = minChunkSize;
+
+          final take = forceAll
+              ? remaining
+              : (remaining < adaptiveChunkSize ? remaining : adaptiveChunkSize);
+          final chunk = data.sublist(cursor, cursor + take);
+          final elapsedMs = await _postWebChunkWithRetry(
+            baseUri: baseUri,
+            uploadId: uploadId,
+            chunk: chunk,
+            chunkIndex: chunkIndex,
+            chunkOffset: sentBytes,
+          );
+
+          sentBytes += chunk.length;
+          chunkIndex++;
+
+          if (elapsedMs < 350 && adaptiveChunkSize < maxChunkSize) {
+            adaptiveChunkSize += chunkStep;
+            if (adaptiveChunkSize > maxChunkSize) {
+              adaptiveChunkSize = maxChunkSize;
+            }
+          } else if (elapsedMs > 1800 && adaptiveChunkSize > minChunkSize) {
+            adaptiveChunkSize -= chunkStep;
+            if (adaptiveChunkSize < minChunkSize) {
+              adaptiveChunkSize = minChunkSize;
+            }
           }
+
+          final progress = totalSize > 0 ? sentBytes / totalSize : null;
+          onProgress?.call(
+            ProgressUpdate(
+              stage: ProgressStage.streaming,
+              progress: progress,
+              message: '${(sentBytes ~/ 1024)} / ${(totalSize ~/ 1024)} KB',
+            ),
+          );
+
+          cursor += take;
         }
-
-        final progress = totalSize > 0 ? sentBytes / totalSize : null;
-        onProgress?.call(
-          ProgressUpdate(
-            stage: ProgressStage.streaming,
-            progress: progress,
-            message: '${(sentBytes ~/ 1024)} / ${(totalSize ~/ 1024)} KB',
-          ),
-        );
-
-        cursor += take;
       }
-    }
 
-    for (final incoming in bufferedChunks) {
-      if (incoming.isEmpty) {
-        continue;
+      for (final incoming in bufferedChunks) {
+        if (incoming.isEmpty) {
+          continue;
+        }
+        pending.add(incoming);
+        await flushPending(forceAll: false);
       }
-      pending.add(incoming);
-      await flushPending(forceAll: false);
-    }
 
       await flushPending(forceAll: true);
-      logger.i('Web upload chunks complete: uploadId=$uploadId sentBytes=$sentBytes');
+      logger.i(
+        'Web upload chunks complete: uploadId=$uploadId sentBytes=$sentBytes',
+      );
 
       final finalizeUri = _webUploadEndpointUri(baseUri, 'finalize');
       final finalizeRes = await http.post(
@@ -558,8 +563,6 @@ class GrpcStoreImpl implements IEviStoreRemoteDataSource {
       await _prepareFileHash(fileData);
       onProgress?.call(ProgressUpdate(stage: ProgressStage.hashDone));
     }
-
-    onProgress?.call(ProgressUpdate(stage: ProgressStage.streaming));
 
     if (fileData.isWeb) {
       final model = await _streamFileWebHttp(
