@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spacebar/core/common/entities/evidence.dart';
 import 'package:spacebar/core/common/models/picked_file_data.dart';
@@ -12,10 +11,29 @@ import 'package:spacebar/features/evi_store/presentation/bloc/evi_store_bloc/evi
 import 'package:spacebar/features/evi_store/presentation/widgets/evi_store_empty.dart';
 import 'package:spacebar/features/evi_store/presentation/widgets/evi_store_success.dart';
 
-class EviStorePage extends StatelessWidget {
+class EviStorePage extends StatefulWidget {
   final Evidence? initialEvidence;
 
   const EviStorePage({super.key, this.initialEvidence});
+
+  @override
+  State<EviStorePage> createState() => _EviStorePageState();
+}
+
+class _EviStorePageState extends State<EviStorePage> {
+  late final EviBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = context.read<EviBloc>();
+  }
+
+  @override
+  void dispose() {
+    _bloc.add(EviStoreReset());
+    super.dispose();
+  }
 
   void store(BuildContext context) async {
     final bloc = context.read<EviBloc>();
@@ -52,7 +70,7 @@ class EviStorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // If initial evidence provided, show it directly without BLoC
-    if (initialEvidence != null) {
+    if (widget.initialEvidence != null) {
       return Scaffold(
         appBar: AppBar(
           title: const Text("DUES"),
@@ -73,7 +91,7 @@ class EviStorePage extends StatelessWidget {
             ),
           ],
         ),
-        body: EviStoreSuccessView(evidence: initialEvidence!),
+        body: EviStoreSuccessView(evidence: widget.initialEvidence!),
       );
     }
 
@@ -93,12 +111,15 @@ class EviStorePage extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: !kIsWeb
-          ? FloatingActionButton(
-              onPressed: () => store(context),
-              child: const Icon(Icons.add),
-            )
-          : null,
+      floatingActionButton: BlocBuilder<EviBloc, EviStoreState>(
+        builder: (context, state) {
+          if (state is EviStoreInitial) return const SizedBox.shrink();
+          return FloatingActionButton(
+            onPressed: () => store(context),
+            child: const Icon(Icons.add),
+          );
+        },
+      ),
       body: BlocConsumer<EviBloc, EviStoreState>(
         listener: (context, state) {
           if (state is EviStoreFailure) {

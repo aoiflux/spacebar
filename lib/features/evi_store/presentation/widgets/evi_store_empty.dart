@@ -118,75 +118,83 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
         _handleDroppedFile(pickedFile);
       },
       child: MouseRegion(
+        cursor: SystemMouseCursors.click,
         onEnter: (_) {
           if (!_isDragHovering) setState(() => _isDragHovering = true);
         },
         onExit: (_) {
           if (_isDragHovering) setState(() => _isDragHovering = false);
         },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          decoration: BoxDecoration(
-            border: Border.all(
+        child: GestureDetector(
+          onTap: _onDesktopDropzoneClicked,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: _isDragHovering
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.2),
+                width: 1.5,
+              ),
+              borderRadius: BorderRadius.circular(8),
               color: _isDragHovering
-                  ? Theme.of(context).colorScheme.primary
+                  ? Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: 0.04)
                   : Theme.of(
                       context,
-                    ).colorScheme.primary.withValues(alpha: 0.2),
-              width: 1.5,
+                    ).colorScheme.primary.withValues(alpha: 0.02),
+              boxShadow: _isDragHovering
+                  ? [
+                      BoxShadow(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.08),
+                        blurRadius: 12,
+                        spreadRadius: 0,
+                      ),
+                    ]
+                  : null,
             ),
-            borderRadius: BorderRadius.circular(8),
-            color: _isDragHovering
-                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.04)
-                : Theme.of(context).colorScheme.primary.withValues(alpha: 0.02),
-            boxShadow: _isDragHovering
-                ? [
-                    BoxShadow(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.primary.withValues(alpha: 0.08),
-                      blurRadius: 12,
-                      spreadRadius: 0,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedScale(
+                  scale: _isDragHovering ? 1.1 : 1.0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Icon(
+                    Icons.folder_open_outlined,
+                    size: 36,
+                    color: Theme.of(context).colorScheme.primary.withValues(
+                      alpha: _isDragHovering ? 1.0 : 0.5,
                     ),
-                  ]
-                : null,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AnimatedScale(
-                scale: _isDragHovering ? 1.1 : 1.0,
-                duration: const Duration(milliseconds: 200),
-                child: Icon(
-                  Icons.folder_open_outlined,
-                  size: 36,
-                  color: Theme.of(context).colorScheme.primary.withValues(
-                    alpha: _isDragHovering ? 1.0 : 0.5,
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Drag & drop files here',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w500,
+                const SizedBox(height: 16),
+                Text(
+                  'Drag & drop files here',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'or tap the button below',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.5),
+                const SizedBox(height: 4),
+                Text(
+                  'or tap the button below',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.5),
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -311,9 +319,7 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
               onTap: _onWebDropzoneClicked,
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
-                child: Container(
-                  color: Colors.transparent,
-                ),
+                child: Container(color: Colors.transparent),
               ),
             ),
           ),
@@ -326,6 +332,22 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
       widget.onFilesDropped!(fileData);
     } else {
       widget.onStorePressed();
+    }
+  }
+
+  Future<void> _onDesktopDropzoneClicked() async {
+    try {
+      final result = await FilePicker.platform.pickFiles();
+      if (result == null || result.files.isEmpty) {
+        return;
+      }
+
+      for (final file in result.files) {
+        final pickedFile = PickedFileData(name: file.name, path: file.path);
+        _handleDroppedFile(pickedFile);
+      }
+    } catch (e) {
+      debugPrint('File picker error: $e');
     }
   }
 
