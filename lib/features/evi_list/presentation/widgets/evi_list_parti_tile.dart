@@ -25,7 +25,7 @@ class EviListPartiTile extends StatefulWidget {
 class _EviListPartiTileState extends State<EviListPartiTile> {
   bool _expanded = false;
 
-  static const _tint = Color(0xFF0CA678);
+  static const _tint = Color(0xFF0D7A5F);
 
   void _toggle() {
     setState(() => _expanded = !_expanded);
@@ -51,11 +51,11 @@ class _EviListPartiTileState extends State<EviListPartiTile> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: _tint.withValues(alpha: 0.22)),
-          color: Colors.white.withValues(alpha: 0.65),
+          border: Border.all(color: _tint.withValues(alpha: 0.18)),
+          color: const Color(0xFFFFFFFF),
           boxShadow: [
             BoxShadow(
-              color: _tint.withValues(alpha: 0.07),
+              color: _tint.withValues(alpha: 0.06),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -101,7 +101,7 @@ class _EviListPartiTileState extends State<EviListPartiTile> {
                                     overflow: TextOverflow.ellipsis,
                                     style: theme.textTheme.bodyMedium?.copyWith(
                                       fontWeight: FontWeight.w600,
-                                      color: const Color(0xFF1C2430),
+                                      color: const Color(0xFF0F1C2E),
                                     ),
                                   ),
                                   const SizedBox(height: 1),
@@ -110,10 +110,9 @@ class _EviListPartiTileState extends State<EviListPartiTile> {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: theme.textTheme.labelSmall?.copyWith(
-                                      color: const Color(
-                                        0xFF364254,
-                                      ).withValues(alpha: 0.55),
-                                      letterSpacing: 0.1,
+                                      color: const Color(0xFF52637A),
+                                      letterSpacing: 0.3,
+                                      fontFamily: 'monospace',
                                     ),
                                   ),
                                   const SizedBox(height: 6),

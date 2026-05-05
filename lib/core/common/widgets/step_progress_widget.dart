@@ -36,9 +36,9 @@ class StepProgressWidget extends StatelessWidget {
   Color _getStageColor(ProgressStage stage) {
     final currentStage = currentProgress.stage;
 
-    if (stage == currentStage) return Colors.blue;
-    if (stage.index < currentStage.index) return Colors.green;
-    return Colors.grey;
+    if (stage == currentStage) return const Color(0xFF0B57D0);
+    if (stage.index < currentStage.index) return const Color(0xFF0D7A5F);
+    return const Color(0xFFE8EDF5);
   }
 
   bool _isStageActive(ProgressStage stage) {
@@ -78,8 +78,8 @@ class StepProgressWidget extends StatelessWidget {
       child: LinearProgressIndicator(
         value: (currentStageIndex + 0.5) / stages.length,
         minHeight: _progressBarHeight,
-        backgroundColor: Colors.grey[300],
-        valueColor: AlwaysStoppedAnimation<Color>(Colors.blue[600]!),
+        backgroundColor: const Color(0xFFE8EDF5),
+        valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFF0B57D0)),
       ),
     );
   }
@@ -132,7 +132,7 @@ class StepProgressWidget extends StatelessWidget {
         shape: BoxShape.circle,
         color: _getStageColor(stage),
         border: Border.all(
-          color: isActive ? Colors.blue[800]! : Colors.transparent,
+          color: isActive ? const Color(0xFF0B57D0) : Colors.transparent,
           width: 2,
         ),
       ),
@@ -197,7 +197,7 @@ class StepProgressWidget extends StatelessWidget {
       _getStageName(stage),
       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
         fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-        color: isActive ? Colors.blue[800] : null,
+        color: isActive ? const Color(0xFF0B57D0) : const Color(0xFF52637A),
       ),
     );
   }
@@ -220,8 +220,10 @@ class StepProgressWidget extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 6,
-              backgroundColor: Colors.grey[300],
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.blue[400]!),
+              backgroundColor: const Color(0xFFE8EDF5),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                const Color(0xFF0B57D0),
+              ),
             ),
           ),
           const SizedBox(height: 4),
@@ -238,7 +240,7 @@ class StepProgressWidget extends StatelessWidget {
         currentProgress.message!,
         style: Theme.of(
           context,
-        ).textTheme.labelSmall?.copyWith(color: Colors.grey[600]),
+        ).textTheme.labelSmall?.copyWith(color: const Color(0xFF52637A)),
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
       ),
@@ -253,7 +255,7 @@ class StepProgressWidget extends StatelessWidget {
       child: Container(
         width: _connectorWidth,
         height: _connectorHeight,
-        color: isCompleted ? Colors.green : Colors.grey[300],
+        color: isCompleted ? const Color(0xFF0D7A5F) : const Color(0xFFE8EDF5),
       ),
     );
   }

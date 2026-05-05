@@ -5,12 +5,11 @@ class EviListEmpty extends StatelessWidget {
 
   const EviListEmpty({super.key, required this.onRefresh});
 
-  static const _tint = Color(0xFF2D7FF9);
+  static const _tint = Color(0xFF0B57D0);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final cs = theme.colorScheme;
 
     return Center(
       child: Padding(
@@ -21,13 +20,13 @@ class EviListEmpty extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
-                color: _tint.withValues(alpha: 0.08),
+                color: _tint.withValues(alpha: 0.07),
                 shape: BoxShape.circle,
-                border: Border.all(color: _tint.withValues(alpha: 0.18)),
+                border: Border.all(color: _tint.withValues(alpha: 0.2)),
               ),
               child: const Icon(
                 Icons.inventory_2_outlined,
-                size: 40,
+                size: 38,
                 color: _tint,
               ),
             ),
@@ -36,7 +35,7 @@ class EviListEmpty extends StatelessWidget {
               'No evidence files',
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: cs.onSurface,
+                color: const Color(0xFF0F1C2E),
                 letterSpacing: 0.1,
               ),
             ),
@@ -45,32 +44,28 @@ class EviListEmpty extends StatelessWidget {
               'Evidence files ingested via the store will appear here.',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: cs.onSurface.withValues(alpha: 0.55),
-                height: 1.4,
+                color: const Color(0xFF52637A),
+                height: 1.5,
               ),
             ),
             const SizedBox(height: 24),
-            FilledButton.tonal(
+            TextButton.icon(
               onPressed: onRefresh,
-              style: FilledButton.styleFrom(
-                backgroundColor: _tint.withValues(alpha: 0.1),
-                foregroundColor: _tint,
+              icon: const Icon(Icons.refresh, size: 16, color: _tint),
+              label: const Text(
+                'Refresh',
+                style: TextStyle(color: _tint, fontWeight: FontWeight.w600),
+              ),
+              style: TextButton.styleFrom(
+                backgroundColor: _tint.withValues(alpha: 0.08),
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
+                  horizontal: 22,
+                  vertical: 10,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(color: _tint.withValues(alpha: 0.28)),
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(color: _tint.withValues(alpha: 0.22)),
                 ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Icon(Icons.refresh, size: 18),
-                  SizedBox(width: 8),
-                  Text('Refresh'),
-                ],
               ),
             ),
           ],

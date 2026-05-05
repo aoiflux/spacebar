@@ -39,19 +39,22 @@ class EviStoreSuccessView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.green.withValues(alpha: 0.1),
+                  color: const Color(0xFF0D7A5F).withValues(alpha: 0.1),
                   shape: BoxShape.circle,
+                  border: Border.all(
+                    color: const Color(0xFF0D7A5F).withValues(alpha: 0.3),
+                  ),
                 ),
                 child: const Icon(
                   Icons.check_circle_outline,
-                  color: Colors.green,
+                  color: Color(0xFF0D7A5F),
                   size: 48,
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.green,
+                  color: const Color(0xFF0D7A5F),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -71,7 +74,7 @@ class EviStoreSuccessView extends StatelessWidget {
             'Evidence Stored Successfully',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.green,
+              color: const Color(0xFF0D7A5F),
             ),
             textAlign: TextAlign.center,
           ),
@@ -80,7 +83,7 @@ class EviStoreSuccessView extends StatelessWidget {
             'Your file has been securely compressed and stored',
             style: Theme.of(
               context,
-            ).textTheme.labelSmall?.copyWith(color: Colors.grey[600]),
+            ).textTheme.labelSmall?.copyWith(color: const Color(0xFF52637A)),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
@@ -127,8 +130,12 @@ class EviStoreSuccessView extends StatelessWidget {
                     label: const Text('View Evidence List'),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      backgroundColor: Colors.blue,
+                      backgroundColor: const Color(0xFF0B57D0),
                       foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
                 ),
@@ -197,17 +204,17 @@ class EviStoreSuccessView extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         gradient: LinearGradient(
           colors: [
-            color.withValues(alpha: 0.15),
+            color.withValues(alpha: 0.12),
             color.withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.22), width: 1),
       ),
       child: Column(
         children: [
-          Icon(icon, color: color, size: 24),
+          Icon(icon, color: color, size: 22),
           const SizedBox(height: 6),
           Text(
             value,
@@ -222,7 +229,7 @@ class EviStoreSuccessView extends StatelessWidget {
             title,
             style: Theme.of(
               context,
-            ).textTheme.labelSmall?.copyWith(color: Colors.grey[600]),
+            ).textTheme.labelSmall?.copyWith(color: const Color(0xFF52637A)),
             textAlign: TextAlign.center,
           ),
         ],
@@ -235,15 +242,19 @@ class EviStoreSuccessView extends StatelessWidget {
     final clampedSavedRatio = ratio.clamp(0.0, 1.0);
 
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
+      color: const Color(0xFFFFFFFF),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: const BorderSide(color: Color(0xFFDDE5F0)),
+      ),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(
             colors: [
-              Colors.blue.withValues(alpha: 0.05),
-              Colors.blue.withValues(alpha: 0.02),
+              const Color(0xFF0B57D0).withValues(alpha: 0.04),
+              const Color(0xFF0B57D0).withValues(alpha: 0.01),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -260,6 +271,7 @@ class EviStoreSuccessView extends StatelessWidget {
                     'Compression',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: const Color(0xFF0F1C2E),
                     ),
                   ),
                   Container(
@@ -268,13 +280,13 @@ class EviStoreSuccessView extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.blue.withValues(alpha: 0.15),
+                      color: const Color(0xFF0B57D0).withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       'Optimal',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Colors.blue,
+                        color: const Color(0xFF0B57D0),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -300,13 +312,11 @@ class EviStoreSuccessView extends StatelessWidget {
                             painter: _DualArcGaugePainter(
                               usedRatio: 1 - clampedSavedRatio,
                               savedRatio: clampedSavedRatio,
-                              usedColor: Colors.grey,
+                              usedColor: const Color(0xFFB8C8D8),
                               savedColor: hasNegativeSavings
-                                  ? Colors.red
-                                  : Colors.green,
-                              backgroundColor: Theme.of(
-                                context,
-                              ).colorScheme.surfaceContainerHighest,
+                                  ? const Color(0xFFEF4444)
+                                  : const Color(0xFF0D7A5F),
+                              backgroundColor: const Color(0xFFE8EDF5),
                             ),
                           ),
                         ),
@@ -318,7 +328,9 @@ class EviStoreSuccessView extends StatelessWidget {
                               : Icons.check_circle,
                           size: gaugeSize * 0.15,
                           color:
-                              (hasNegativeSavings ? Colors.red : Colors.green)
+                              (hasNegativeSavings
+                                      ? const Color(0xFFEF4444)
+                                      : const Color(0xFF0D7A5F))
                                   .withValues(alpha: 0.8),
                         ),
                       ],
@@ -335,7 +347,7 @@ class EviStoreSuccessView extends StatelessWidget {
                 children: [
                   _buildGaugeLegend(
                     context,
-                    color: Colors.grey,
+                    color: const Color(0xFFB8C8D8),
                     icon: Icons.archive,
                     prefix: 'Used: ',
                     percentage: ((1 - ratio) * 100).toStringAsFixed(0),
@@ -343,11 +355,13 @@ class EviStoreSuccessView extends StatelessWidget {
                   Container(
                     width: 1,
                     height: 30,
-                    color: Colors.grey.withValues(alpha: 0.3),
+                    color: const Color(0xFFDDE5F0),
                   ),
                   _buildGaugeLegend(
                     context,
-                    color: hasNegativeSavings ? Colors.red : Colors.green,
+                    color: hasNegativeSavings
+                        ? const Color(0xFFEF4444)
+                        : const Color(0xFF0D7A5F),
                     icon: hasNegativeSavings
                         ? Icons.warning_amber_rounded
                         : Icons.savings,
@@ -403,8 +417,12 @@ class EviStoreSuccessView extends StatelessWidget {
 
   Widget _buildDetailsCard(BuildContext context) {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
+      color: const Color(0xFFFFFFFF),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: const BorderSide(color: Color(0xFFDDE5F0)),
+      ),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
@@ -430,6 +448,7 @@ class EviStoreSuccessView extends StatelessWidget {
                     'File Details',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: const Color(0xFF0F1C2E),
                     ),
                   ),
                   Container(
@@ -438,13 +457,13 @@ class EviStoreSuccessView extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.purple.withValues(alpha: 0.15),
+                      color: const Color(0xFF6941C6).withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       '${evidence.chunkMap.length} chunks',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Colors.purple,
+                        color: const Color(0xFF6941C6),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -474,7 +493,7 @@ class EviStoreSuccessView extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              Divider(color: Colors.grey.withValues(alpha: 0.2)),
+              Divider(color: const Color(0xFFDDE5F0)),
 
               const SizedBox(height: 16),
 
@@ -482,7 +501,7 @@ class EviStoreSuccessView extends StatelessWidget {
                 'Size Breakdown',
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey[700],
+                  color: const Color(0xFF52637A),
                 ),
               ),
 
@@ -534,15 +553,19 @@ class EviStoreSuccessView extends StatelessWidget {
     }
 
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
+      color: const Color(0xFFFFFFFF),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: const BorderSide(color: Color(0xFFDDE5F0)),
+      ),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(
             colors: [
-              Colors.orange.withValues(alpha: 0.05),
-              Colors.orange.withValues(alpha: 0.02),
+              const Color(0xFFF59E0B).withValues(alpha: 0.04),
+              const Color(0xFFF59E0B).withValues(alpha: 0.01),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -560,6 +583,7 @@ class EviStoreSuccessView extends StatelessWidget {
                     'Storage Comparison',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: const Color(0xFF0F1C2E),
                     ),
                   ),
                   Container(
@@ -568,13 +592,13 @@ class EviStoreSuccessView extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.orange.withValues(alpha: 0.15),
+                      color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       '${(ratio * 100).toStringAsFixed(0)}% used',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Colors.orange,
+                        color: const Color(0xFFF59E0B),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -604,7 +628,7 @@ class EviStoreSuccessView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.1),
+                  color: const Color(0xFFE8EDF5).withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -645,15 +669,16 @@ class EviStoreSuccessView extends StatelessWidget {
       children: [
         Text(
           value,
-          style: Theme.of(
-            context,
-          ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF0F1C2E),
+          ),
         ),
         Text(
           label,
           style: Theme.of(
             context,
-          ).textTheme.labelSmall?.copyWith(color: Colors.grey[600]),
+          ).textTheme.labelSmall?.copyWith(color: const Color(0xFF52637A)),
         ),
       ],
     );
@@ -672,12 +697,17 @@ class EviStoreSuccessView extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: Theme.of(context).textTheme.labelMedium),
+            Text(
+              label,
+              style: Theme.of(
+                context,
+              ).textTheme.labelMedium?.copyWith(color: const Color(0xFF52637A)),
+            ),
             Text(
               '$percentage% • $value',
               style: Theme.of(
                 context,
-              ).textTheme.labelSmall?.copyWith(color: Colors.grey[600]),
+              ).textTheme.labelSmall?.copyWith(color: const Color(0xFF52637A)),
             ),
           ],
         ),
@@ -688,7 +718,7 @@ class EviStoreSuccessView extends StatelessWidget {
             value: percentage / 100,
             minHeight: 20,
             valueColor: AlwaysStoppedAnimation<Color>(color),
-            backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+            backgroundColor: const Color(0xFFE8EDF5),
           ),
         ),
       ],
@@ -713,14 +743,15 @@ class EviStoreSuccessView extends StatelessWidget {
           label,
           style: Theme.of(
             context,
-          ).textTheme.labelSmall?.copyWith(color: Colors.grey[600]),
+          ).textTheme.labelSmall?.copyWith(color: const Color(0xFF52637A)),
         ),
         const Spacer(),
         Text(
           value,
-          style: Theme.of(
-            context,
-          ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF0F1C2E),
+          ),
         ),
       ],
     );
@@ -734,7 +765,7 @@ class EviStoreSuccessView extends StatelessWidget {
   }) {
     return Row(
       children: [
-        Icon(icon, color: Colors.blueGrey, size: 20),
+        Icon(icon, color: const Color(0xFF52637A), size: 20),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -743,16 +774,17 @@ class EviStoreSuccessView extends StatelessWidget {
               Text(
                 label,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Colors.grey[600],
+                  color: const Color(0xFF52637A),
                   fontWeight: FontWeight.w500,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 value,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF0F1C2E),
+                ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),

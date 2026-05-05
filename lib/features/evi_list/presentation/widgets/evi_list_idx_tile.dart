@@ -8,7 +8,7 @@ class EviListIdxTile extends StatelessWidget {
 
   const EviListIdxTile({super.key, required this.idx});
 
-  static const _tint = Color(0xFF7048E8);
+  static const _tint = Color(0xFF6941C6);
 
   void _navigateToStore(BuildContext context) {
     Navigator.of(context).push(
@@ -29,7 +29,7 @@ class EviListIdxTile extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: _tint.withValues(alpha: 0.18)),
-            color: _tint.withValues(alpha: 0.04),
+            color: const Color(0xFFFFFFFF),
           ),
           child: Row(
             children: [
@@ -57,7 +57,7 @@ class EviListIdxTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w500,
-                        color: const Color(0xFF1C2430),
+                        color: const Color(0xFF0F1C2E),
                       ),
                     ),
                     const SizedBox(height: 1),
@@ -66,8 +66,9 @@ class EviListIdxTile extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: const Color(0xFF364254).withValues(alpha: 0.55),
-                        letterSpacing: 0.1,
+                        color: const Color(0xFF52637A),
+                        letterSpacing: 0.3,
+                        fontFamily: 'monospace',
                       ),
                     ),
                     const SizedBox(height: 6),

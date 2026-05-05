@@ -72,8 +72,30 @@ class _EviStorePageState extends State<EviStorePage> {
     // If initial evidence provided, show it directly without BLoC
     if (widget.initialEvidence != null) {
       return Scaffold(
+        backgroundColor: const Color(0xFFF4F6FA),
         appBar: AppBar(
-          title: const Text("DUES"),
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          title: Row(
+            children: [
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: const Color(0xFF0B57D0),
+                ),
+                child: const Icon(
+                  Icons.shield_outlined,
+                  size: 16,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 10),
+              const Text('DUES'),
+            ],
+          ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).pop(),
@@ -90,14 +112,40 @@ class _EviStorePageState extends State<EviStorePage> {
               icon: const Icon(Icons.list_outlined),
             ),
           ],
+          bottom: const PreferredSize(
+            preferredSize: Size.fromHeight(1),
+            child: Divider(height: 1, color: Color(0xFFDDE5F0)),
+          ),
         ),
         body: EviStoreSuccessView(evidence: widget.initialEvidence!),
       );
     }
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF4F6FA),
       appBar: AppBar(
-        title: const Text("DUES"),
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        title: Row(
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: const Color(0xFF0B57D0),
+              ),
+              child: const Icon(
+                Icons.shield_outlined,
+                size: 16,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Text('DUES'),
+          ],
+        ),
         actions: [
           IconButton(
             onPressed: () => _goHome(context),
@@ -110,6 +158,10 @@ class _EviStorePageState extends State<EviStorePage> {
             icon: const Icon(Icons.list_outlined),
           ),
         ],
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, color: Color(0xFFDDE5F0)),
+        ),
       ),
       floatingActionButton: BlocBuilder<EviBloc, EviStoreState>(
         builder: (context, state) {

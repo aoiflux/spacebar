@@ -24,11 +24,15 @@ class DashboardPage extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F6FB),
+      backgroundColor: const Color(0xFFF4F6FA),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFFFFFFFF),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: const Color(0xFFDDE5F0)),
+        ),
         titleSpacing: 20,
         title: Row(
           children: [
@@ -38,7 +42,7 @@ class DashboardPage extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(9),
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF1B9AAA), Color(0xFF2D7FF9)],
+                  colors: [Color(0xFF0B57D0), Color(0xFF0946B0)],
                 ),
               ),
               child: const Icon(
@@ -52,7 +56,7 @@ class DashboardPage extends StatelessWidget {
               'Evidence Dashboard',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF1C2430),
+                color: const Color(0xFF0F1C2E),
                 letterSpacing: 0.1,
               ),
             ),
@@ -289,11 +293,12 @@ class _HeroSummary extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF0F3557), Color(0xFF1B9AAA)],
+          colors: [Color(0xFF0B57D0), Color(0xFF0946B0)],
         ),
+        border: Border.all(color: const Color(0xFFDDE5F0)),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x331B9AAA),
+            color: Color(0x220B57D0),
             blurRadius: 24,
             offset: Offset(0, 10),
           ),
@@ -313,7 +318,7 @@ class _HeroSummary extends StatelessWidget {
           Text(
             '${stats.totalFiles} total files across evidence, partitions, and indexes',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.9),
+              color: Colors.white.withValues(alpha: 0.80),
             ),
           ),
           const SizedBox(height: 16),
@@ -342,8 +347,8 @@ class _HeroSummary extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: Colors.white.withValues(alpha: 0.14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+        color: Colors.white.withValues(alpha: 0.18),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.35)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -436,7 +441,7 @@ class _MetricCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFFFFFFFF),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: tint.withValues(alpha: 0.2)),
         ),
@@ -459,7 +464,7 @@ class _MetricCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF1C2430),
+                color: const Color(0xFF0F1C2E),
               ),
             ),
             const SizedBox(height: 2),
@@ -467,7 +472,7 @@ class _MetricCard extends StatelessWidget {
               label,
               style: Theme.of(
                 context,
-              ).textTheme.bodySmall?.copyWith(color: const Color(0xFF4A5566)),
+              ).textTheme.bodySmall?.copyWith(color: const Color(0xFF52637A)),
             ),
           ],
         ),
@@ -657,9 +662,9 @@ class _StackedChartCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8FBFF),
+        color: const Color(0xFFFFFFFF),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFDDE6F0)),
+        border: Border.all(color: const Color(0xFFDDE5F0)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -668,7 +673,7 @@ class _StackedChartCard extends StatelessWidget {
             title,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF253042),
+              color: const Color(0xFF0F1C2E),
             ),
           ),
           const SizedBox(height: 2),
@@ -676,7 +681,7 @@ class _StackedChartCard extends StatelessWidget {
             totalLabel,
             style: Theme.of(
               context,
-            ).textTheme.bodySmall?.copyWith(color: const Color(0xFF5D6A7E)),
+            ).textTheme.bodySmall?.copyWith(color: const Color(0xFF52637A)),
           ),
           const SizedBox(height: 10),
           ClipRRect(
@@ -713,7 +718,7 @@ class _StackedChartCard extends StatelessWidget {
                     child: Text(
                       item.label,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFF3D4A5E),
+                        color: const Color(0xFF52637A),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -721,7 +726,7 @@ class _StackedChartCard extends StatelessWidget {
                   Text(
                     item.valueLabel ?? item.value.toString(),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF3D4A5E),
+                      color: const Color(0xFF52637A),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -731,7 +736,7 @@ class _StackedChartCard extends StatelessWidget {
                         ? '0%'
                         : '${((item.value / total) * 100).toStringAsFixed(0)}%',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: const Color(0xFF6B7687),
+                      color: const Color(0xFF52637A),
                     ),
                   ),
                 ],
@@ -818,17 +823,17 @@ class _CoverageCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
-        color: const Color(0xFFEEF3FA),
+        color: const Color(0xFFE8EDF5).withValues(alpha: 0.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 13, color: const Color(0xFF445066)),
+          Icon(icon, size: 13, color: const Color(0xFF52637A)),
           const SizedBox(width: 6),
           Text(
             label,
             style: const TextStyle(
-              color: Color(0xFF445066),
+              color: Color(0xFF52637A),
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
@@ -857,7 +862,7 @@ class _CompressionCard extends StatelessWidget {
           Text(
             '$compressionPct% overall compression gain',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: const Color(0xFF1C2430),
+              color: const Color(0xFF0D7A5F),
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -895,7 +900,8 @@ class _CompressionCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFD5DEEA)),
+        border: Border.all(color: const Color(0xFFDDE5F0)),
+        color: const Color(0xFFFFFFFF),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -904,13 +910,13 @@ class _CompressionCard extends StatelessWidget {
             value,
             style: const TextStyle(
               fontWeight: FontWeight.w700,
-              color: Color(0xFF1C2430),
+              color: Color(0xFF0F1C2E),
               fontSize: 13,
             ),
           ),
           Text(
             label,
-            style: const TextStyle(color: Color(0xFF5A6578), fontSize: 11),
+            style: const TextStyle(color: Color(0xFF52637A), fontSize: 11),
           ),
         ],
       ),
@@ -945,7 +951,7 @@ class _ProgressRow extends StatelessWidget {
                 label,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF253042),
+                  color: const Color(0xFF52637A),
                 ),
               ),
             ),
@@ -953,7 +959,7 @@ class _ProgressRow extends StatelessWidget {
               details,
               style: Theme.of(
                 context,
-              ).textTheme.labelMedium?.copyWith(color: const Color(0xFF586579)),
+              ).textTheme.labelMedium?.copyWith(color: const Color(0xFF52637A)),
             ),
           ],
         ),
@@ -1035,15 +1041,15 @@ class _TopFileTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFFFFFFF),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE0E7F1)),
+        border: Border.all(color: const Color(0xFFDDE5F0)),
       ),
       child: Row(
         children: [
           const Icon(
             Icons.insert_drive_file_outlined,
-            color: Color(0xFF445066),
+            color: Color(0xFF52637A),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -1055,7 +1061,7 @@ class _TopFileTile extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF1C2430),
+                    color: const Color(0xFF0F1C2E),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -1065,7 +1071,8 @@ class _TopFileTile extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: const Color(0xFF5D6A7E),
+                    color: const Color(0xFF52637A),
+                    fontFamily: 'monospace',
                   ),
                 ),
               ],
@@ -1075,7 +1082,7 @@ class _TopFileTile extends StatelessWidget {
           Text(
             fmtBytes(file.totalSize),
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: const Color(0xFF253042),
+              color: const Color(0xFF52637A),
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -1083,13 +1090,13 @@ class _TopFileTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: const Color(0xFFEDF5FF),
+              color: const Color(0xFF0B57D0).withValues(alpha: 0.10),
               borderRadius: BorderRadius.circular(99),
             ),
             child: Text(
               '${(ratio * 100).toStringAsFixed(0)}% saved',
               style: const TextStyle(
-                color: Color(0xFF2D7FF9),
+                color: Color(0xFF0B57D0),
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
               ),
@@ -1118,9 +1125,9 @@ class _SectionCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFFFFFFF),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFDDE6F0)),
+        border: Border.all(color: const Color(0xFFDDE5F0)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1128,7 +1135,7 @@ class _SectionCard extends StatelessWidget {
           Text(
             title,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: const Color(0xFF1C2430),
+              color: const Color(0xFF0F1C2E),
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -1137,7 +1144,7 @@ class _SectionCard extends StatelessWidget {
             subtitle,
             style: Theme.of(
               context,
-            ).textTheme.bodySmall?.copyWith(color: const Color(0xFF5D6A7E)),
+            ).textTheme.bodySmall?.copyWith(color: const Color(0xFF52637A)),
           ),
           const SizedBox(height: 12),
           child,

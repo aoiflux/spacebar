@@ -9,21 +9,23 @@ class HomeInfoChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(999),
-        color: const Color(0xFF223142).withValues(alpha: 0.08),
+        color: const Color(0xFFEEF4FF),
+        border: Border.all(color: const Color(0xFFBDD2F8)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: const Color(0xFF314256)),
-          const SizedBox(width: 8),
+          Icon(icon, size: 14, color: const Color(0xFF0B57D0)),
+          const SizedBox(width: 7),
           Text(
             label,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: const Color(0xFF2D3A4D),
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: const Color(0xFF2B4B8C),
               fontWeight: FontWeight.w500,
+              fontSize: 11.5,
             ),
           ),
         ],

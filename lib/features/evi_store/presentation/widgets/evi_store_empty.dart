@@ -46,14 +46,33 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
           // Navigation Button
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
+            child: TextButton.icon(
               onPressed: () => Navigator.of(
                 context,
               ).push(MaterialPageRoute(builder: (_) => const EviListPage())),
-              icon: const Icon(Icons.list_outlined),
-              label: const Text('View Evidence List'),
-              style: ElevatedButton.styleFrom(
+              icon: const Icon(
+                Icons.list_outlined,
+                size: 16,
+                color: Color(0xFF0B57D0),
+              ),
+              label: const Text(
+                'View Evidence List',
+                style: TextStyle(
+                  color: Color(0xFF0B57D0),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              style: TextButton.styleFrom(
+                backgroundColor: const Color(
+                  0xFF0B57D0,
+                ).withValues(alpha: 0.08),
                 padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: const Color(0xFF0B57D0).withValues(alpha: 0.3),
+                  ),
+                ),
               ),
             ),
           ),
@@ -66,23 +85,35 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.85),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF0B57D0), Color(0xFF0946B0)],
+        ),
         shape: BoxShape.circle,
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x440B57D0),
+            blurRadius: 20,
+            offset: Offset(0, 6),
+          ),
+        ],
       ),
-      child: Icon(
+      child: const Icon(
         Icons.cloud_upload_outlined,
-        size: 40,
-        color: Theme.of(context).colorScheme.onPrimary,
+        size: 38,
+        color: Colors.white,
       ),
     );
   }
 
   Widget _buildTitle(BuildContext context) {
     return Text(
-      'Upload Your Files',
+      'Upload Evidence File',
       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         letterSpacing: -0.5,
+        color: const Color(0xFF0F1C2E),
       ),
       textAlign: TextAlign.center,
     );
@@ -90,9 +121,9 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
 
   Widget _buildDescription(BuildContext context) {
     return Text(
-      'Securely store and manage your files with advanced encryption, deduplication, and smart compression',
+      'Securely store and manage evidence files with hash-based deduplication, smart compression, and chain-of-custody preservation.',
       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+        color: const Color(0xFF52637A),
         height: 1.5,
       ),
       textAlign: TextAlign.center,
@@ -134,27 +165,19 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
             decoration: BoxDecoration(
               border: Border.all(
                 color: _isDragHovering
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(
-                        context,
-                      ).colorScheme.primary.withValues(alpha: 0.2),
+                    ? const Color(0xFF0B57D0)
+                    : const Color(0xFFDDE5F0),
                 width: 1.5,
               ),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
               color: _isDragHovering
-                  ? Theme.of(
-                      context,
-                    ).colorScheme.primary.withValues(alpha: 0.04)
-                  : Theme.of(
-                      context,
-                    ).colorScheme.primary.withValues(alpha: 0.02),
+                  ? const Color(0xFF0B57D0).withValues(alpha: 0.06)
+                  : const Color(0xFFFFFFFF).withValues(alpha: 0.6),
               boxShadow: _isDragHovering
                   ? [
                       BoxShadow(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.primary.withValues(alpha: 0.08),
-                        blurRadius: 12,
+                        color: const Color(0xFF0B57D0).withValues(alpha: 0.12),
+                        blurRadius: 20,
                         spreadRadius: 0,
                       ),
                     ]
@@ -169,16 +192,16 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
                   child: Icon(
                     Icons.folder_open_outlined,
                     size: 36,
-                    color: Theme.of(context).colorScheme.primary.withValues(
-                      alpha: _isDragHovering ? 1.0 : 0.5,
-                    ),
+                    color: const Color(
+                      0xFF0B57D0,
+                    ).withValues(alpha: _isDragHovering ? 1.0 : 0.5),
                   ),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   'Drag & drop files here',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: const Color(0xFF0B57D0),
                     fontWeight: FontWeight.w500,
                   ),
                   textAlign: TextAlign.center,
@@ -187,9 +210,7 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
                 Text(
                   'or tap the button below',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.5),
+                    color: const Color(0xFF52637A),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -389,17 +410,13 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Tooltip(
-          message: 'Use the floating button to add a file',
-          child: Opacity(
-            opacity: 0.6,
-            child: Text(
-              '💡 Tip: Use the button in the bottom right corner',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
-          ),
+        Icon(Icons.lightbulb_outline, size: 13, color: const Color(0xFF52637A)),
+        const SizedBox(width: 6),
+        Text(
+          'Use the + button in the bottom right to pick a file',
+          style: Theme.of(
+            context,
+          ).textTheme.labelSmall?.copyWith(color: const Color(0xFF52637A)),
         ),
       ],
     );
@@ -462,34 +479,31 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
     required String description,
   }) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
-        ),
+        color: const Color(0xFFFFFFFF),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFDDE5F0)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 24, color: Theme.of(context).colorScheme.primary),
+          Icon(icon, size: 22, color: const Color(0xFF0B57D0)),
           const SizedBox(height: 6),
           Text(
             title,
-            style: Theme.of(
-              context,
-            ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF0F1C2E),
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
           Text(
             description,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.6),
-              height: 1.3,
+              color: const Color(0xFF52637A),
+              height: 1.35,
             ),
             textAlign: TextAlign.center,
           ),
