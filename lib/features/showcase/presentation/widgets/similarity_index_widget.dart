@@ -33,33 +33,33 @@ class _FileBubble {
 const _defaultMethods = <_MethodSignal>[
   _MethodSignal(
     id: 'exact_hash',
-    label: 'Exact hash',
+    label: 'Exact',
     weight: 100,
     color: Color(0xFFDC2626),
   ),
   _MethodSignal(
     id: 'chunk_exact',
-    label: 'Chunk match',
+    label: 'Chunk',
     weight: 88,
-    color: Color(0xFFEA580C),
+    color: Color(0xFFF59E0B),
   ),
   _MethodSignal(
     id: 'chunk_partial_simhash',
-    label: 'Partial simhash',
+    label: 'Partial',
     weight: 72,
-    color: Color(0xFFD97706),
+    color: Color(0xFF84CC16),
   ),
   _MethodSignal(
     id: 'topk_full_simhash',
-    label: 'Top-K simhash',
+    label: 'Top-K',
     weight: 78,
-    color: Color(0xFF7C3AED),
+    color: Color(0xFF06B6D4),
   ),
   _MethodSignal(
     id: 'vector_match',
-    label: 'Vector embedding',
+    label: 'Vector',
     weight: 69,
-    color: Color(0xFF0EA5E9),
+    color: Color(0xFF8B5CF6),
   ),
 ];
 
@@ -127,7 +127,7 @@ class _SimilarityIndexWidgetState extends State<SimilarityIndexWidget>
     super.dispose();
   }
 
-  int? _hoveredBubble;
+  int? _hoveredIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -199,68 +199,37 @@ class _SimilarityIndexWidgetState extends State<SimilarityIndexWidget>
           ),
           const SizedBox(height: 10),
           Expanded(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return Column(
-                  children: [
-                    // Bubble visualization with file labels
-                    Expanded(
-                      flex: 2,
-                      child: AnimatedBuilder(
-                        animation: _controller,
-                        builder: (context, _) {
-                          return MouseRegion(
-                            onExit: (_) =>
-                                setState(() => _hoveredBubble = null),
-                            child: CustomPaint(
-                              painter: _BubbleOverlapPainter(
-                                bubbles: related,
-                                methods: methods,
-                                animation: _controller.value,
-                                hoveredIndex: _hoveredBubble,
-                                isDark: isDark,
-                                tint: tint,
-                              ),
-                              size: Size.infinite,
-                              child: Stack(
-                                children: [
-                                  for (int i = 0; i < related.length; i++)
-                                    MouseRegion(
-                                      onEnter: (_) =>
-                                          setState(() => _hoveredBubble = i),
-                                      onExit: (_) =>
-                                          setState(() => _hoveredBubble = null),
-                                      child: Positioned.fill(
-                                        child: Container(),
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    // File details table
-                    Expanded(
-                      flex: 1,
-                      child: SingleChildScrollView(
-                        child: _FileDetailsTable(
-                          files: related,
-                          methods: methods,
-                          hoveredIndex: _hoveredBubble,
-                          isDark: isDark,
-                          onHoverFile: (index) =>
-                              setState(() => _hoveredBubble = index),
-                          onUnhoverFile: () =>
-                              setState(() => _hoveredBubble = null),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // File score list
+                  _FileScoreList(
+                    files: related,
+                    hoveredIndex: _hoveredIndex,
+                    isDark: isDark,
+                    onHover: (index) => setState(() => _hoveredIndex = index),
+                    onUnhover: () => setState(() => _hoveredIndex = null),
+                  ),
+                  const SizedBox(height: 12),
+                  // Method x File matrix
+                  AnimatedBuilder(
+                    animation: _controller,
+                    builder: (context, _) {
+                      return _MethodFileMatrix(
+                        files: related,
+                        methods: methods,
+                        hoveredIndex: _hoveredIndex,
+                        animation: _controller.value,
+                        isDark: isDark,
+                        onHoverFile: (index) =>
+                            setState(() => _hoveredIndex = index),
+                        onUnhoverFile: () =>
+                            setState(() => _hoveredIndex = null),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -339,220 +308,25 @@ class _SummaryBanner extends StatelessWidget {
   }
 }
 
-class _BubbleOverlapPainter extends CustomPainter {
-  const _BubbleOverlapPainter({
-    required this.bubbles,
-    required this.methods,
-    required this.animation,
-    required this.hoveredIndex,
-    required this.isDark,
-    required this.tint,
-  });
-
-  final List<_FileBubble> bubbles;
-  final List<_MethodSignal> methods;
-  final double animation;
-  final int? hoveredIndex;
-  final bool isDark;
-  final Color tint;
-
-  Color _blendColors(List<Color> colors) {
-    if (colors.isEmpty) return const Color(0xFF6B7280);
-    if (colors.length == 1) return colors.first;
-    // Average RGB components
-    int r = 0, g = 0, b = 0;
-    for (final c in colors) {
-      r += c.red;
-      g += c.green;
-      b += c.blue;
-    }
-    return Color.fromARGB(
-      255,
-      (r ~/ colors.length).clamp(0, 255),
-      (g ~/ colors.length).clamp(0, 255),
-      (b ~/ colors.length).clamp(0, 255),
-    );
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (bubbles.isEmpty) return;
-
-    // Compute bubble positions with spacing to show overlaps
-    final positions = _computePositions(size);
-
-    // Draw connections between overlapping files
-    for (int i = 0; i < bubbles.length; i++) {
-      for (int j = i + 1; j < bubbles.length; j++) {
-        final p1 = positions[i];
-        final r1 = _bubbleRadius(bubbles[i].score);
-        final p2 = positions[j];
-        final r2 = _bubbleRadius(bubbles[j].score);
-
-        final dist = (p2 - p1).distance;
-        if (dist < r1 + r2 + 20) {
-          // Overlapping or close
-          final intersects = dist < r1 + r2;
-          canvas.drawLine(
-            p1,
-            p2,
-            Paint()
-              ..color = tint.withOpacity(intersects ? 0.3 : 0.12)
-              ..strokeWidth = intersects ? 1.5 : 0.8,
-          );
-        }
-      }
-    }
-
-    // Draw bubbles
-    for (int i = 0; i < bubbles.length; i++) {
-      final bubble = bubbles[i];
-      final pos = positions[i];
-      final radius = _bubbleRadius(bubble.score);
-
-      // Matched method colors
-      final matchColors = bubble.matchedBy
-          .map(
-            (id) => methods
-                .firstWhere((m) => m.id == id, orElse: () => methods.first)
-                .color,
-          )
-          .toList();
-      final blendedColor = _blendColors(matchColors);
-
-      // Hover/animation pulse
-      final isHovered = hoveredIndex == i;
-      final pulse =
-          0.95 + (math.sin((animation + i * 0.15) * 2 * math.pi) + 1) * 0.05;
-      final animRadius = radius * (isHovered ? 1.12 : pulse);
-
-      // Shadow
-      if (isHovered) {
-        canvas.drawCircle(
-          pos,
-          animRadius + 2,
-          Paint()
-            ..color = blendedColor.withOpacity(0.15)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
-        );
-      }
-
-      // Main bubble with gradient effect
-      canvas.drawCircle(
-        pos,
-        animRadius,
-        Paint()
-          ..color = blendedColor.withOpacity(isHovered ? 0.85 : 0.72)
-          ..style = PaintingStyle.fill,
-      );
-
-      // Highlight ring if strong match
-      if (bubble.score >= 85) {
-        canvas.drawCircle(
-          pos,
-          animRadius,
-          Paint()
-            ..color = const Color(0xFFDC2626).withOpacity(0.4)
-            ..strokeWidth = 1.2
-            ..style = PaintingStyle.stroke,
-        );
-      }
-
-      // Score badge inside
-      final scorePaint = TextPainter(
-        text: TextSpan(
-          text: '${bubble.score}%',
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w800,
-            fontSize: 11,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      );
-      scorePaint.layout();
-      scorePaint.paint(
-        canvas,
-        pos - Offset(scorePaint.width / 2, scorePaint.height / 2),
-      );
-
-      // Filename label below (always visible)
-      final namePaint = TextPainter(
-        text: TextSpan(
-          text: bubble.file.length > 20
-              ? bubble.file.substring(0, 17) + '..'
-              : bubble.file,
-          style: TextStyle(
-            color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF0F172A),
-            fontWeight: FontWeight.w700,
-            fontSize: 9,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      );
-      namePaint.layout();
-      namePaint.paint(
-        canvas,
-        pos + Offset(-namePaint.width / 2, animRadius + 10),
-      );
-    }
-  }
-
-  List<Offset> _computePositions(Size size) {
-    if (bubbles.isEmpty) return [];
-    if (bubbles.length == 1) {
-      return [Offset(size.width / 2, size.height / 2)];
-    }
-
-    final centerX = size.width / 2;
-    final centerY = size.height / 2;
-    final positions = <Offset>[];
-
-    // Arrange by score in a loose circular pattern with some spacing
-    for (int i = 0; i < bubbles.length; i++) {
-      final angle = (i / bubbles.length) * 2 * math.pi;
-      final distance = 40 + (bubbles[i].score / 100) * 30;
-      final x = centerX + distance * math.cos(angle);
-      final y = centerY + distance * math.sin(angle);
-      positions.add(Offset(x, y));
-    }
-
-    return positions;
-  }
-
-  double _bubbleRadius(int score) {
-    return 16 + (score / 100) * 20;
-  }
-
-  @override
-  bool shouldRepaint(_BubbleOverlapPainter old) =>
-      old.animation != animation || old.hoveredIndex != hoveredIndex;
-}
-
-class _FileDetailsTable extends StatelessWidget {
-  const _FileDetailsTable({
+class _FileScoreList extends StatelessWidget {
+  const _FileScoreList({
     required this.files,
-    required this.methods,
     required this.hoveredIndex,
     required this.isDark,
-    required this.onHoverFile,
-    required this.onUnhoverFile,
+    required this.onHover,
+    required this.onUnhover,
   });
 
   final List<_FileBubble> files;
-  final List<_MethodSignal> methods;
   final int? hoveredIndex;
   final bool isDark;
-  final Function(int) onHoverFile;
-  final VoidCallback onUnhoverFile;
-
-  Color _getMethodColor(String methodId) {
-    return methods.firstWhere((m) => m.id == methodId).color;
-  }
+  final Function(int) onHover;
+  final VoidCallback onUnhover;
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0B1324) : const Color(0xFFF8FAFC),
@@ -569,50 +343,74 @@ class _FileDetailsTable extends StatelessWidget {
           final isHovered = hoveredIndex == index;
 
           return MouseRegion(
-            onEnter: (_) => onHoverFile(index),
-            onExit: (_) => onUnhoverFile(),
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 4),
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-              decoration: BoxDecoration(
-                color: isHovered
-                    ? (isDark
-                          ? const Color(0xFF1E293B)
-                          : const Color(0xFFEFF6FF))
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(4),
-              ),
+            onEnter: (_) => onHover(index),
+            onExit: (_) => onUnhover(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 3),
               child: Row(
                 children: [
-                  // File name
                   Expanded(
                     flex: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Text(
+                      file.file,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        fontSize: 8.5,
+                        fontWeight: FontWeight.w700,
+                        color: isHovered
+                            ? (isDark
+                                  ? const Color(0xFF60A5FA)
+                                  : const Color(0xFF0B57D0))
+                            : (isDark
+                                  ? const Color(0xFFE2E8F0)
+                                  : const Color(0xFF0F172A)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  // Score bar
+                  Expanded(
+                    flex: 1,
+                    child: Stack(
                       children: [
-                        Text(
-                          file.file,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.labelSmall
-                              ?.copyWith(
-                                fontSize: 8.5,
-                                fontWeight: FontWeight.w700,
-                                color: isDark
-                                    ? const Color(0xFFE2E8F0)
-                                    : const Color(0xFF0F172A),
+                        Container(
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? const Color(0xFF1E293B)
+                                : const Color(0xFFE2E8F0),
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                        ),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(3),
+                          child: Container(
+                            height: 16,
+                            width: (file.score / 100) * 100,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  file.score >= 85
+                                      ? const Color(0xFFDC2626)
+                                      : const Color(0xFFF59E0B),
+                                  file.score >= 85
+                                      ? const Color(0xFFEF4444)
+                                      : const Color(0xFFFCD34D),
+                                ],
                               ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 4),
-                  // Similarity score
+                  const SizedBox(width: 6),
                   SizedBox(
-                    width: 35,
+                    width: 28,
                     child: Text(
                       '${file.score}%',
-                      textAlign: TextAlign.center,
+                      textAlign: TextAlign.right,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         fontSize: 8.5,
                         fontWeight: FontWeight.w800,
@@ -624,45 +422,162 @@ class _FileDetailsTable extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 4),
-                  // Method badges
-                  Expanded(
-                    flex: 1,
-                    child: Wrap(
-                      spacing: 2,
-                      children: file.matchedBy.map((methodId) {
-                        return Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: _getMethodColor(methodId),
-                            shape: BoxShape.circle,
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  // Repackaged likelihood
-                  SizedBox(
-                    width: 30,
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+class _MethodFileMatrix extends StatelessWidget {
+  const _MethodFileMatrix({
+    required this.files,
+    required this.methods,
+    required this.hoveredIndex,
+    required this.animation,
+    required this.isDark,
+    required this.onHoverFile,
+    required this.onUnhoverFile,
+  });
+
+  final List<_FileBubble> files;
+  final List<_MethodSignal> methods;
+  final int? hoveredIndex;
+  final double animation;
+  final bool isDark;
+  final Function(int) onHoverFile;
+  final VoidCallback onUnhoverFile;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF0B1324) : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Method header row
+          Padding(
+            padding: const EdgeInsets.only(left: 100, bottom: 4),
+            child: Row(
+              children: methods.map((method) {
+                return Expanded(
+                  child: Center(
                     child: Text(
-                      '${file.repackagedLikelihood}%',
-                      textAlign: TextAlign.right,
+                      method.label,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        fontSize: 8,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 7.5,
+                        fontWeight: FontWeight.w700,
                         color: isDark
                             ? const Color(0xFF94A3B8)
                             : const Color(0xFF64748B),
                       ),
                     ),
                   ),
-                ],
-              ),
+                );
+              }).toList(),
             ),
-          );
-        }).toList(),
+          ),
+          const SizedBox(height: 2),
+          // Matrix rows
+          Column(
+            children: files.asMap().entries.map((entry) {
+              final index = entry.key;
+              final file = entry.value;
+              final isHovered = hoveredIndex == index;
+
+              return MouseRegion(
+                onEnter: (_) => onHoverFile(index),
+                onExit: (_) => onUnhoverFile(),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    children: [
+                      // File name label
+                      SizedBox(
+                        width: 100,
+                        child: Text(
+                          file.file.length > 14
+                              ? file.file.substring(0, 11) + '..'
+                              : file.file,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                fontSize: 8,
+                                fontWeight: FontWeight.w700,
+                                color: isHovered
+                                    ? (isDark
+                                          ? const Color(0xFF60A5FA)
+                                          : const Color(0xFF0B57D0))
+                                    : (isDark
+                                          ? const Color(0xFFA1A7B5)
+                                          : const Color(0xFF64748B)),
+                              ),
+                        ),
+                      ),
+                      // Method cells
+                      Expanded(
+                        child: Row(
+                          children: methods.map((method) {
+                            final matched = file.matchedBy.contains(method.id);
+                            final pulse =
+                                0.6 +
+                                (math.sin(
+                                          (animation + index * 0.1) *
+                                              2 *
+                                              math.pi,
+                                        ) +
+                                        1) *
+                                    0.2;
+
+                            return Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 2,
+                                  vertical: 1,
+                                ),
+                                child: Container(
+                                  height: 18,
+                                  decoration: BoxDecoration(
+                                    color: matched
+                                        ? method.color.withOpacity(
+                                            isHovered ? pulse : 0.7,
+                                          )
+                                        : (isDark
+                                              ? const Color(0xFF1E293B)
+                                              : const Color(0xFFE2E8F0)),
+                                    borderRadius: BorderRadius.circular(3),
+                                    border: isHovered && matched
+                                        ? Border.all(
+                                            color: method.color,
+                                            width: 1.5,
+                                          )
+                                        : null,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
       ),
     );
   }
