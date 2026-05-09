@@ -5,6 +5,7 @@ import 'package:spacebar/features/home/presentation/widgets/home_action_pane.dar
 import 'package:spacebar/features/home/presentation/widgets/home_fluent_background.dart';
 import 'package:spacebar/features/home/presentation/widgets/home_info_chip.dart';
 import 'package:spacebar/features/home/presentation/widgets/home_status_pill.dart';
+import 'package:spacebar/features/showcase/presentation/pages/showcase_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -59,6 +60,17 @@ class HomePage extends StatelessWidget {
                             label: 'Secure Mode',
                             icon: Icons.lock_outline,
                             tint: Color(0xFF0D7A5F),
+                          ),
+                          const SizedBox(width: 12),
+                          _ShowcaseButton(
+                            theme: theme,
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const ShowcasePage(),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -117,6 +129,22 @@ class HomePage extends StatelessWidget {
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
                                         builder: (_) => const EviListPage(),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                HomeActionPane(
+                                  icon: Icons.collections_outlined,
+                                  title: 'Feature Showcase',
+                                  subtitle:
+                                      'Explore comprehensive visualizations of core platform capabilities and advanced forensic features.',
+                                  ctaLabel: 'View Gallery',
+                                  tint: const Color(0xFF6941C6),
+                                  statLabel: 'Gallery',
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => const ShowcasePage(),
                                       ),
                                     );
                                   },
@@ -300,6 +328,114 @@ class _HeroNarrow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ShowcaseButton extends StatefulWidget {
+  final ThemeData theme;
+  final VoidCallback onTap;
+
+  const _ShowcaseButton({required this.theme, required this.onTap});
+
+  @override
+  State<_ShowcaseButton> createState() => _ShowcaseButtonState();
+}
+
+class _ShowcaseButtonState extends State<_ShowcaseButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _gradientAnimation;
+  bool _isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 3000),
+      vsync: this,
+    )..repeat();
+
+    _gradientAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedBuilder(
+        animation: _gradientAnimation,
+        builder: (context, child) {
+          return GestureDetector(
+            onTap: widget.onTap,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                gradient: LinearGradient(
+                  begin: Alignment(-1 - _gradientAnimation.value, -1),
+                  end: Alignment(1 + _gradientAnimation.value, 1),
+                  colors: [
+                    const Color(0xFF6941C6),
+                    const Color(0xFF0B57D0),
+                    const Color(0xFF0D7A5F),
+                    const Color(0xFF6941C6),
+                  ],
+                  stops: const [0.0, 0.3, 0.7, 1.0],
+                ),
+                boxShadow: _isHovered
+                    ? [
+                        BoxShadow(
+                          color: const Color(0xFF6941C6).withOpacity(0.4),
+                          blurRadius: 12,
+                          spreadRadius: 2,
+                        ),
+                      ]
+                    : [
+                        BoxShadow(
+                          color: const Color(0xFF6941C6).withOpacity(0.2),
+                          blurRadius: 6,
+                          spreadRadius: 0,
+                        ),
+                      ],
+              ),
+              child: Transform.scale(
+                scale: _isHovered ? 1.05 : 1.0,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.collections_outlined,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Showcase',
+                      style: widget.theme.textTheme.labelSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 11,
+                        color: Colors.white,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
