@@ -387,8 +387,8 @@ class _RailPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final slotW = size.width / count;
     // Icon columns are vertically centered with label text below the icon.
-    // This places icon centers around ~30 px in a 76 px rail.
-    const cy = 30.0;
+    // Lines positioned at vertical middle of the rail.
+    const cy = 28.0;
 
     for (int i = 0; i < count - 1; i++) {
       final fromX = slotW * i + slotW / 2;
