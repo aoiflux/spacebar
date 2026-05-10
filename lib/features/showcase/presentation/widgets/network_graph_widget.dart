@@ -117,11 +117,13 @@ class _NetworkGraphWidgetState extends State<NetworkGraphWidget>
                         ? const Color(0xFF0B1324)
                         : const Color(0xFFF8FAFC),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: primaryTint.withValues(alpha: 0.2)),
+                    border: Border.all(
+                      color: primaryTint.withValues(alpha: 0.2),
+                    ),
                   ),
                   child: AnimatedBuilder(
                     animation: _motionCtrl,
-                    builder: (_, __) {
+                    builder: (_, _) {
                       final loop = _motionCtrl.value;
                       final wave = (math.sin(loop * 2 * math.pi) + 1) / 2;
                       final mergeT = 0.42 + (wave * 0.08);
@@ -396,8 +398,9 @@ class _ClusterPainter extends CustomPainter {
 
     // Shared-indicator edges
     for (final edge in edges) {
-      if (edge.from >= positions.length || edge.to >= positions.length)
+      if (edge.from >= positions.length || edge.to >= positions.length) {
         continue;
+      }
       final a = positions[edge.from];
       final b = positions[edge.to];
 
@@ -728,4 +731,3 @@ class _MetricPill extends StatelessWidget {
     );
   }
 }
-

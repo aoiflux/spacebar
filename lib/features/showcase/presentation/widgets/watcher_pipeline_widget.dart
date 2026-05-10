@@ -211,7 +211,7 @@ class _WatcherPipelineWidgetState extends State<WatcherPipelineWidget>
                       aspectRatio: 1,
                       child: AnimatedBuilder(
                         animation: _scanCtrl,
-                        builder: (_, __) => _RadarOrb(
+                        builder: (_, _) => _RadarOrb(
                           scanT: _scanCtrl.value,
                           tint: tint,
                           isDark: isDark,
@@ -237,7 +237,7 @@ class _WatcherPipelineWidgetState extends State<WatcherPipelineWidget>
               Expanded(
                 child: AnimatedBuilder(
                   animation: _flowCtrl,
-                  builder: (_, __) => _PipelineRail(
+                  builder: (_, _) => _PipelineRail(
                     flowT: _flowCtrl.value,
                     activeStage: _activeStage,
                     isDark: isDark,
@@ -285,7 +285,7 @@ class _StatusBar extends StatelessWidget {
             children: [
               AnimatedBuilder(
                 animation: beatCtrl,
-                builder: (_, __) => Container(
+                builder: (_, _) => Container(
                   width: 9,
                   height: 9,
                   decoration: BoxDecoration(
@@ -333,7 +333,7 @@ class _StatusBar extends StatelessWidget {
       children: [
         AnimatedBuilder(
           animation: beatCtrl,
-          builder: (_, __) => Container(
+          builder: (_, _) => Container(
             width: 9,
             height: 9,
             decoration: BoxDecoration(
@@ -589,7 +589,7 @@ class _DetectionFeed extends StatelessWidget {
             padding: EdgeInsets.zero,
             itemCount: files.length,
             physics: const BouncingScrollPhysics(),
-            separatorBuilder: (_, __) => SizedBox(height: compact ? 3 : 4),
+            separatorBuilder: (_, _) => SizedBox(height: compact ? 3 : 4),
             itemBuilder: (context, i) {
               final f = files[i];
               final isLatest = i == latestIndex;

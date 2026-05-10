@@ -126,7 +126,7 @@ class _KeywordSearchWidgetState extends State<KeywordSearchWidget>
               padding: EdgeInsets.zero,
               itemCount: results.length,
               physics: const BouncingScrollPhysics(),
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
+              separatorBuilder: (_, _) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
                 final item = results[index];
                 return AnimatedBuilder(
@@ -161,7 +161,9 @@ class _KeywordSearchWidgetState extends State<KeywordSearchWidget>
                             width: 6,
                             height: 6,
                             decoration: BoxDecoration(
-                              color: highlighted ? tint : tint.withValues(alpha: 0.4),
+                              color: highlighted
+                                  ? tint
+                                  : tint.withValues(alpha: 0.4),
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -257,4 +259,3 @@ class _StatPill extends StatelessWidget {
     );
   }
 }
-

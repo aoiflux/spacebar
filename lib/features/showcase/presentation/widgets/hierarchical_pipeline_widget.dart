@@ -201,7 +201,7 @@ class _HierarchicalPipelineWidgetState extends State<HierarchicalPipelineWidget>
             height: 76,
             child: AnimatedBuilder(
               animation: _flowCtrl,
-              builder: (_, __) => _StageRail(
+              builder: (_, _) => _StageRail(
                 selectedIndex: _selectedStage,
                 flowT: _flowCtrl.value,
                 isDark: isDark,
@@ -222,7 +222,7 @@ class _HierarchicalPipelineWidgetState extends State<HierarchicalPipelineWidget>
           Expanded(
             child: AnimatedBuilder(
               animation: _revealCtrl,
-              builder: (_, __) => _OutputGrid(
+              builder: (_, _) => _OutputGrid(
                 outputs: stage.outputs,
                 stageColor: stage.color,
                 revealT: _revealCtrl.value,
@@ -316,7 +316,9 @@ class _StageRail extends StatelessWidget {
                       child: Icon(
                         s.icon,
                         size: isSel ? 20 : 15,
-                        color: isSel ? Colors.white : s.color.withValues(alpha: 0.75),
+                        color: isSel
+                            ? Colors.white
+                            : s.color.withValues(alpha: 0.75),
                       ),
                     ),
                     const SizedBox(height: 5),
@@ -836,4 +838,3 @@ class _FooterDivider extends StatelessWidget {
     );
   }
 }
-

@@ -121,7 +121,7 @@ class _ScrollingListWidgetState extends State<ScrollingListWidget>
                       width: stripWidth,
                       child: AnimatedBuilder(
                         animation: _flowCtrl,
-                        builder: (_, __) => _ExtractorStrip(
+                        builder: (_, _) => _ExtractorStrip(
                           flowT: _flowCtrl.value,
                           pulseT: _pulseCtrl.value,
                           tint: tint,
@@ -138,7 +138,7 @@ class _ScrollingListWidgetState extends State<ScrollingListWidget>
                             child: ListView.separated(
                               physics: const BouncingScrollPhysics(),
                               itemCount: parsed.length,
-                              separatorBuilder: (_, __) =>
+                              separatorBuilder: (_, _) =>
                                   SizedBox(height: compact ? 5 : 7),
                               itemBuilder: (context, index) {
                                 final item = parsed[index];
@@ -410,7 +410,9 @@ class _ArtifactCard extends StatelessWidget {
           horizontal: compact ? 9 : 11,
         ),
         decoration: BoxDecoration(
-          color: item.color.withValues(alpha: active ? (isDark ? 0.2 : 0.34) : 0.2),
+          color: item.color.withValues(
+            alpha: active ? (isDark ? 0.2 : 0.34) : 0.2,
+          ),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: item.color.withValues(alpha: active ? 0.7 : 0.3),
@@ -555,10 +557,7 @@ class _ArtifactPreviewPanel extends StatelessWidget {
               layoutBuilder: (currentChild, previousChildren) {
                 return Stack(
                   alignment: Alignment.centerLeft,
-                  children: [
-                    ...previousChildren,
-                    if (currentChild != null) currentChild,
-                  ],
+                  children: [...previousChildren, ?currentChild],
                 );
               },
               transitionBuilder: (child, animation) {
@@ -987,4 +986,3 @@ class _TimestampPreview extends StatelessWidget {
     );
   }
 }
-

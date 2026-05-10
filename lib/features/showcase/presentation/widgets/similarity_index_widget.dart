@@ -508,7 +508,7 @@ class _MethodFileMatrix extends StatelessWidget {
                         width: 100,
                         child: Text(
                           file.file.length > 14
-                              ? file.file.substring(0, 11) + '..'
+                              ? '${file.file.substring(0, 11)}..'
                               : file.file,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -551,8 +551,8 @@ class _MethodFileMatrix extends StatelessWidget {
                                   height: 18,
                                   decoration: BoxDecoration(
                                     color: matched
-                                        ? method.color.withValues(alpha: 
-                                            isHovered ? pulse : 0.7,
+                                        ? method.color.withValues(
+                                            alpha: isHovered ? pulse : 0.7,
                                           )
                                         : (isDark
                                               ? const Color(0xFF1E293B)
@@ -582,4 +582,3 @@ class _MethodFileMatrix extends StatelessWidget {
     );
   }
 }
-

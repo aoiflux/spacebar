@@ -330,7 +330,7 @@ class _GraphCanvas extends StatelessWidget {
             },
             child: AnimatedBuilder(
               animation: Listenable.merge([flowCtrl, pulseCtrl]),
-              builder: (_, __) => CustomPaint(
+              builder: (_, _) => CustomPaint(
                 size: size,
                 painter: _GraphPainter(
                   nodes: nodes,
