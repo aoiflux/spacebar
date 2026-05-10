@@ -23,8 +23,8 @@ const _kStages = [
     Color(0xFF3B82F6),
   ),
   _PipeStage(
-    'Carve',
-    Icons.content_cut_rounded,
+    'Identify',
+    Icons.lens_outlined,
     '847',
     'files',
     Color(0xFF10B981),
@@ -294,8 +294,8 @@ class _StatusBar extends StatelessWidget {
                     boxShadow: active
                         ? [
                             BoxShadow(
-                              color: green.withValues(alpha: 
-                                0.3 + 0.3 * beatCtrl.value,
+                              color: green.withValues(
+                                alpha: 0.3 + 0.3 * beatCtrl.value,
                               ),
                               blurRadius: 8,
                               spreadRadius: beatCtrl.value * 3,
@@ -342,7 +342,9 @@ class _StatusBar extends StatelessWidget {
               boxShadow: active
                   ? [
                       BoxShadow(
-                        color: green.withValues(alpha: 0.3 + 0.3 * beatCtrl.value),
+                        color: green.withValues(
+                          alpha: 0.3 + 0.3 * beatCtrl.value,
+                        ),
                         blurRadius: 8,
                         spreadRadius: beatCtrl.value * 3,
                       ),
@@ -780,11 +782,13 @@ class _PipelineRail extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: isActive
                                   ? s.color
-                                  : s.color.withValues(alpha: isDark ? 0.12 : 0.08),
+                                  : s.color.withValues(
+                                      alpha: isDark ? 0.12 : 0.08,
+                                    ),
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: s.color.withValues(alpha: 
-                                  isActive ? 1.0 : 0.3,
+                                color: s.color.withValues(
+                                  alpha: isActive ? 1.0 : 0.3,
                                 ),
                                 width: isActive ? 2.0 : 1.2,
                               ),
@@ -942,4 +946,3 @@ class _PipePainter extends CustomPainter {
       old.flowT != flowT ||
       old.isDark != isDark;
 }
-

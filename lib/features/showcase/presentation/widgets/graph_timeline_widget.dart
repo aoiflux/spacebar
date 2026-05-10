@@ -34,6 +34,12 @@ const _kNodes = <_NodeData>[
   _NodeData('n8', 'Process Start', _NodeType.event, 0.44, 0.76),
   _NodeData('n9', 'Packet Flow', _NodeType.network, 0.22, 0.76),
   _NodeData('n10', 'Memory Region', _NodeType.threat, 0.06, 0.54),
+  _NodeData('n11', 'TLS Fingerprint', _NodeType.network, 0.31, 0.58),
+  _NodeData('n12', 'DNS Query', _NodeType.network, 0.14, 0.63),
+  _NodeData('n13', 'Scheduled Task', _NodeType.persistence, 0.53, 0.43),
+  _NodeData('n14', 'Service Entry', _NodeType.persistence, 0.73, 0.74),
+  _NodeData('n15', 'Dropped DLL', _NodeType.binary, 0.52, 0.27),
+  _NodeData('n16', 'Mutex Beacon', _NodeType.threat, 0.79, 0.37),
 ];
 
 const _kEdges = <_EdgeData>[
@@ -47,6 +53,24 @@ const _kEdges = <_EdgeData>[
   _EdgeData('n4', 'n10', 'Observed In'),
   _EdgeData('n8', 'n9', 'Contacts'),
   _EdgeData('n10', 'n7', 'Linked To'),
+  _EdgeData('n3', 'n15', 'Carves'),
+  _EdgeData('n15', 'n4', 'Loads'),
+  _EdgeData('n4', 'n13', 'Creates'),
+  _EdgeData('n13', 'n14', 'Bootstraps'),
+  _EdgeData('n14', 'n8', 'Spawns'),
+  _EdgeData('n8', 'n11', 'Emits'),
+  _EdgeData('n11', 'n9', 'Matches JA3'),
+  _EdgeData('n9', 'n12', 'Resolves'),
+  _EdgeData('n12', 'n6', 'Correlates'),
+  _EdgeData('n10', 'n16', 'Contains'),
+  _EdgeData('n16', 'n7', 'Maps To'),
+  _EdgeData('n5', 'n16', 'Signature Hit'),
+  _EdgeData('n15', 'n6', 'String Match'),
+  _EdgeData('n2', 'n10', 'Maps Memory'),
+  _EdgeData('n3', 'n9', 'Cross Source'),
+  _EdgeData('n6', 'n11', 'Beacon Over'),
+  _EdgeData('n13', 'n7', 'Persists Via'),
+  _EdgeData('n14', 'n6', 'Calls C2'),
 ];
 
 Color _typeColor(_NodeType t) {
@@ -817,7 +841,10 @@ class _NodeDetailHeader extends StatelessWidget {
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.2),
               shape: BoxShape.circle,
-              border: Border.all(color: color.withValues(alpha: 0.6), width: 1.5),
+              border: Border.all(
+                color: color.withValues(alpha: 0.6),
+                width: 1.5,
+              ),
             ),
             child: Icon(_typeIcon(node.type), size: 15, color: color),
           ),
@@ -1141,4 +1168,3 @@ class _SourceChip extends StatelessWidget {
     );
   }
 }
-

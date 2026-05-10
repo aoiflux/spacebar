@@ -11,7 +11,7 @@ class FeatureShowcaseData {
     'newItems': 3,
     'lastScan': '2m ago',
     'status': 'active',
-    'stages': ['dedupe', 'carve', 'parse', 'index'],
+    'stages': ['dedupe', 'identify', 'parse', 'index'],
   };
 
   static const dedupCompressData = {
@@ -55,7 +55,7 @@ class FeatureShowcaseData {
 
   static const pipelineStages = [
     {'name': 'dedupe', 'status': 'complete', 'icon': '✓'},
-    {'name': 'carve', 'status': 'complete', 'icon': '✓'},
+    {'name': 'identify', 'status': 'complete', 'icon': '✓'},
     {'name': 'parse', 'status': 'complete', 'icon': '✓'},
     {'name': 'index', 'status': 'complete', 'icon': '✓'},
   ];
@@ -166,8 +166,8 @@ class FeatureShowcaseData {
   };
 
   static const provenanceGraphData = {
-    'nodes': 12,
-    'edges': 19,
+    'nodes': 16,
+    'edges': 28,
     'highlight': 'file-123',
     'ingestPath': ['Disk image', 'Partition', 'Indexed file'],
     'indexedFile': 'indexed_file_0142.bin',
@@ -198,6 +198,24 @@ class FeatureShowcaseData {
           {'relation': 'Backed By', 'node': 'Injected region rwx'},
           {'relation': 'Shares Hash With', 'node': 'Case-7 payload chunk'},
           {'relation': 'Linked To', 'node': 'Scheduled Task updater.exe'},
+        ],
+      },
+      {
+        'root': 'Scheduled Task',
+        'steps': [
+          {'relation': 'Created By', 'node': 'powershell -enc ...'},
+          {'relation': 'Executes', 'node': 'dropped_updater.dll'},
+          {'relation': 'Triggers', 'node': 'service host spawn event'},
+          {'relation': 'Persists Via', 'node': 'Registry Run Key backup'},
+        ],
+      },
+      {
+        'root': 'TLS Fingerprint',
+        'steps': [
+          {'relation': 'Observed In', 'node': 'packet capture flow #3190'},
+          {'relation': 'Matches', 'node': 'Case-156 c2 ja3 profile'},
+          {'relation': 'Correlates To', 'node': 'DNS query cdn-upd[.]net'},
+          {'relation': 'Linked To', 'node': 'mutex beacon global\\svc_upd'},
         ],
       },
     ],
