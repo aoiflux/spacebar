@@ -2,7 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:spacebar/core/common/models/picked_file_data.dart';
 
 Future<PickedFileData?> pickFile() async {
-  final result = await FilePicker.platform.pickFiles(
+  final result = await FilePicker.pickFiles(
     withReadStream: true,
     withData: false,
   );

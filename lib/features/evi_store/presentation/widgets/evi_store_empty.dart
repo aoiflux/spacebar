@@ -358,7 +358,7 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
 
   Future<void> _onDesktopDropzoneClicked() async {
     try {
-      final result = await FilePicker.platform.pickFiles();
+      final result = await FilePicker.pickFiles();
       if (result == null || result.files.isEmpty) {
         return;
       }
