@@ -133,22 +133,6 @@ class HomePage extends StatelessWidget {
                                     );
                                   },
                                 ),
-                                HomeActionPane(
-                                  icon: Icons.collections_outlined,
-                                  title: 'Feature Showcase',
-                                  subtitle:
-                                      'Explore comprehensive visualizations of core platform capabilities and advanced forensic features.',
-                                  ctaLabel: 'View Gallery',
-                                  tint: const Color(0xFF6941C6),
-                                  statLabel: 'Gallery',
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => const ShowcasePage(),
-                                      ),
-                                    );
-                                  },
-                                ),
                               ],
                             );
                           },
@@ -439,4 +423,3 @@ class _ShowcaseButtonState extends State<_ShowcaseButton>
     );
   }
 }
-
