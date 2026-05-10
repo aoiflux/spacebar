@@ -661,9 +661,9 @@ class _PeSectionPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget bar(String label, double w, bool active) {
+    Widget bar(double w, bool active, bool dense) {
       return Container(
-        height: compact ? 7 : 9,
+        height: dense ? 5 : (compact ? 7 : 9),
         width: double.infinity,
         decoration: BoxDecoration(
           color: active
@@ -678,35 +678,56 @@ class _PeSectionPreview extends StatelessWidget {
       );
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Text(
-          '.text',
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            fontSize: compact ? 7 : 8,
-            color: color,
-          ),
-        ),
-        bar('.text', 0.88, true),
-        Text(
-          '.rdata',
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            fontSize: compact ? 7 : 8,
-            color: isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
-          ),
-        ),
-        bar('.rdata', 0.62, false),
-        Text(
-          '.data',
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            fontSize: compact ? 7 : 8,
-            color: isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
-          ),
-        ),
-        bar('.data', 0.41, false),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final dense = compact || constraints.maxHeight <= 44;
+        final labelHeight = dense ? 7.0 : 10.0;
+        final labelFontSize = dense ? 6.0 : (compact ? 7.0 : 8.0);
+        final spacer = dense ? 1.0 : 2.0;
+
+        Widget label(String text, Color textColor) {
+          return SizedBox(
+            height: labelHeight,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                text,
+                maxLines: 1,
+                overflow: TextOverflow.clip,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  fontSize: labelFontSize,
+                  height: 1,
+                  color: textColor,
+                ),
+              ),
+            ),
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            label('.text', color),
+            SizedBox(height: spacer),
+            bar(0.88, true, dense),
+            SizedBox(height: spacer),
+            label(
+              '.rdata',
+              isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
+            ),
+            SizedBox(height: spacer),
+            bar(0.62, false, dense),
+            SizedBox(height: spacer),
+            label(
+              '.data',
+              isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
+            ),
+            SizedBox(height: spacer),
+            bar(0.41, false, dense),
+          ],
+        );
+      },
     );
   }
 }

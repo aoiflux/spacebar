@@ -87,6 +87,48 @@ class FeatureShowcaseData {
       'Scheduled task: updater.exe',
       'Service: suspicioussvc',
     ],
+    'queries': [
+      {
+        'keyword': 'persistence',
+        'results': [
+          'Registry Run key',
+          'Scheduled task: updater.exe',
+          'Service: suspicioussvc',
+        ],
+      },
+      {
+        'keyword': 'beacon',
+        'results': [
+          'TLS fingerprint: ja3-6f1a',
+          'Flow 3190 -> 185.203.118.44:443',
+          'DNS query: cdn-upd.net',
+        ],
+      },
+      {
+        'keyword': 'powershell',
+        'results': [
+          'Process start: powershell -enc ...',
+          'Script block: updater bootstrap',
+          'Scheduled task: updater.exe',
+        ],
+      },
+      {
+        'keyword': '185.203.118.44',
+        'results': [
+          'Flow 3190 -> 185.203.118.44:443',
+          'pcap/c2_tls_185.203.118.44.json',
+          'ioc/ip_185.203.118.44.txt',
+        ],
+      },
+      {
+        'keyword': 'ransomware',
+        'results': [
+          'archive_patch_2026.bin',
+          'svc_update_signed.dat',
+          'triage/ransomware_family_notes.md',
+        ],
+      },
+    ],
   };
 
   static const similarityIndexData = {
