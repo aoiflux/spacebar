@@ -58,8 +58,8 @@ class ShowcaseDimens {
 }
 
 class ShowcaseStrings {
-  static const String pageTitle = 'Feature Showcase';
-  static const String pageSubtitle = 'Visual overview of core capabilities';
+  static const String pageTitle =
+      'Next Generation Digital Forensic Readiness for Cross-Domain Artefact Correlation';
 
   static const String ingestionSectionTitle = 'Ingestion & Processing';
   static const String ingestionSectionSubtitle =

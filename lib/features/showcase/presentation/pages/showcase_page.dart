@@ -20,6 +20,15 @@ class _ShowcasePageState extends State<ShowcasePage> {
   bool _darkOps = ShowcaseDefaults.darkOpsEnabled;
   bool _enableCardTickers = false;
 
+  static const int _ingestionModuleCount = 4;
+  static const int _correlationModuleCount = 1;
+  static const int _intelligenceModuleCount = 2;
+
+  int get _moduleCount =>
+      _ingestionModuleCount +
+      _correlationModuleCount +
+      _intelligenceModuleCount;
+
   @override
   void initState() {
     super.initState();
@@ -62,8 +71,105 @@ class _ShowcasePageState extends State<ShowcasePage> {
   }
 
   Widget _buildHeader(ThemeData theme) {
+    final titleColor = _darkOps
+        ? ShowcaseColors.textPrimaryDark
+        : ShowcaseColors.textInk;
+    final isWideLayout = MediaQuery.of(context).size.width >= 1000;
+    final expandedHeight = isWideLayout
+        ? ShowcaseDimens.headerExpandedHeight - 16
+        : ShowcaseDimens.headerExpandedHeight;
+    final headerVerticalPadding = isWideLayout
+        ? ShowcaseDimens.pagePadding - 4
+        : ShowcaseDimens.pagePadding;
+    final titleToSubtitleGap = isWideLayout
+        ? ShowcaseDimens.gap2
+        : ShowcaseDimens.gap6;
+
+    Widget modulePill() {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: _darkOps
+              ? ShowcaseColors.badgeBgDark
+              : ShowcaseColors.badgeBgLight,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: _darkOps
+                ? ShowcaseColors.borderDark
+                : ShowcaseColors.borderLight,
+          ),
+        ),
+        child: Text(
+          '$_moduleCount modules',
+          style: theme.textTheme.labelSmall?.copyWith(
+            fontWeight: FontWeight.w800,
+            color: _darkOps
+                ? ShowcaseColors.badgeTextDark
+                : ShowcaseColors.badgeTextLight,
+          ),
+        ),
+      );
+    }
+
+    Widget visualDeckPill() {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: ShowcaseColors.tintViolet.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: ShowcaseColors.tintViolet.withValues(alpha: 0.28),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.insights_rounded,
+              size: 12,
+              color: ShowcaseColors.tintViolet,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              'Visual Intelligence Deck',
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: ShowcaseColors.tintViolet,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget buzzPill(String label) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: _darkOps
+              ? ShowcaseColors.panelDark
+              : ShowcaseColors.badgeBgLight,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: _darkOps
+                ? ShowcaseColors.borderDark
+                : ShowcaseColors.borderLight,
+          ),
+        ),
+        child: Text(
+          label,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: _darkOps
+                ? ShowcaseColors.textMutedDark
+                : ShowcaseColors.textSecondary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      );
+    }
+
     return SliverAppBar(
-      expandedHeight: ShowcaseDimens.headerExpandedHeight,
+      expandedHeight: expandedHeight,
       floating: false,
       pinned: true,
       backgroundColor: _darkOps
@@ -72,45 +178,69 @@ class _ShowcasePageState extends State<ShowcasePage> {
       elevation: ShowcaseDimens.zero,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
-        color: _darkOps
-            ? ShowcaseColors.textPrimaryDark
-            : ShowcaseColors.textInk,
+        color: titleColor,
         onPressed: () => Navigator.of(context).pop(),
       ),
       flexibleSpace: FlexibleSpaceBar(
-        background: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            ShowcaseDimens.pagePadding,
-            ShowcaseDimens.pagePadding,
-            ShowcaseDimens.pagePadding,
-            ShowcaseDimens.pagePadding,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                ShowcaseStrings.pageTitle,
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: _darkOps
-                      ? ShowcaseColors.textPrimaryDark
-                      : ShowcaseColors.textInk,
-                  letterSpacing: ShowcaseDimens.letterSpacingSmall,
-                ),
+        background: LayoutBuilder(
+          builder: (context, constraints) {
+            final contentHeight =
+                (constraints.maxHeight - (headerVerticalPadding * 2)).clamp(
+                  0.0,
+                  double.infinity,
+                );
+            final showSubtitle = contentHeight >= 72;
+            final showBuzz = contentHeight >= 110;
+
+            return Padding(
+              padding: EdgeInsets.fromLTRB(
+                ShowcaseDimens.pagePadding,
+                headerVerticalPadding,
+                ShowcaseDimens.pagePadding,
+                headerVerticalPadding,
               ),
-              const SizedBox(height: ShowcaseDimens.gap6),
-              Text(
-                ShowcaseStrings.pageSubtitle,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: _darkOps
-                      ? ShowcaseColors.textMutedDark
-                      : ShowcaseColors.textMutedLight,
-                  fontSize: ShowcaseDimens.fontBodySmall,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(child: visualDeckPill()),
+                      const SizedBox(width: 12),
+                      modulePill(),
+                    ],
+                  ),
+                  SizedBox(
+                    height: isWideLayout
+                        ? ShowcaseDimens.gap6
+                        : ShowcaseDimens.gap8,
+                  ),
+                  Text(
+                    ShowcaseStrings.pageTitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: titleColor,
+                      letterSpacing: ShowcaseDimens.letterSpacingSmall,
+                    ),
+                  ),
+                  if (showBuzz) ...[
+                    const SizedBox(height: ShowcaseDimens.gap8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        buzzPill('Chain-of-Custody'),
+                        buzzPill('Cross-Case Correlation'),
+                        buzzPill('Hash Deduplication'),
+                      ],
+                    ),
+                  ],
+                ],
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -127,12 +257,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
         ),
         child: Column(
           children: [
-            _DashboardControlStrip(
-              darkOps: _darkOps,
-              onToggleDarkOps: () {
-                setState(() => _darkOps = !_darkOps);
-              },
-            ),
+            _DashboardControlStrip(darkOps: _darkOps),
             const SizedBox(height: ShowcaseDimens.gap10),
             _KpiRow(darkOps: _darkOps),
           ],
@@ -453,12 +578,8 @@ class _ShowcasePageState extends State<ShowcasePage> {
 
 class _DashboardControlStrip extends StatelessWidget {
   final bool darkOps;
-  final VoidCallback onToggleDarkOps;
 
-  const _DashboardControlStrip({
-    required this.darkOps,
-    required this.onToggleDarkOps,
-  });
+  const _DashboardControlStrip({required this.darkOps});
 
   @override
   Widget build(BuildContext context) {
@@ -485,8 +606,6 @@ class _DashboardControlStrip extends StatelessWidget {
             value: ShowcaseStrings.systemStatusValue,
             darkOps: darkOps,
           ),
-          const SizedBox(width: ShowcaseDimens.gap8),
-          _ModeTogglePill(darkOps: darkOps, onTap: onToggleDarkOps),
         ];
 
         return Container(
@@ -905,60 +1024,6 @@ class _SectionLabel extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _ModeTogglePill extends StatelessWidget {
-  final bool darkOps;
-  final VoidCallback onTap;
-
-  const _ModeTogglePill({required this.darkOps, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(ShowcaseDimens.pillRadius),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: ShowcaseDimens.gap10,
-          vertical: ShowcaseDimens.gap6,
-        ),
-        decoration: BoxDecoration(
-          color: darkOps
-              ? ShowcaseColors.modeBgDark
-              : ShowcaseColors.modeBgLight,
-          borderRadius: BorderRadius.circular(ShowcaseDimens.pillRadius),
-          border: Border.all(
-            color: darkOps
-                ? ShowcaseColors.modeBorderDark
-                : ShowcaseColors.modeBorderLight,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              darkOps ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
-              size: ShowcaseDimens.modeIconSize,
-              color: darkOps
-                  ? ShowcaseColors.modeTextDark
-                  : ShowcaseColors.modeTextLight,
-            ),
-            const SizedBox(width: ShowcaseDimens.gap6),
-            Text(
-              darkOps ? ShowcaseStrings.modeDark : ShowcaseStrings.modeLight,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                fontWeight: FontWeight.w800,
-                color: darkOps
-                    ? ShowcaseColors.modeTextDark
-                    : ShowcaseColors.modeTextLight,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
