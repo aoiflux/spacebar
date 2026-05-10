@@ -18,6 +18,17 @@ class ShowcasePage extends StatefulWidget {
 
 class _ShowcasePageState extends State<ShowcasePage> {
   bool _darkOps = ShowcaseDefaults.darkOpsEnabled;
+  bool _enableCardTickers = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Let the route transition settle before starting all card animations.
+    Future<void>.delayed(const Duration(milliseconds: 140), () {
+      if (!mounted) return;
+      setState(() => _enableCardTickers = true);
+    });
+  }
 
   ThemeData _buildOpsTheme(ThemeData baseTheme) {
     return baseTheme.copyWith(
@@ -150,53 +161,160 @@ class _ShowcasePageState extends State<ShowcasePage> {
                 ? ShowcaseDimens.mobileGraphHeight
                 : ShowcaseDimens.desktopGraphHeight;
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _SectionLabel(
-                  number: ShowcaseStrings.ingestionSectionNumber,
-                  title: ShowcaseStrings.ingestionSectionTitle,
-                  subtitle: ShowcaseStrings.ingestionSectionSubtitle,
-                  darkOps: _darkOps,
-                ),
-                const SizedBox(height: ShowcaseDimens.gap10),
-                _buildIngestionWrap(
-                  cardWidth: cardWidth,
-                  cardHeight: regularHeight,
-                ),
-                const SizedBox(height: spacing),
-                _SectionLabel(
-                  number: ShowcaseStrings.correlationSectionNumber,
-                  title: ShowcaseStrings.correlationSectionTitle,
-                  subtitle: ShowcaseStrings.correlationSectionSubtitle,
-                  darkOps: _darkOps,
-                ),
-                const SizedBox(height: ShowcaseDimens.gap10),
-                SizedBox(
-                  width: double.infinity,
-                  height: artefactHeight,
-                  child: const GraphTimelineWidget(
-                    title: ShowcaseStrings.artefactGraphTitle,
-                    description: ShowcaseStrings.artefactGraphDescription,
-                    mockData: FeatureShowcaseData.provenanceGraphData,
-                    tint: ShowcaseColors.tintViolet,
-                  ),
-                ),
-                const SizedBox(height: spacing),
-                _SectionLabel(
-                  number: ShowcaseStrings.intelligenceSectionNumber,
-                  title: ShowcaseStrings.intelligenceSectionTitle,
-                  subtitle: ShowcaseStrings.intelligenceSectionSubtitle,
-                  darkOps: _darkOps,
-                ),
-                const SizedBox(height: ShowcaseDimens.gap10),
-                _buildIntelligenceWrap(
-                  cardWidth: cardWidth,
-                  cardHeight: regularHeight,
-                ),
-              ],
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 220),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              child: _enableCardTickers
+                  ? KeyedSubtree(
+                      key: const ValueKey('live-showcase'),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _SectionLabel(
+                            number: ShowcaseStrings.ingestionSectionNumber,
+                            title: ShowcaseStrings.ingestionSectionTitle,
+                            subtitle: ShowcaseStrings.ingestionSectionSubtitle,
+                            darkOps: _darkOps,
+                          ),
+                          const SizedBox(height: ShowcaseDimens.gap10),
+                          TickerMode(
+                            enabled: _enableCardTickers,
+                            child: RepaintBoundary(
+                              child: _buildIngestionWrap(
+                                cardWidth: cardWidth,
+                                cardHeight: regularHeight,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: spacing),
+                          _SectionLabel(
+                            number: ShowcaseStrings.correlationSectionNumber,
+                            title: ShowcaseStrings.correlationSectionTitle,
+                            subtitle:
+                                ShowcaseStrings.correlationSectionSubtitle,
+                            darkOps: _darkOps,
+                          ),
+                          const SizedBox(height: ShowcaseDimens.gap10),
+                          TickerMode(
+                            enabled: _enableCardTickers,
+                            child: RepaintBoundary(
+                              child: SizedBox(
+                                width: double.infinity,
+                                height: artefactHeight,
+                                child: const GraphTimelineWidget(
+                                  title: ShowcaseStrings.artefactGraphTitle,
+                                  description:
+                                      ShowcaseStrings.artefactGraphDescription,
+                                  mockData:
+                                      FeatureShowcaseData.provenanceGraphData,
+                                  tint: ShowcaseColors.tintViolet,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: spacing),
+                          _SectionLabel(
+                            number: ShowcaseStrings.intelligenceSectionNumber,
+                            title: ShowcaseStrings.intelligenceSectionTitle,
+                            subtitle:
+                                ShowcaseStrings.intelligenceSectionSubtitle,
+                            darkOps: _darkOps,
+                          ),
+                          const SizedBox(height: ShowcaseDimens.gap10),
+                          TickerMode(
+                            enabled: _enableCardTickers,
+                            child: RepaintBoundary(
+                              child: _buildIntelligenceWrap(
+                                cardWidth: cardWidth,
+                                cardHeight: regularHeight,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : KeyedSubtree(
+                      key: const ValueKey('skeleton-showcase'),
+                      child: _buildShowcaseSkeleton(
+                        cardWidth: cardWidth,
+                        cardHeight: regularHeight,
+                        artefactHeight: artefactHeight,
+                        spacing: spacing,
+                      ),
+                    ),
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShowcaseSkeleton({
+    required double cardWidth,
+    required double cardHeight,
+    required double artefactHeight,
+    required double spacing,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _SectionLabel(
+          number: ShowcaseStrings.ingestionSectionNumber,
+          title: ShowcaseStrings.ingestionSectionTitle,
+          subtitle: ShowcaseStrings.ingestionSectionSubtitle,
+          darkOps: _darkOps,
+        ),
+        const SizedBox(height: ShowcaseDimens.gap10),
+        _buildSkeletonWrap(
+          cardWidth: cardWidth,
+          cardHeight: cardHeight,
+          count: 4,
+        ),
+        const SizedBox(height: ShowcaseDimens.sectionSpacing),
+        _SectionLabel(
+          number: ShowcaseStrings.correlationSectionNumber,
+          title: ShowcaseStrings.correlationSectionTitle,
+          subtitle: ShowcaseStrings.correlationSectionSubtitle,
+          darkOps: _darkOps,
+        ),
+        const SizedBox(height: ShowcaseDimens.gap10),
+        _SkeletonCard(
+          width: double.infinity,
+          height: artefactHeight,
+          darkOps: _darkOps,
+        ),
+        SizedBox(height: spacing),
+        _SectionLabel(
+          number: ShowcaseStrings.intelligenceSectionNumber,
+          title: ShowcaseStrings.intelligenceSectionTitle,
+          subtitle: ShowcaseStrings.intelligenceSectionSubtitle,
+          darkOps: _darkOps,
+        ),
+        const SizedBox(height: ShowcaseDimens.gap10),
+        _buildSkeletonWrap(
+          cardWidth: cardWidth,
+          cardHeight: cardHeight,
+          count: 2,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSkeletonWrap({
+    required double cardWidth,
+    required double cardHeight,
+    required int count,
+  }) {
+    return Wrap(
+      spacing: ShowcaseDimens.sectionSpacing,
+      runSpacing: ShowcaseDimens.sectionSpacing,
+      children: List.generate(
+        count,
+        (_) => _SkeletonCard(
+          width: cardWidth,
+          height: cardHeight,
+          darkOps: _darkOps,
         ),
       ),
     );
@@ -396,6 +514,82 @@ class _DashboardControlStrip extends StatelessWidget {
               : Row(children: [controls, const Spacer(), ...statusWidgets]),
         );
       },
+    );
+  }
+}
+
+class _SkeletonCard extends StatelessWidget {
+  const _SkeletonCard({
+    required this.width,
+    required this.height,
+    required this.darkOps,
+  });
+
+  final double width;
+  final double height;
+  final bool darkOps;
+
+  @override
+  Widget build(BuildContext context) {
+    final borderColor = darkOps
+        ? ShowcaseColors.borderDark
+        : ShowcaseColors.borderLight;
+    final base = darkOps
+        ? ShowcaseColors.cardDark
+        : ShowcaseColors.cardLightAlt;
+    final stripe = darkOps ? const Color(0xFF243249) : const Color(0xFFDCE8F8);
+
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: base,
+        borderRadius: BorderRadius.circular(ShowcaseDimens.radius12),
+        border: Border.all(color: borderColor),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(ShowcaseDimens.gap12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: width * 0.28,
+              height: 10,
+              decoration: BoxDecoration(
+                color: stripe,
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              width: width * 0.52,
+              height: 8,
+              decoration: BoxDecoration(
+                color: stripe.withValues(alpha: 0.85),
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Container(
+              width: width * 0.38,
+              height: 8,
+              decoration: BoxDecoration(
+                color: stripe.withValues(alpha: 0.65),
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+            const Spacer(),
+            Container(
+              width: double.infinity,
+              height: 36,
+              decoration: BoxDecoration(
+                color: stripe.withValues(alpha: 0.35),
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
