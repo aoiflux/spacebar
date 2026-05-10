@@ -294,7 +294,7 @@ class _StatusBar extends StatelessWidget {
                     boxShadow: active
                         ? [
                             BoxShadow(
-                              color: green.withOpacity(
+                              color: green.withValues(alpha: 
                                 0.3 + 0.3 * beatCtrl.value,
                               ),
                               blurRadius: 8,
@@ -342,7 +342,7 @@ class _StatusBar extends StatelessWidget {
               boxShadow: active
                   ? [
                       BoxShadow(
-                        color: green.withOpacity(0.3 + 0.3 * beatCtrl.value),
+                        color: green.withValues(alpha: 0.3 + 0.3 * beatCtrl.value),
                         blurRadius: 8,
                         spreadRadius: beatCtrl.value * 3,
                       ),
@@ -382,9 +382,9 @@ class _Chip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: color.withOpacity(0.28)),
+        border: Border.all(color: color.withValues(alpha: 0.28)),
       ),
       child: Text(
         label,
@@ -451,7 +451,7 @@ class _RadarPainter extends CustomPainter {
         Offset(cx, cy),
         r * frac,
         Paint()
-          ..color = tint.withOpacity(isDark ? 0.12 : 0.08)
+          ..color = tint.withValues(alpha: isDark ? 0.12 : 0.08)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1,
       );
@@ -459,7 +459,7 @@ class _RadarPainter extends CustomPainter {
 
     // Crosshairs
     final crossPaint = Paint()
-      ..color = tint.withOpacity(0.12)
+      ..color = tint.withValues(alpha: 0.12)
       ..strokeWidth = 0.8;
     canvas.drawLine(Offset(cx, cy - r), Offset(cx, cy + r), crossPaint);
     canvas.drawLine(Offset(cx - r, cy), Offset(cx + r, cy), crossPaint);
@@ -474,7 +474,7 @@ class _RadarPainter extends CustomPainter {
       true,
       Paint()
         ..shader = SweepGradient(
-          colors: [tint.withOpacity(0.0), tint.withOpacity(0.22)],
+          colors: [tint.withValues(alpha: 0.0), tint.withValues(alpha: 0.22)],
           startAngle: 0,
           endAngle: sweepAngle,
           transform: GradientRotation(startAngle),
@@ -488,7 +488,7 @@ class _RadarPainter extends CustomPainter {
       Offset(cx, cy),
       Offset(edgeX, edgeY),
       Paint()
-        ..color = tint.withOpacity(0.7)
+        ..color = tint.withValues(alpha: 0.7)
         ..strokeWidth = 1.5
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2),
     );
@@ -503,7 +503,7 @@ class _RadarPainter extends CustomPainter {
         Offset(bx, by),
         3.5,
         Paint()
-          ..color = tint.withOpacity(0.18)
+          ..color = tint.withValues(alpha: 0.18)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
       );
       canvas.drawCircle(Offset(bx, by), 1.8, Paint()..color = tint);
@@ -514,7 +514,7 @@ class _RadarPainter extends CustomPainter {
       Offset(cx, cy),
       4,
       Paint()
-        ..color = tint.withOpacity(0.3)
+        ..color = tint.withValues(alpha: 0.3)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
     );
     canvas.drawCircle(Offset(cx, cy), 2, Paint()..color = tint);
@@ -600,11 +600,11 @@ class _DetectionFeed extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: isLatest
-                      ? f.color.withOpacity(isDark ? 0.14 : 0.08)
+                      ? f.color.withValues(alpha: isDark ? 0.14 : 0.08)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(6),
                   border: isLatest
-                      ? Border.all(color: f.color.withOpacity(0.3))
+                      ? Border.all(color: f.color.withValues(alpha: 0.3))
                       : Border.all(color: Colors.transparent),
                 ),
                 child: Row(
@@ -612,7 +612,7 @@ class _DetectionFeed extends StatelessWidget {
                     Icon(
                       f.icon,
                       size: compact ? 11 : 12,
-                      color: f.color.withOpacity(isLatest ? 1.0 : 0.4),
+                      color: f.color.withValues(alpha: isLatest ? 1.0 : 0.4),
                     ),
                     const SizedBox(width: 6),
                     Expanded(
@@ -780,10 +780,10 @@ class _PipelineRail extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: isActive
                                   ? s.color
-                                  : s.color.withOpacity(isDark ? 0.12 : 0.08),
+                                  : s.color.withValues(alpha: isDark ? 0.12 : 0.08),
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: s.color.withOpacity(
+                                color: s.color.withValues(alpha: 
                                   isActive ? 1.0 : 0.3,
                                 ),
                                 width: isActive ? 2.0 : 1.2,
@@ -791,7 +791,7 @@ class _PipelineRail extends StatelessWidget {
                               boxShadow: isActive
                                   ? [
                                       BoxShadow(
-                                        color: s.color.withOpacity(0.4),
+                                        color: s.color.withValues(alpha: 0.4),
                                         blurRadius: 14,
                                       ),
                                     ]
@@ -804,7 +804,7 @@ class _PipelineRail extends StatelessWidget {
                                   : (compact ? 12 : 14),
                               color: isActive
                                   ? Colors.white
-                                  : s.color.withOpacity(0.7),
+                                  : s.color.withValues(alpha: 0.7),
                             ),
                           ),
                           SizedBox(height: compact ? 2 : 4),
@@ -903,7 +903,7 @@ class _PipePainter extends CustomPainter {
         Offset(toX - 17, cy),
         Paint()
           ..color = isActive
-              ? segColor.withOpacity(0.5)
+              ? segColor.withValues(alpha: 0.5)
               : (isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0))
           ..strokeWidth = isActive ? 1.8 : 1.2
           ..style = PaintingStyle.stroke,
@@ -919,7 +919,7 @@ class _PipePainter extends CustomPainter {
           Offset(px, cy),
           7,
           Paint()
-            ..color = segColor.withOpacity(0.2)
+            ..color = segColor.withValues(alpha: 0.2)
             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
         );
         canvas.drawCircle(Offset(px, cy), 3, Paint()..color = segColor);
@@ -929,7 +929,7 @@ class _PipePainter extends CustomPainter {
           Offset(trailPx, cy),
           2,
           Paint()
-            ..color = segColor.withOpacity(0.4)
+            ..color = segColor.withValues(alpha: 0.4)
             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
         );
       }
@@ -942,3 +942,4 @@ class _PipePainter extends CustomPainter {
       old.flowT != flowT ||
       old.isDark != isDark;
 }
+

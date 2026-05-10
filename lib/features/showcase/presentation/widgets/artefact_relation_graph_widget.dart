@@ -72,7 +72,7 @@ class _ArtefactRelationGraphWidgetState
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF0B1324) : const Color(0xFFF8FAFC),
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: primary.withOpacity(0.24)),
+              border: Border.all(color: primary.withValues(alpha: 0.24)),
             ),
             child: AnimatedBuilder(
               animation: _controller,
@@ -111,13 +111,13 @@ class _ArtefactRelationGraphWidgetState
                     ),
                     decoration: BoxDecoration(
                       color: isActive
-                          ? primary.withOpacity(0.2)
-                          : primary.withOpacity(0.08),
+                          ? primary.withValues(alpha: 0.2)
+                          : primary.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(999),
                       border: Border.all(
                         color: isActive
-                            ? primary.withOpacity(0.45)
-                            : primary.withOpacity(0.2),
+                            ? primary.withValues(alpha: 0.45)
+                            : primary.withValues(alpha: 0.2),
                       ),
                     ),
                     child: Text(
@@ -211,9 +211,9 @@ class _ArgSection extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: color.withOpacity(darkMode ? 0.12 : 0.08),
+        color: color.withValues(alpha: darkMode ? 0.12 : 0.08),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.24)),
+        border: Border.all(color: color.withValues(alpha: 0.24)),
       ),
       child: Column(
         children: [
@@ -268,9 +268,9 @@ class _ArgSection extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: darkMode
                                 ? const Color(0xFF0F172A)
-                                : Colors.white.withOpacity(0.7),
+                                : Colors.white.withValues(alpha: 0.7),
                             borderRadius: BorderRadius.circular(7),
-                            border: Border.all(color: color.withOpacity(0.18)),
+                            border: Border.all(color: color.withValues(alpha: 0.18)),
                           ),
                           child: Row(
                             children: [
@@ -278,7 +278,7 @@ class _ArgSection extends StatelessWidget {
                                 width: 6,
                                 height: 6,
                                 decoration: BoxDecoration(
-                                  color: color.withOpacity(0.75),
+                                  color: color.withValues(alpha: 0.75),
                                   shape: BoxShape.circle,
                                 ),
                               ),
@@ -334,7 +334,7 @@ class _ArgMiniGraphPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final grid = Paint()
       ..color = (darkMode ? const Color(0xFF334155) : const Color(0xFFCBD5E1))
-          .withOpacity(0.22)
+          .withValues(alpha: 0.22)
       ..strokeWidth = 0.7;
 
     for (double x = 0; x <= size.width; x += size.width / 6) {
@@ -349,7 +349,7 @@ class _ArgMiniGraphPainter extends CustomPainter {
     ];
 
     final edgePaint = Paint()
-      ..color = color.withOpacity(0.5)
+      ..color = color.withValues(alpha: 0.5)
       ..strokeWidth = 1.6
       ..style = PaintingStyle.stroke;
 
@@ -375,12 +375,12 @@ class _ArgMiniGraphPainter extends CustomPainter {
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1.2
-          ..color = color.withOpacity(active ? 0.4 : 0.18),
+          ..color = color.withValues(alpha: active ? 0.4 : 0.18),
       );
       canvas.drawCircle(
         p,
         r,
-        Paint()..color = active ? color : color.withOpacity(0.75),
+        Paint()..color = active ? color : color.withValues(alpha: 0.75),
       );
     }
   }
@@ -394,3 +394,4 @@ class _ArgMiniGraphPainter extends CustomPainter {
         oldDelegate.edgeCount != edgeCount;
   }
 }
+

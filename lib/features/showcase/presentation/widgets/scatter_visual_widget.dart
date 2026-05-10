@@ -54,10 +54,10 @@ class ScatterVisualWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: (tint ?? const Color(0xFF0B57D0)).withOpacity(0.05),
+              color: (tint ?? const Color(0xFF0B57D0)).withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: (tint ?? const Color(0xFF0B57D0)).withOpacity(0.1),
+                color: (tint ?? const Color(0xFF0B57D0)).withValues(alpha: 0.1),
               ),
             ),
             child: Column(
@@ -125,13 +125,13 @@ class ScatterPlotPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final strokePaint = Paint()
-      ..color = color.withOpacity(0.3)
+      ..color = color.withValues(alpha: 0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
     // Draw background grid
     final gridPaint = Paint()
-      ..color = Colors.grey.withOpacity(0.1)
+      ..color = Colors.grey.withValues(alpha: 0.1)
       ..strokeWidth = 0.5;
 
     for (double i = 0; i <= size.width; i += size.width / 5) {
@@ -165,3 +165,4 @@ class ScatterPlotPainter extends CustomPainter {
   bool shouldRepaint(ScatterPlotPainter oldDelegate) =>
       oldDelegate.matches != matches || oldDelegate.color != color;
 }
+

@@ -239,9 +239,9 @@ class _StatChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(isDark ? 0.18 : 0.1),
+        color: color.withValues(alpha: isDark ? 0.18 : 0.1),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: color.withOpacity(0.28)),
+        border: Border.all(color: color.withValues(alpha: 0.28)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -345,13 +345,13 @@ class _ExtractorStripPainter extends CustomPainter {
         Offset(x, y),
         8,
         Paint()
-          ..color = tint.withOpacity(0.2)
+          ..color = tint.withValues(alpha: 0.2)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
       );
       canvas.drawCircle(
         Offset(x, y),
         4.5,
-        Paint()..color = tint.withOpacity(0.95),
+        Paint()..color = tint.withValues(alpha: 0.95),
       );
     }
 
@@ -360,7 +360,7 @@ class _ExtractorStripPainter extends CustomPainter {
       Offset(x, py),
       7,
       Paint()
-        ..color = tint.withOpacity(0.25)
+        ..color = tint.withValues(alpha: 0.25)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
     );
     canvas.drawCircle(Offset(x, py), 3.2, Paint()..color = tint);
@@ -370,7 +370,7 @@ class _ExtractorStripPainter extends CustomPainter {
       Offset(x, y2),
       pulseR,
       Paint()
-        ..color = tint.withOpacity(0.1)
+        ..color = tint.withValues(alpha: 0.1)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.5,
     );
@@ -410,10 +410,10 @@ class _ArtifactCard extends StatelessWidget {
           horizontal: compact ? 9 : 11,
         ),
         decoration: BoxDecoration(
-          color: item.color.withOpacity(active ? (isDark ? 0.2 : 0.34) : 0.2),
+          color: item.color.withValues(alpha: active ? (isDark ? 0.2 : 0.34) : 0.2),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: item.color.withOpacity(active ? 0.7 : 0.3),
+            color: item.color.withValues(alpha: active ? 0.7 : 0.3),
             width: active ? 1.2 : 1,
           ),
         ),
@@ -446,7 +446,7 @@ class _ArtifactCard extends StatelessWidget {
                 boxShadow: active
                     ? [
                         BoxShadow(
-                          color: item.color.withOpacity(0.55),
+                          color: item.color.withValues(alpha: 0.55),
                           blurRadius: 8,
                         ),
                       ]
@@ -600,7 +600,7 @@ class _RegistryPreview extends StatelessWidget {
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(7),
-        border: Border.all(color: color.withOpacity(0.35)),
+        border: Border.all(color: color.withValues(alpha: 0.35)),
       ),
       child: Row(
         children: [
@@ -620,7 +620,7 @@ class _RegistryPreview extends StatelessWidget {
               ),
             ),
           ),
-          Container(width: 1, color: color.withOpacity(0.2)),
+          Container(width: 1, color: color.withValues(alpha: 0.2)),
           Expanded(
             child: Container(
               margin: EdgeInsets.all(compact ? 3 : 4),
@@ -629,7 +629,7 @@ class _RegistryPreview extends StatelessWidget {
                 vertical: compact ? 3 : 4,
               ),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.14),
+                color: color.withValues(alpha: 0.14),
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Text(
@@ -668,8 +668,8 @@ class _PeSectionPreview extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           color: active
-              ? color.withOpacity(0.75)
-              : color.withOpacity(isDark ? 0.24 : 0.2),
+              ? color.withValues(alpha: 0.75)
+              : color.withValues(alpha: isDark ? 0.24 : 0.2),
           borderRadius: BorderRadius.circular(4),
         ),
         child: Align(
@@ -729,11 +729,11 @@ class _SignaturePreview extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: compact ? 4 : 5, vertical: 2),
         decoration: BoxDecoration(
           color: hit
-              ? color.withOpacity(0.24)
+              ? color.withValues(alpha: 0.24)
               : (isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0)),
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
-            color: hit ? color.withOpacity(0.55) : Colors.transparent,
+            color: hit ? color.withValues(alpha: 0.55) : Colors.transparent,
           ),
         ),
         child: Text(
@@ -789,7 +789,7 @@ class _StringPreview extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A) : Colors.white,
         borderRadius: BorderRadius.circular(7),
-        border: Border.all(color: color.withOpacity(0.28)),
+        border: Border.all(color: color.withValues(alpha: 0.28)),
       ),
       child: RichText(
         maxLines: compact ? 1 : 2,
@@ -806,7 +806,7 @@ class _StringPreview extends StatelessWidget {
               style: TextStyle(
                 color: color,
                 fontWeight: FontWeight.w800,
-                backgroundColor: color.withOpacity(0.15),
+                backgroundColor: color.withValues(alpha: 0.15),
               ),
             ),
             const TextSpan(text: '?id=7f4a..."'),
@@ -838,7 +838,7 @@ class _EventPreview extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A) : Colors.white,
         borderRadius: BorderRadius.circular(7),
-        border: Border.all(color: color.withOpacity(0.25)),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: Wrap(
         spacing: 6,
@@ -859,7 +859,7 @@ class _EventPreview extends StatelessWidget {
               vertical: 2,
             ),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.16),
+              color: color.withValues(alpha: 0.16),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
@@ -898,7 +898,7 @@ class _StickyBitPreview extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A) : Colors.white,
         borderRadius: BorderRadius.circular(7),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Wrap(
         spacing: 4,
@@ -916,7 +916,7 @@ class _StickyBitPreview extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 1),
             padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(3),
             ),
             child: Text(
@@ -962,7 +962,7 @@ class _TimestampPreview extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A) : Colors.white,
         borderRadius: BorderRadius.circular(7),
-        border: Border.all(color: color.withOpacity(0.25)),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: Row(
         children: [
@@ -987,3 +987,4 @@ class _TimestampPreview extends StatelessWidget {
     );
   }
 }
+

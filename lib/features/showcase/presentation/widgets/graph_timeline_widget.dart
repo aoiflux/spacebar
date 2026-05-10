@@ -281,7 +281,7 @@ class _GraphCanvas extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF070E1C) : const Color(0xFFF1F5F9),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: tint.withOpacity(0.18), width: 1.2),
+        border: Border.all(color: tint.withValues(alpha: 0.18), width: 1.2),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -378,7 +378,7 @@ class _GraphPainter extends CustomPainter {
   void _drawGrid(Canvas canvas, Size size) {
     final p = Paint()
       ..color = (isDark ? const Color(0xFF1E3A5F) : const Color(0xFFCBD5E1))
-          .withOpacity(0.3)
+          .withValues(alpha: 0.3)
       ..style = PaintingStyle.fill;
     const step = 22.0;
     for (double x = step; x < size.width; x += step) {
@@ -396,7 +396,7 @@ class _GraphPainter extends CustomPainter {
       c,
       60 + pulseT * 22,
       Paint()
-        ..color = _typeColor(sel.type).withOpacity(0.055 + pulseT * 0.035)
+        ..color = _typeColor(sel.type).withValues(alpha: 0.055 + pulseT * 0.035)
         ..style = PaintingStyle.fill
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 36),
     );
@@ -428,7 +428,7 @@ class _GraphPainter extends CustomPainter {
         canvas.drawPath(
           path,
           Paint()
-            ..color = tint.withOpacity(0.22)
+            ..color = tint.withValues(alpha: 0.22)
             ..strokeWidth = 7
             ..style = PaintingStyle.stroke
             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
@@ -437,7 +437,7 @@ class _GraphPainter extends CustomPainter {
         canvas.drawPath(
           path,
           Paint()
-            ..color = tint.withOpacity(0.9)
+            ..color = tint.withValues(alpha: 0.9)
             ..strokeWidth = 2.0
             ..style = PaintingStyle.stroke,
         );
@@ -447,7 +447,7 @@ class _GraphPainter extends CustomPainter {
           pt,
           5.5,
           Paint()
-            ..color = Colors.white.withOpacity(0.85)
+            ..color = Colors.white.withValues(alpha: 0.85)
             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
         );
         canvas.drawCircle(pt, 3.0, Paint()..color = tint);
@@ -460,7 +460,7 @@ class _GraphPainter extends CustomPainter {
           Paint()
             ..color =
                 (isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1))
-                    .withOpacity(0.5)
+                    .withValues(alpha: 0.5)
             ..strokeWidth = 1.1
             ..style = PaintingStyle.stroke,
         );
@@ -501,9 +501,9 @@ class _GraphPainter extends CustomPainter {
       arrowPath,
       Paint()
         ..color = highlighted
-            ? tint.withOpacity(0.9)
+            ? tint.withValues(alpha: 0.9)
             : (isDark ? const Color(0xFF475569) : const Color(0xFF94A3B8))
-                  .withOpacity(0.5)
+                  .withValues(alpha: 0.5)
         ..style = PaintingStyle.fill,
     );
   }
@@ -535,13 +535,13 @@ class _GraphPainter extends CustomPainter {
       bgRect,
       Paint()
         ..color = isDark
-            ? const Color(0xFF0D1526).withOpacity(0.92)
-            : Colors.white.withOpacity(0.94),
+            ? const Color(0xFF0D1526).withValues(alpha: 0.92)
+            : Colors.white.withValues(alpha: 0.94),
     );
     canvas.drawRRect(
       bgRect,
       Paint()
-        ..color = tint.withOpacity(0.35)
+        ..color = tint.withValues(alpha: 0.35)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 0.8,
     );
@@ -563,14 +563,14 @@ class _GraphPainter extends CustomPainter {
           center,
           pr,
           Paint()
-            ..color = color.withOpacity(0.12 + pulseT * 0.1)
+            ..color = color.withValues(alpha: 0.12 + pulseT * 0.1)
             ..style = PaintingStyle.fill,
         );
         canvas.drawCircle(
           center,
           pr,
           Paint()
-            ..color = color.withOpacity(0.45)
+            ..color = color.withValues(alpha: 0.45)
             ..style = PaintingStyle.stroke
             ..strokeWidth = 1.0,
         );
@@ -581,7 +581,7 @@ class _GraphPainter extends CustomPainter {
         center,
         r + 5,
         Paint()
-          ..color = color.withOpacity(isSel ? 0.28 : 0.09)
+          ..color = color.withValues(alpha: isSel ? 0.28 : 0.09)
           ..style = PaintingStyle.fill
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 7),
       );
@@ -603,7 +603,7 @@ class _GraphPainter extends CustomPainter {
         center,
         r,
         Paint()
-          ..color = color.withOpacity(isSel ? 1.0 : 0.65)
+          ..color = color.withValues(alpha: isSel ? 1.0 : 0.65)
           ..style = PaintingStyle.stroke
           ..strokeWidth = isSel ? 2.2 : 1.2,
       );
@@ -636,8 +636,8 @@ class _GraphPainter extends CustomPainter {
         bgRect,
         Paint()
           ..color = isDark
-              ? const Color(0xFF080E1C).withOpacity(0.88)
-              : Colors.white.withOpacity(0.9),
+              ? const Color(0xFF080E1C).withValues(alpha: 0.88)
+              : Colors.white.withValues(alpha: 0.9),
       );
       tp.paint(canvas, labelPos);
     }
@@ -762,9 +762,9 @@ class _StatBadge extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 6),
         decoration: BoxDecoration(
-          color: color.withOpacity(isDark ? 0.12 : 0.07),
+          color: color.withValues(alpha: isDark ? 0.12 : 0.07),
           borderRadius: BorderRadius.circular(7),
-          border: Border.all(color: color.withOpacity(0.22)),
+          border: Border.all(color: color.withValues(alpha: 0.22)),
         ),
         child: Column(
           children: [
@@ -805,9 +805,9 @@ class _NodeDetailHeader extends StatelessWidget {
       curve: Curves.easeOutCubic,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: color.withOpacity(isDark ? 0.12 : 0.07),
+        color: color.withValues(alpha: isDark ? 0.12 : 0.07),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.28)),
+        border: Border.all(color: color.withValues(alpha: 0.28)),
       ),
       child: Row(
         children: [
@@ -815,9 +815,9 @@ class _NodeDetailHeader extends StatelessWidget {
             width: 30,
             height: 30,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha: 0.2),
               shape: BoxShape.circle,
-              border: Border.all(color: color.withOpacity(0.6), width: 1.5),
+              border: Border.all(color: color.withValues(alpha: 0.6), width: 1.5),
             ),
             child: Icon(_typeIcon(node.type), size: 15, color: color),
           ),
@@ -845,7 +845,7 @@ class _NodeDetailHeader extends StatelessWidget {
                     vertical: 1,
                   ),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.18),
+                    color: color.withValues(alpha: 0.18),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
@@ -984,9 +984,9 @@ class _ChainStep extends StatelessWidget {
                     vertical: 1,
                   ),
                   decoration: BoxDecoration(
-                    color: tint.withOpacity(0.09),
+                    color: tint.withValues(alpha: 0.09),
                     borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: tint.withOpacity(0.2)),
+                    border: Border.all(color: tint.withValues(alpha: 0.2)),
                   ),
                   child: Text(
                     relation!,
@@ -1008,14 +1008,14 @@ class _ChainStep extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
           decoration: BoxDecoration(
             color: highlighted
-                ? tint.withOpacity(isDark ? 0.18 : 0.09)
+                ? tint.withValues(alpha: isDark ? 0.18 : 0.09)
                 : (isDark
-                      ? const Color(0xFF111827).withOpacity(0.6)
+                      ? const Color(0xFF111827).withValues(alpha: 0.6)
                       : const Color(0xFFF1F5F9)),
             borderRadius: BorderRadius.circular(6),
             border: Border.all(
               color: highlighted
-                  ? tint.withOpacity(0.38)
+                  ? tint.withValues(alpha: 0.38)
                   : (isDark
                         ? const Color(0xFF1E293B)
                         : const Color(0xFFE2E8F0)),
@@ -1114,9 +1114,9 @@ class _SourceChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
       decoration: BoxDecoration(
-        color: color.withOpacity(isDark ? 0.1 : 0.06),
+        color: color.withValues(alpha: isDark ? 0.1 : 0.06),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withOpacity(0.22)),
+        border: Border.all(color: color.withValues(alpha: 0.22)),
       ),
       child: Row(
         children: [
@@ -1141,3 +1141,4 @@ class _SourceChip extends StatelessWidget {
     );
   }
 }
+

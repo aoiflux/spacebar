@@ -37,10 +37,10 @@ class IconGridWidget extends StatelessWidget {
 
           return Container(
             decoration: BoxDecoration(
-              color: Color(color).withOpacity(0.15),
+              color: Color(color).withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Color(color).withOpacity(0.3),
+                color: Color(color).withValues(alpha: 0.3),
                 width: 1.5,
               ),
             ),
@@ -65,3 +65,4 @@ class IconGridWidget extends StatelessWidget {
     );
   }
 }
+

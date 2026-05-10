@@ -259,9 +259,9 @@ class _SummaryBanner extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-        color: tint.withOpacity(isDark ? 0.13 : 0.1),
+        color: tint.withValues(alpha: isDark ? 0.13 : 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: tint.withOpacity(0.3)),
+        border: Border.all(color: tint.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -551,7 +551,7 @@ class _MethodFileMatrix extends StatelessWidget {
                                   height: 18,
                                   decoration: BoxDecoration(
                                     color: matched
-                                        ? method.color.withOpacity(
+                                        ? method.color.withValues(alpha: 
                                             isHovered ? pulse : 0.7,
                                           )
                                         : (isDark
@@ -582,3 +582,4 @@ class _MethodFileMatrix extends StatelessWidget {
     );
   }
 }
+

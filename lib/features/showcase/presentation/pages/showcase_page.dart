@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spacebar/features/showcase/presentation/constants/showcase_page_constants.dart';
 import 'package:spacebar/features/showcase/presentation/widgets/graph_timeline_widget.dart';
 import 'package:spacebar/features/showcase/presentation/widgets/hierarchical_pipeline_widget.dart';
 import 'package:spacebar/features/showcase/presentation/widgets/keyword_search_widget.dart';
@@ -16,39 +17,283 @@ class ShowcasePage extends StatefulWidget {
 }
 
 class _ShowcasePageState extends State<ShowcasePage> {
-  bool _darkOps = false;
+  bool _darkOps = ShowcaseDefaults.darkOpsEnabled;
 
   ThemeData _buildOpsTheme(ThemeData baseTheme) {
-    final cs = ColorScheme.dark(
-      primary: const Color(0xFF63A0FF),
-      secondary: const Color(0xFF5EEAD4),
-      tertiary: const Color(0xFF8B5CF6),
-      surface: const Color(0xFF111827),
-      onSurface: const Color(0xFFE2E8F0),
-      onSurfaceVariant: const Color(0xFF94A3B8),
-      outline: const Color(0xFF334155),
-      outlineVariant: const Color(0xFF1F2937),
-    );
-
     return baseTheme.copyWith(
       brightness: Brightness.dark,
-      colorScheme: cs,
-      scaffoldBackgroundColor: const Color(0xFF0B1220),
-      cardColor: const Color(0xFF111827),
-      dividerColor: const Color(0xFF263548),
+      colorScheme: ShowcaseColorScheme.ops,
+      scaffoldBackgroundColor: ShowcaseColors.scaffoldDark,
+      cardColor: ShowcaseColors.cardDark,
+      dividerColor: ShowcaseColors.dividerDark,
       appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF0F172A),
-        foregroundColor: Color(0xFFE2E8F0),
+        backgroundColor: ShowcaseColors.appBarDark,
+        foregroundColor: ShowcaseColors.textPrimaryDark,
         surfaceTintColor: Colors.transparent,
       ),
+    );
+  }
+
+  Widget _buildBackground() {
+    if (_darkOps) {
+      return Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: ShowcaseColors.backgroundGradientDark,
+          ),
+        ),
+      );
+    }
+
+    return const ColoredBox(color: ShowcaseColors.backgroundLight);
+  }
+
+  Widget _buildHeader(ThemeData theme) {
+    return SliverAppBar(
+      expandedHeight: ShowcaseDimens.headerExpandedHeight,
+      floating: false,
+      pinned: true,
+      backgroundColor: _darkOps
+          ? ShowcaseColors.appBarDark
+          : ShowcaseColors.surfaceLight,
+      elevation: ShowcaseDimens.zero,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        color: _darkOps
+            ? ShowcaseColors.textPrimaryDark
+            : ShowcaseColors.textInk,
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      flexibleSpace: FlexibleSpaceBar(
+        background: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            ShowcaseDimens.pagePadding,
+            ShowcaseDimens.pagePadding,
+            ShowcaseDimens.pagePadding,
+            ShowcaseDimens.pagePadding,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                ShowcaseStrings.pageTitle,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: _darkOps
+                      ? ShowcaseColors.textPrimaryDark
+                      : ShowcaseColors.textInk,
+                  letterSpacing: ShowcaseDimens.letterSpacingSmall,
+                ),
+              ),
+              const SizedBox(height: ShowcaseDimens.gap6),
+              Text(
+                ShowcaseStrings.pageSubtitle,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: _darkOps
+                      ? ShowcaseColors.textMutedDark
+                      : ShowcaseColors.textMutedLight,
+                  fontSize: ShowcaseDimens.fontBodySmall,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopControls() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          ShowcaseDimens.pagePadding,
+          ShowcaseDimens.gap12,
+          ShowcaseDimens.pagePadding,
+          ShowcaseDimens.zero,
+        ),
+        child: Column(
+          children: [
+            _DashboardControlStrip(
+              darkOps: _darkOps,
+              onToggleDarkOps: () {
+                setState(() => _darkOps = !_darkOps);
+              },
+            ),
+            const SizedBox(height: ShowcaseDimens.gap10),
+            _KpiRow(darkOps: _darkOps),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShowcaseContent({
+    required bool isMobile,
+    required int crossAxisCount,
+  }) {
+    return SliverPadding(
+      padding: const EdgeInsets.all(ShowcaseDimens.pagePadding),
+      sliver: SliverToBoxAdapter(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            const spacing = ShowcaseDimens.sectionSpacing;
+            final totalSpacing = spacing * (crossAxisCount - 1);
+            final cardWidth =
+                (constraints.maxWidth - totalSpacing) / crossAxisCount;
+            final regularHeight = isMobile
+                ? ShowcaseDimens.mobileCardHeight
+                : ShowcaseDimens.desktopCardHeight;
+            final artefactHeight = isMobile
+                ? ShowcaseDimens.mobileGraphHeight
+                : ShowcaseDimens.desktopGraphHeight;
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _SectionLabel(
+                  number: ShowcaseStrings.ingestionSectionNumber,
+                  title: ShowcaseStrings.ingestionSectionTitle,
+                  subtitle: ShowcaseStrings.ingestionSectionSubtitle,
+                  darkOps: _darkOps,
+                ),
+                const SizedBox(height: ShowcaseDimens.gap10),
+                _buildIngestionWrap(
+                  cardWidth: cardWidth,
+                  cardHeight: regularHeight,
+                ),
+                const SizedBox(height: spacing),
+                _SectionLabel(
+                  number: ShowcaseStrings.correlationSectionNumber,
+                  title: ShowcaseStrings.correlationSectionTitle,
+                  subtitle: ShowcaseStrings.correlationSectionSubtitle,
+                  darkOps: _darkOps,
+                ),
+                const SizedBox(height: ShowcaseDimens.gap10),
+                SizedBox(
+                  width: double.infinity,
+                  height: artefactHeight,
+                  child: const GraphTimelineWidget(
+                    title: ShowcaseStrings.artefactGraphTitle,
+                    description: ShowcaseStrings.artefactGraphDescription,
+                    mockData: FeatureShowcaseData.provenanceGraphData,
+                    tint: ShowcaseColors.tintViolet,
+                  ),
+                ),
+                const SizedBox(height: spacing),
+                _SectionLabel(
+                  number: ShowcaseStrings.intelligenceSectionNumber,
+                  title: ShowcaseStrings.intelligenceSectionTitle,
+                  subtitle: ShowcaseStrings.intelligenceSectionSubtitle,
+                  darkOps: _darkOps,
+                ),
+                const SizedBox(height: ShowcaseDimens.gap10),
+                _buildIntelligenceWrap(
+                  cardWidth: cardWidth,
+                  cardHeight: regularHeight,
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIngestionWrap({
+    required double cardWidth,
+    required double cardHeight,
+  }) {
+    return Wrap(
+      spacing: ShowcaseDimens.sectionSpacing,
+      runSpacing: ShowcaseDimens.sectionSpacing,
+      children: [
+        SizedBox(
+          width: cardWidth,
+          height: cardHeight,
+          child: const WatcherPipelineWidget(
+            title: ShowcaseStrings.watcherCardTitle,
+            description: ShowcaseStrings.watcherCardDescription,
+            mockData: FeatureShowcaseData.watcherPipelineData,
+            tint: ShowcaseColors.tintBlue,
+          ),
+        ),
+        SizedBox(
+          width: cardWidth,
+          height: cardHeight,
+          child: const HierarchicalPipelineWidget(
+            title: ShowcaseStrings.diskPipelineCardTitle,
+            description: ShowcaseStrings.diskPipelineCardDescription,
+            mockData: FeatureShowcaseData.dedupCompressData,
+            tint: ShowcaseColors.tintAmber,
+          ),
+        ),
+        SizedBox(
+          width: cardWidth,
+          height: cardHeight,
+          child: const ScrollingListWidget(
+            title: ShowcaseStrings.microArtifactCardTitle,
+            description: ShowcaseStrings.microArtifactCardDescription,
+            items: FeatureShowcaseData.microArtifactItems,
+            tint: ShowcaseColors.tintViolet,
+          ),
+        ),
+        SizedBox(
+          width: cardWidth,
+          height: cardHeight,
+          child: const KeywordSearchWidget(
+            title: ShowcaseStrings.keywordCardTitle,
+            description: ShowcaseStrings.keywordCardDescription,
+            mockData: FeatureShowcaseData.keywordSearchData,
+            tint: ShowcaseColors.tintSky,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildIntelligenceWrap({
+    required double cardWidth,
+    required double cardHeight,
+  }) {
+    return Wrap(
+      spacing: ShowcaseDimens.sectionSpacing,
+      runSpacing: ShowcaseDimens.sectionSpacing,
+      children: [
+        SizedBox(
+          width: cardWidth,
+          height: cardHeight,
+          child: const SimilarityIndexWidget(
+            title: ShowcaseStrings.similarityCardTitle,
+            description: ShowcaseStrings.similarityCardDescription,
+            mockData: FeatureShowcaseData.similarityIndexData,
+            tint: ShowcaseColors.tintRed,
+          ),
+        ),
+        SizedBox(
+          width: cardWidth,
+          height: cardHeight,
+          child: const NetworkGraphWidget(
+            title: ShowcaseStrings.crossCaseCardTitle,
+            description: ShowcaseStrings.crossCaseCardDescription,
+            mockData: FeatureShowcaseData.crossCaseLinksData,
+            tint: ShowcaseColors.tintAmber,
+          ),
+        ),
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final baseTheme = Theme.of(context);
-    final isMobile = MediaQuery.of(context).size.width < 600;
-    final crossAxisCount = isMobile ? 1 : 2;
+    final isMobile =
+        MediaQuery.of(context).size.width < ShowcaseDimens.mobileBreakpoint;
+    final crossAxisCount = isMobile
+        ? ShowcaseLayout.mobileCrossAxisCount
+        : ShowcaseLayout.desktopCrossAxisCount;
     final pageTheme = _darkOps ? _buildOpsTheme(baseTheme) : baseTheme;
 
     return Theme(
@@ -61,245 +306,20 @@ class _ShowcasePageState extends State<ShowcasePage> {
             body: SafeArea(
               child: Stack(
                 children: [
-                  // Background
-                  Positioned.fill(
-                    child: _darkOps
-                        ? Container(
-                            decoration: const BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Color(0xFF070E1A),
-                                  Color(0xFF0B1220),
-                                  Color(0xFF0F172A),
-                                ],
-                              ),
-                            ),
-                          )
-                        : Container(color: const Color(0xFFF4F6FA)),
-                  ),
-                  // Content
+                  Positioned.fill(child: _buildBackground()),
                   CustomScrollView(
                     slivers: [
-                      // Header
-                      SliverAppBar(
-                        expandedHeight: 140,
-                        floating: false,
-                        pinned: true,
-                        backgroundColor: _darkOps
-                            ? const Color(0xFF0F172A)
-                            : Colors.white,
-                        elevation: 0,
-                        leading: IconButton(
-                          icon: const Icon(Icons.arrow_back),
-                          color: _darkOps
-                              ? const Color(0xFFE2E8F0)
-                              : const Color(0xFF0F1C2E),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
-                        flexibleSpace: FlexibleSpaceBar(
-                          background: Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  'Feature Showcase',
-                                  style: theme.textTheme.headlineSmall
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.w700,
-                                        color: _darkOps
-                                            ? const Color(0xFFE2E8F0)
-                                            : const Color(0xFF0F1C2E),
-                                        letterSpacing: 0.2,
-                                      ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  'Visual overview of core capabilities',
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: _darkOps
-                                        ? const Color(0xFF94A3B8)
-                                        : const Color(0xFF52637A),
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                      _buildHeader(theme),
+                      _buildTopControls(),
+                      _buildShowcaseContent(
+                        isMobile: isMobile,
+                        crossAxisCount: crossAxisCount,
                       ),
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                          child: Column(
-                            children: [
-                              _DashboardControlStrip(
-                                darkOps: _darkOps,
-                                onToggleDarkOps: () {
-                                  setState(() => _darkOps = !_darkOps);
-                                },
-                              ),
-                              const SizedBox(height: 10),
-                              _KpiRow(darkOps: _darkOps),
-                            ],
-                          ),
+                      const SliverPadding(
+                        padding: EdgeInsets.only(
+                          bottom: ShowcaseDimens.footerBottomPadding,
                         ),
-                      ),
-                      // Responsive showcase rows
-                      SliverPadding(
-                        padding: const EdgeInsets.all(16),
-                        sliver: SliverToBoxAdapter(
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              const spacing = 16.0;
-                              final totalSpacing =
-                                  spacing * (crossAxisCount - 1);
-                              final cardWidth =
-                                  (constraints.maxWidth - totalSpacing) /
-                                  crossAxisCount;
-                              final regularHeight = isMobile ? 330.0 : 360.0;
-                              final artefactHeight = isMobile ? 480.0 : 560.0;
-
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _SectionLabel(
-                                    number: 1,
-                                    title: 'Ingestion & Processing',
-                                    subtitle:
-                                        'Live watcher telemetry and hierarchical parsing flow',
-                                    darkOps: _darkOps,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Wrap(
-                                    spacing: spacing,
-                                    runSpacing: spacing,
-                                    children: [
-                                      SizedBox(
-                                        width: cardWidth,
-                                        height: regularHeight,
-                                        child: WatcherPipelineWidget(
-                                          title:
-                                              'Background Watcher + Processing Pipeline',
-                                          description:
-                                              'Auto-detect new evidence and push through dedupe, carve, parse, and index.',
-                                          mockData: FeatureShowcaseData
-                                              .watcherPipelineData,
-                                          tint: const Color(0xFF0B57D0),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: cardWidth,
-                                        height: regularHeight,
-                                        child: HierarchicalPipelineWidget(
-                                          title:
-                                              'Disk Image Processing Pipeline',
-                                          description:
-                                              'Deduplicate + Zstd-compress first, then parse and index asynchronously across partitions and file systems.',
-                                          mockData: FeatureShowcaseData
-                                              .dedupCompressData,
-                                          tint: const Color(0xFFF59E0B),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: cardWidth,
-                                        height: regularHeight,
-                                        child: ScrollingListWidget(
-                                          title: 'Micro-Artifact Extraction',
-                                          description:
-                                              'Stream of extracted atomic artifacts',
-                                          items: FeatureShowcaseData
-                                              .microArtifactItems,
-                                          tint: const Color(0xFF6941C6),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: cardWidth,
-                                        height: regularHeight,
-                                        child: KeywordSearchWidget(
-                                          title: 'Keyword Search',
-                                          description:
-                                              'Fast indexed search across all extracted artefacts.',
-                                          mockData: FeatureShowcaseData
-                                              .keywordSearchData,
-                                          tint: const Color(0xFF38BDF8),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: spacing),
-                                  _SectionLabel(
-                                    number: 2,
-                                    title: 'Correlation Board',
-                                    subtitle:
-                                        'Cross-source evidence linkage across files, memory, and packets',
-                                    darkOps: _darkOps,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    height: artefactHeight,
-                                    child: GraphTimelineWidget(
-                                      title: 'Artefact Relation Graph',
-                                      description:
-                                          'Evidence-board style relationships across indexed files, memory images, and packet captures.',
-                                      mockData: FeatureShowcaseData
-                                          .provenanceGraphData,
-                                      tint: const Color(0xFF6941C6),
-                                    ),
-                                  ),
-                                  const SizedBox(height: spacing),
-                                  _SectionLabel(
-                                    number: 3,
-                                    title: 'Cross-Case Intelligence',
-                                    subtitle:
-                                        'Artefact linking across disk images, RAM captures, and network captures',
-                                    darkOps: _darkOps,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Wrap(
-                                    spacing: spacing,
-                                    runSpacing: spacing,
-                                    children: [
-                                      SizedBox(
-                                        width: cardWidth,
-                                        height: regularHeight,
-                                        child: SimilarityIndexWidget(
-                                          title: 'Artefact Similarity Index',
-                                          description:
-                                              'Five-signal evidence fusion ranks related files and highlights repackaged malware likelihood.',
-                                          mockData: FeatureShowcaseData
-                                              .similarityIndexData,
-                                          tint: const Color(0xFFEF4444),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: cardWidth,
-                                        height: regularHeight,
-                                        child: NetworkGraphWidget(
-                                          title: 'Cross-Case Links',
-                                          description:
-                                              'One campaign, multiple incidents.',
-                                          mockData: FeatureShowcaseData
-                                              .crossCaseLinksData,
-                                          tint: const Color(0xFFF59E0B),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      // Footer spacing
-                      SliverPadding(
-                        padding: const EdgeInsets.only(bottom: 32),
-                        sliver: SliverToBoxAdapter(child: Container()),
+                        sliver: SliverToBoxAdapter(child: SizedBox.shrink()),
                       ),
                     ],
                   ),
@@ -326,78 +346,54 @@ class _DashboardControlStrip extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final compact = constraints.maxWidth < 820;
+        final compact = constraints.maxWidth < ShowcaseDimens.compactBreakpoint;
+        final controls = Wrap(
+          spacing: ShowcaseDimens.gap8,
+          runSpacing: ShowcaseDimens.gap8,
+          children: ShowcaseData.controlTabs
+              .map(
+                (tab) => _ControlPill(
+                  label: tab.label,
+                  active: tab.active,
+                  darkOps: darkOps,
+                ),
+              )
+              .toList(growable: false),
+        );
+
+        final statusWidgets = [
+          _StatusPill(
+            label: ShowcaseStrings.systemStatusLabel,
+            value: ShowcaseStrings.systemStatusValue,
+            darkOps: darkOps,
+          ),
+          const SizedBox(width: ShowcaseDimens.gap8),
+          _ModeTogglePill(darkOps: darkOps, onTap: onToggleDarkOps),
+        ];
+
         return Container(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(ShowcaseDimens.gap10),
           decoration: BoxDecoration(
-            color: darkOps ? const Color(0xFF111827) : const Color(0xFFF8FAFC),
-            borderRadius: BorderRadius.circular(12),
+            color: darkOps
+                ? ShowcaseColors.cardDark
+                : ShowcaseColors.cardLightAlt,
+            borderRadius: BorderRadius.circular(ShowcaseDimens.radius12),
             border: Border.all(
               color: darkOps
-                  ? const Color(0xFF334155)
-                  : const Color(0xFFE2E8F0),
+                  ? ShowcaseColors.borderDark
+                  : ShowcaseColors.borderLight,
             ),
           ),
           child: compact
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        _ControlPill(
-                          label: 'Algorithm',
-                          active: true,
-                          darkOps: darkOps,
-                        ),
-                        _ControlPill(label: 'Models', darkOps: darkOps),
-                        _ControlPill(label: 'How it works', darkOps: darkOps),
-                        _ControlPill(label: 'Customize', darkOps: darkOps),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        _StatusPill(
-                          label: 'System Status',
-                          value: 'Online',
-                          darkOps: darkOps,
-                        ),
-                        const SizedBox(width: 8),
-                        _ModeTogglePill(
-                          darkOps: darkOps,
-                          onTap: onToggleDarkOps,
-                        ),
-                      ],
-                    ),
+                    controls,
+                    const SizedBox(height: ShowcaseDimens.gap8),
+                    Row(children: statusWidgets),
                   ],
                 )
-              : Row(
-                  children: [
-                    Wrap(
-                      spacing: 8,
-                      children: [
-                        _ControlPill(
-                          label: 'Algorithm',
-                          active: true,
-                          darkOps: darkOps,
-                        ),
-                        _ControlPill(label: 'Models', darkOps: darkOps),
-                        _ControlPill(label: 'How it works', darkOps: darkOps),
-                        _ControlPill(label: 'Customize', darkOps: darkOps),
-                      ],
-                    ),
-                    const Spacer(),
-                    _StatusPill(
-                      label: 'System Status',
-                      value: 'Online',
-                      darkOps: darkOps,
-                    ),
-                    const SizedBox(width: 8),
-                    _ModeTogglePill(darkOps: darkOps, onTap: onToggleDarkOps),
-                  ],
-                ),
+              : Row(children: [controls, const Spacer(), ...statusWidgets]),
         );
       },
     );
@@ -418,24 +414,39 @@ class _ControlPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(
+        horizontal: ShowcaseDimens.gap10,
+        vertical: ShowcaseDimens.gap6,
+      ),
       decoration: BoxDecoration(
         color: active
-            ? (darkOps ? const Color(0xFF1E3A8A) : const Color(0xFFE0ECFF))
-            : (darkOps ? const Color(0xFF0F172A) : Colors.white),
-        borderRadius: BorderRadius.circular(999),
+            ? (darkOps
+                  ? ShowcaseColors.pillActiveDark
+                  : ShowcaseColors.pillActiveLight)
+            : (darkOps
+                  ? ShowcaseColors.panelDark
+                  : ShowcaseColors.surfaceLight),
+        borderRadius: BorderRadius.circular(ShowcaseDimens.pillRadius),
         border: Border.all(
           color: active
-              ? (darkOps ? const Color(0xFF3B82F6) : const Color(0xFFB5CDF7))
-              : (darkOps ? const Color(0xFF334155) : const Color(0xFFE2E8F0)),
+              ? (darkOps
+                    ? ShowcaseColors.pillActiveBorderDark
+                    : ShowcaseColors.pillActiveBorderLight)
+              : (darkOps
+                    ? ShowcaseColors.borderDark
+                    : ShowcaseColors.borderLight),
         ),
       ),
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
           color: active
-              ? (darkOps ? const Color(0xFFBFDBFE) : const Color(0xFF0B57D0))
-              : (darkOps ? const Color(0xFF94A3B8) : const Color(0xFF475569)),
+              ? (darkOps
+                    ? ShowcaseColors.pillActiveTextDark
+                    : ShowcaseColors.pillActiveTextLight)
+              : (darkOps
+                    ? ShowcaseColors.textMutedDark
+                    : ShowcaseColors.textSecondary),
           fontWeight: FontWeight.w700,
         ),
       ),
@@ -457,30 +468,37 @@ class _StatusPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(
+        horizontal: ShowcaseDimens.gap10,
+        vertical: ShowcaseDimens.gap6,
+      ),
       decoration: BoxDecoration(
-        color: darkOps ? const Color(0xFF052E25) : const Color(0xFFECFDF3),
-        borderRadius: BorderRadius.circular(999),
+        color: darkOps
+            ? ShowcaseColors.statusBgDark
+            : ShowcaseColors.statusBgLight,
+        borderRadius: BorderRadius.circular(ShowcaseDimens.pillRadius),
         border: Border.all(
-          color: darkOps ? const Color(0xFF0D7A5F) : const Color(0xFFB7E8C9),
+          color: darkOps
+              ? ShowcaseColors.statusBorderDark
+              : ShowcaseColors.statusBorderLight,
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 7,
-            height: 7,
+            width: ShowcaseDimens.statusDotSize,
+            height: ShowcaseDimens.statusDotSize,
             decoration: const BoxDecoration(
-              color: Color(0xFF0D7A5F),
+              color: ShowcaseColors.statusAccent,
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: ShowcaseDimens.gap6),
           Text(
             '$label: $value',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: const Color(0xFF0D7A5F),
+              color: ShowcaseColors.statusAccent,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -499,52 +517,30 @@ class _KpiRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final compact = constraints.maxWidth < 820;
+        final compact = constraints.maxWidth < ShowcaseDimens.compactBreakpoint;
         final tileWidth = compact
             ? constraints.maxWidth
-            : (constraints.maxWidth - 30) / 4;
+            : (constraints.maxWidth -
+                      (ShowcaseDimens.kpiSpacing *
+                          (ShowcaseLayout.kpiColumns - 1))) /
+                  ShowcaseLayout.kpiColumns;
 
         return Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: [
-            SizedBox(
-              width: tileWidth,
-              child: _KpiTile(
-                label: 'Active Cases',
-                value: '27',
-                accent: Color(0xFF0B57D0),
-                darkOps: darkOps,
-              ),
-            ),
-            SizedBox(
-              width: tileWidth,
-              child: _KpiTile(
-                label: 'Indexed Entries',
-                value: '2.4M',
-                accent: Color(0xFF7C3AED),
-                darkOps: darkOps,
-              ),
-            ),
-            SizedBox(
-              width: tileWidth,
-              child: _KpiTile(
-                label: 'Correlation Hits',
-                value: '312',
-                accent: Color(0xFFDC2626),
-                darkOps: darkOps,
-              ),
-            ),
-            SizedBox(
-              width: tileWidth,
-              child: _KpiTile(
-                label: 'Watcher Queue',
-                value: '03',
-                accent: Color(0xFF0D7A5F),
-                darkOps: darkOps,
-              ),
-            ),
-          ],
+          spacing: ShowcaseDimens.kpiSpacing,
+          runSpacing: ShowcaseDimens.kpiSpacing,
+          children: ShowcaseData.kpis
+              .map(
+                (kpi) => SizedBox(
+                  width: tileWidth,
+                  child: _KpiTile(
+                    label: kpi.label,
+                    value: kpi.value,
+                    accent: kpi.accent,
+                    darkOps: darkOps,
+                  ),
+                ),
+              )
+              .toList(growable: false),
         );
       },
     );
@@ -567,25 +563,30 @@ class _KpiTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      padding: const EdgeInsets.symmetric(
+        horizontal: ShowcaseDimens.gap10,
+        vertical: ShowcaseDimens.gap10,
+      ),
       decoration: BoxDecoration(
-        color: darkOps ? const Color(0xFF111827) : Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        color: darkOps ? ShowcaseColors.cardDark : ShowcaseColors.surfaceLight,
+        borderRadius: BorderRadius.circular(ShowcaseDimens.radius10),
         border: Border.all(
-          color: darkOps ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+          color: darkOps
+              ? ShowcaseColors.borderDark
+              : ShowcaseColors.borderLight,
         ),
       ),
       child: Row(
         children: [
           Container(
-            width: 6,
-            height: 28,
+            width: ShowcaseDimens.kpiAccentWidth,
+            height: ShowcaseDimens.kpiAccentHeight,
             decoration: BoxDecoration(
               color: accent,
-              borderRadius: BorderRadius.circular(3),
+              borderRadius: BorderRadius.circular(ShowcaseDimens.radius3),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: ShowcaseDimens.gap8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -594,18 +595,18 @@ class _KpiTile extends StatelessWidget {
                   value,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: darkOps
-                        ? const Color(0xFFE2E8F0)
-                        : const Color(0xFF0F172A),
+                        ? ShowcaseColors.textPrimaryDark
+                        : ShowcaseColors.panelDark,
                     fontWeight: FontWeight.w800,
-                    letterSpacing: 0.1,
+                    letterSpacing: ShowcaseDimens.letterSpacingTiny,
                   ),
                 ),
                 Text(
                   label,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: darkOps
-                        ? const Color(0xFF94A3B8)
-                        : const Color(0xFF64748B),
+                        ? ShowcaseColors.textMutedDark
+                        : ShowcaseColors.textLabelLight,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -637,49 +638,48 @@ class _SectionLabel extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Gradient accent bar
         Container(
-          width: 3,
-          height: 36,
+          width: ShowcaseDimens.sectionAccentWidth,
+          height: ShowcaseDimens.sectionAccentHeight,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [const Color(0xFF6941C6), const Color(0xFF3B82F6)],
+              colors: [ShowcaseColors.tintViolet, ShowcaseColors.accentBlue],
             ),
-            borderRadius: BorderRadius.circular(3),
+            borderRadius: BorderRadius.circular(ShowcaseDimens.radius3),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: ShowcaseDimens.gap12),
         if (number != null) ...[
           Container(
-            width: 22,
-            height: 22,
+            width: ShowcaseDimens.badgeSize,
+            height: ShowcaseDimens.badgeSize,
             decoration: BoxDecoration(
               color: darkOps
-                  ? const Color(0xFF1E293B)
-                  : const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(6),
+                  ? ShowcaseColors.badgeBgDark
+                  : ShowcaseColors.badgeBgLight,
+              borderRadius: BorderRadius.circular(ShowcaseDimens.radius6),
               border: Border.all(
                 color: darkOps
-                    ? const Color(0xFF334155)
-                    : const Color(0xFFE2E8F0),
+                    ? ShowcaseColors.borderDark
+                    : ShowcaseColors.borderLight,
               ),
             ),
             child: Center(
               child: Text(
                 '$number',
                 style: theme.textTheme.labelSmall?.copyWith(
-                  fontSize: 10,
+                  fontSize: ShowcaseDimens.fontBadge,
                   fontWeight: FontWeight.w800,
                   color: darkOps
-                      ? const Color(0xFF64748B)
-                      : const Color(0xFF94A3B8),
+                      ? ShowcaseColors.badgeTextDark
+                      : ShowcaseColors.badgeTextLight,
                 ),
               ),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: ShowcaseDimens.gap10),
         ],
         Expanded(
           child: Column(
@@ -689,22 +689,22 @@ class _SectionLabel extends StatelessWidget {
                 title,
                 style: theme.textTheme.titleSmall?.copyWith(
                   color: darkOps
-                      ? const Color(0xFFE2E8F0)
-                      : const Color(0xFF0F172A),
+                      ? ShowcaseColors.textPrimaryDark
+                      : ShowcaseColors.panelDark,
                   fontWeight: FontWeight.w800,
-                  fontSize: 14,
-                  letterSpacing: 0.1,
+                  fontSize: ShowcaseDimens.fontTitleSmall,
+                  letterSpacing: ShowcaseDimens.letterSpacingTiny,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: ShowcaseDimens.gap2),
               Text(
                 subtitle,
                 style: theme.textTheme.labelSmall?.copyWith(
                   color: darkOps
-                      ? const Color(0xFF475569)
-                      : const Color(0xFF94A3B8),
+                      ? ShowcaseColors.sectionSubtitleDark
+                      : ShowcaseColors.sectionSubtitleLight,
                   fontWeight: FontWeight.w600,
-                  fontSize: 11,
+                  fontSize: ShowcaseDimens.fontSubtitleSmall,
                 ),
               ),
             ],
@@ -725,14 +725,21 @@ class _ModeTogglePill extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(999),
+      borderRadius: BorderRadius.circular(ShowcaseDimens.pillRadius),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        padding: const EdgeInsets.symmetric(
+          horizontal: ShowcaseDimens.gap10,
+          vertical: ShowcaseDimens.gap6,
+        ),
         decoration: BoxDecoration(
-          color: darkOps ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
-          borderRadius: BorderRadius.circular(999),
+          color: darkOps
+              ? ShowcaseColors.modeBgDark
+              : ShowcaseColors.modeBgLight,
+          borderRadius: BorderRadius.circular(ShowcaseDimens.pillRadius),
           border: Border.all(
-            color: darkOps ? const Color(0xFF475569) : const Color(0xFFCBD5E1),
+            color: darkOps
+                ? ShowcaseColors.modeBorderDark
+                : ShowcaseColors.modeBorderLight,
           ),
         ),
         child: Row(
@@ -740,19 +747,19 @@ class _ModeTogglePill extends StatelessWidget {
           children: [
             Icon(
               darkOps ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
-              size: 14,
+              size: ShowcaseDimens.modeIconSize,
               color: darkOps
-                  ? const Color(0xFFBFDBFE)
-                  : const Color(0xFF334155),
+                  ? ShowcaseColors.modeTextDark
+                  : ShowcaseColors.modeTextLight,
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: ShowcaseDimens.gap6),
             Text(
-              darkOps ? 'Dark Ops' : 'Light Ops',
+              darkOps ? ShowcaseStrings.modeDark : ShowcaseStrings.modeLight,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 fontWeight: FontWeight.w800,
                 color: darkOps
-                    ? const Color(0xFFBFDBFE)
-                    : const Color(0xFF334155),
+                    ? ShowcaseColors.modeTextDark
+                    : ShowcaseColors.modeTextLight,
               ),
             ),
           ],

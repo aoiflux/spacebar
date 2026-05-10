@@ -44,7 +44,7 @@ class DonutChartWidget extends StatelessWidget {
                     painter: DonutPainter(
                       percentage: ratio / 100,
                       color: tint ?? const Color(0xFF0D7A5F),
-                      backgroundColor: theme.dividerColor.withOpacity(0.2),
+                      backgroundColor: theme.dividerColor.withValues(alpha: 0.2),
                     ),
                   ),
                   // Center text
@@ -79,7 +79,7 @@ class DonutChartWidget extends StatelessWidget {
               _LegendItem(
                 label: 'Raw Size',
                 value: rawSize,
-                color: theme.dividerColor.withOpacity(0.4),
+                color: theme.dividerColor.withValues(alpha: 0.4),
               ),
               _LegendItem(
                 label: 'Saved',
@@ -187,3 +187,4 @@ class _LegendItem extends StatelessWidget {
     );
   }
 }
+

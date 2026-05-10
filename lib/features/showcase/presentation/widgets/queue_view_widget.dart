@@ -36,10 +36,10 @@ class QueueViewWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
-              color: const Color(0xFF0D7A5F).withOpacity(0.08),
+              color: const Color(0xFF0D7A5F).withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: const Color(0xFF0D7A5F).withOpacity(0.15),
+                color: const Color(0xFF0D7A5F).withValues(alpha: 0.15),
               ),
             ),
             child: Row(
@@ -103,7 +103,7 @@ class QueueViewWidget extends StatelessWidget {
           Container(
             height: 6,
             decoration: BoxDecoration(
-              color: theme.dividerColor.withOpacity(0.2),
+              color: theme.dividerColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(3),
             ),
             clipBehavior: Clip.hardEdge,
@@ -161,9 +161,9 @@ class _QueueStatusCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.2), width: 1.5),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -192,3 +192,4 @@ class _QueueStatusCard extends StatelessWidget {
     );
   }
 }
+

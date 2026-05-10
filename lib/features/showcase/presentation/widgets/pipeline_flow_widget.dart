@@ -49,16 +49,16 @@ class PipelineFlowWidget extends StatelessWidget {
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: [
-                                  tint?.withOpacity(0.8) ??
+                                  tint?.withValues(alpha: 0.8) ??
                                       const Color(0xFF0B57D0),
-                                  tint?.withOpacity(0.6) ??
-                                      const Color(0xFF0B57D0).withOpacity(0.6),
+                                  tint?.withValues(alpha: 0.6) ??
+                                      const Color(0xFF0B57D0).withValues(alpha: 0.6),
                                 ],
                               ),
                               boxShadow: [
                                 BoxShadow(
                                   color: (tint ?? const Color(0xFF0B57D0))
-                                      .withOpacity(0.2),
+                                      .withValues(alpha: 0.2),
                                   blurRadius: 8,
                                   spreadRadius: 2,
                                 ),
@@ -98,7 +98,7 @@ class PipelineFlowWidget extends StatelessWidget {
                                 Icons.arrow_forward,
                                 size: 16,
                                 color: (tint ?? const Color(0xFF0B57D0))
-                                    .withOpacity(0.5),
+                                    .withValues(alpha: 0.5),
                               ),
                               const SizedBox(height: 8),
                             ],
@@ -115,10 +115,10 @@ class PipelineFlowWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: (tint ?? const Color(0xFF0B57D0)).withOpacity(0.08),
+              color: (tint ?? const Color(0xFF0B57D0)).withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: (tint ?? const Color(0xFF0B57D0)).withOpacity(0.15),
+                color: (tint ?? const Color(0xFF0B57D0)).withValues(alpha: 0.15),
               ),
             ),
             child: Text(
@@ -135,3 +135,4 @@ class PipelineFlowWidget extends StatelessWidget {
     );
   }
 }
+

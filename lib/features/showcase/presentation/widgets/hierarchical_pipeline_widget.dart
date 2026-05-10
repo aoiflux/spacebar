@@ -298,16 +298,16 @@ class _StageRail extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: isSel
                             ? s.color
-                            : s.color.withOpacity(isDark ? 0.12 : 0.08),
+                            : s.color.withValues(alpha: isDark ? 0.12 : 0.08),
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: s.color.withOpacity(isSel ? 1.0 : 0.35),
+                          color: s.color.withValues(alpha: isSel ? 1.0 : 0.35),
                           width: isSel ? 2.0 : 1.2,
                         ),
                         boxShadow: isSel
                             ? [
                                 BoxShadow(
-                                  color: s.color.withOpacity(0.45),
+                                  color: s.color.withValues(alpha: 0.45),
                                   blurRadius: 16,
                                 ),
                               ]
@@ -316,7 +316,7 @@ class _StageRail extends StatelessWidget {
                       child: Icon(
                         s.icon,
                         size: isSel ? 20 : 15,
-                        color: isSel ? Colors.white : s.color.withOpacity(0.75),
+                        color: isSel ? Colors.white : s.color.withValues(alpha: 0.75),
                       ),
                     ),
                     const SizedBox(height: 5),
@@ -343,7 +343,7 @@ class _StageRail extends StatelessWidget {
                           vertical: 1,
                         ),
                         decoration: BoxDecoration(
-                          color: s.color.withOpacity(0.14),
+                          color: s.color.withValues(alpha: 0.14),
                           borderRadius: BorderRadius.circular(3),
                         ),
                         child: Text(
@@ -401,7 +401,7 @@ class _RailPainter extends CustomPainter {
         Offset(toX - 19, cy),
         Paint()
           ..color = isHighlighted
-              ? colors[i].withOpacity(0.55)
+              ? colors[i].withValues(alpha: 0.55)
               : (isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0))
           ..strokeWidth = isHighlighted ? 2.0 : 1.2
           ..style = PaintingStyle.stroke,
@@ -418,7 +418,7 @@ class _RailPainter extends CustomPainter {
           Offset(px, cy),
           6,
           Paint()
-            ..color = colors[i].withOpacity(0.22)
+            ..color = colors[i].withValues(alpha: 0.22)
             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
         );
         canvas.drawCircle(Offset(px, cy), 2.8, Paint()..color = colors[i]);
@@ -503,7 +503,7 @@ class _PathBar extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: current.color.withOpacity(0.14),
+              color: current.color.withValues(alpha: 0.14),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
@@ -520,8 +520,8 @@ class _PathBar extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
               color: current.mode == _StageMode.async
-                  ? const Color(0xFF7C3AED).withOpacity(0.14)
-                  : const Color(0xFF0D7A5F).withOpacity(0.14),
+                  ? const Color(0xFF7C3AED).withValues(alpha: 0.14)
+                  : const Color(0xFF0D7A5F).withValues(alpha: 0.14),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
@@ -638,9 +638,9 @@ class _OutputGrid extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               decoration: BoxDecoration(
-                color: stageColor.withOpacity(isDark ? 0.07 : 0.05),
+                color: stageColor.withValues(alpha: isDark ? 0.07 : 0.05),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: stageColor.withOpacity(0.22)),
+                border: Border.all(color: stageColor.withValues(alpha: 0.22)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -651,7 +651,7 @@ class _OutputGrid extends StatelessWidget {
                       Icon(
                         o.icon,
                         size: 13,
-                        color: stageColor.withOpacity(0.8),
+                        color: stageColor.withValues(alpha: 0.8),
                       ),
                       const SizedBox(width: 5),
                       Expanded(
@@ -836,3 +836,4 @@ class _FooterDivider extends StatelessWidget {
     );
   }
 }
+

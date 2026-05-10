@@ -396,14 +396,14 @@ class _ShowcaseButtonState extends State<_ShowcaseButton>
                 boxShadow: _isHovered
                     ? [
                         BoxShadow(
-                          color: const Color(0xFF6941C6).withOpacity(0.4),
+                          color: const Color(0xFF6941C6).withValues(alpha: 0.4),
                           blurRadius: 12,
                           spreadRadius: 2,
                         ),
                       ]
                     : [
                         BoxShadow(
-                          color: const Color(0xFF6941C6).withOpacity(0.2),
+                          color: const Color(0xFF6941C6).withValues(alpha: 0.2),
                           blurRadius: 6,
                           spreadRadius: 0,
                         ),
@@ -439,3 +439,4 @@ class _ShowcaseButtonState extends State<_ShowcaseButton>
     );
   }
 }
+

@@ -84,7 +84,7 @@ class _KeywordSearchWidgetState extends State<KeywordSearchWidget>
                       ? const Color(0xFF0B1324)
                       : const Color(0xFFF8FAFC),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: tint.withOpacity(0.35)),
+                  border: Border.all(color: tint.withValues(alpha: 0.35)),
                 ),
                 child: Row(
                   children: [
@@ -144,15 +144,15 @@ class _KeywordSearchWidgetState extends State<KeywordSearchWidget>
                       ),
                       decoration: BoxDecoration(
                         color: highlighted
-                            ? tint.withOpacity(0.12)
+                            ? tint.withValues(alpha: 0.12)
                             : (theme.brightness == Brightness.dark
                                   ? const Color(0xFF111827)
                                   : const Color(0xFFF8FAFC)),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: highlighted
-                              ? tint.withOpacity(0.45)
-                              : tint.withOpacity(0.18),
+                              ? tint.withValues(alpha: 0.45)
+                              : tint.withValues(alpha: 0.18),
                         ),
                       ),
                       child: Row(
@@ -161,7 +161,7 @@ class _KeywordSearchWidgetState extends State<KeywordSearchWidget>
                             width: 6,
                             height: 6,
                             decoration: BoxDecoration(
-                              color: highlighted ? tint : tint.withOpacity(0.4),
+                              color: highlighted ? tint : tint.withValues(alpha: 0.4),
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -227,9 +227,9 @@ class _StatPill extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.12),
+          color: color.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withOpacity(0.28)),
+          border: Border.all(color: color.withValues(alpha: 0.28)),
         ),
         child: Column(
           children: [
@@ -257,3 +257,4 @@ class _StatPill extends StatelessWidget {
     );
   }
 }
+

@@ -73,7 +73,7 @@ class _AnimatedStatusCardState extends State<AnimatedStatusCard>
                     boxShadow: status == 'active'
                         ? [
                             BoxShadow(
-                              color: const Color(0xFF0D7A5F).withOpacity(0.3),
+                              color: const Color(0xFF0D7A5F).withValues(alpha: 0.3),
                               blurRadius: 8,
                               spreadRadius: 2,
                             ),
@@ -108,7 +108,7 @@ class _AnimatedStatusCardState extends State<AnimatedStatusCard>
               Container(
                 width: 1,
                 height: 40,
-                color: theme.dividerColor.withOpacity(0.3),
+                color: theme.dividerColor.withValues(alpha: 0.3),
               ),
               _StatItem(
                 label: 'Last Scan',
@@ -166,3 +166,4 @@ class _StatItem extends StatelessWidget {
     );
   }
 }
+

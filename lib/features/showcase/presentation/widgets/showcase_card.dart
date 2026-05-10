@@ -72,8 +72,8 @@ class _ShowcaseCardState extends State<ShowcaseCard>
         ? const Color(0xFF94A3B8)
         : const Color(0xFF52637A);
     final dividerColor = isDark
-        ? theme.dividerColor.withOpacity(0.8)
-        : theme.dividerColor.withOpacity(0.5);
+        ? theme.dividerColor.withValues(alpha: 0.8)
+        : theme.dividerColor.withValues(alpha: 0.5);
 
     await showDialog<void>(
       context: context,
@@ -103,8 +103,8 @@ class _ShowcaseCardState extends State<ShowcaseCard>
                     borderRadius: BorderRadius.circular(18),
                     side: BorderSide(
                       color:
-                          widget.tint?.withOpacity(0.24) ??
-                          theme.dividerColor.withOpacity(0.4),
+                          widget.tint?.withValues(alpha: 0.24) ??
+                          theme.dividerColor.withValues(alpha: 0.4),
                       width: 1.6,
                     ),
                   ),
@@ -116,7 +116,7 @@ class _ShowcaseCardState extends State<ShowcaseCard>
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                widget.tint!.withOpacity(0.03),
+                                widget.tint!.withValues(alpha: 0.03),
                                 isDark ? const Color(0xFF111827) : Colors.white,
                               ],
                             )
@@ -212,8 +212,8 @@ class _ShowcaseCardState extends State<ShowcaseCard>
         ? const Color(0xFF94A3B8)
         : const Color(0xFF52637A);
     final dividerColor = isDark
-        ? theme.dividerColor.withOpacity(0.8)
-        : theme.dividerColor.withOpacity(0.5);
+        ? theme.dividerColor.withValues(alpha: 0.8)
+        : theme.dividerColor.withValues(alpha: 0.5);
 
     return MouseRegion(
       onEnter: (_) => _onEnter(),
@@ -232,8 +232,8 @@ class _ShowcaseCardState extends State<ShowcaseCard>
                   borderRadius: BorderRadius.circular(16),
                   side: BorderSide(
                     color:
-                        widget.tint?.withOpacity(0.2) ??
-                        theme.dividerColor.withOpacity(0.3),
+                        widget.tint?.withValues(alpha: 0.2) ??
+                        theme.dividerColor.withValues(alpha: 0.3),
                     width: 1.5,
                   ),
                 ),
@@ -245,7 +245,7 @@ class _ShowcaseCardState extends State<ShowcaseCard>
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
-                              widget.tint!.withOpacity(0.02),
+                              widget.tint!.withValues(alpha: 0.02),
                               isDark ? const Color(0xFF111827) : Colors.white,
                             ],
                           )
@@ -358,3 +358,4 @@ class _PanelAction extends StatelessWidget {
     );
   }
 }
+

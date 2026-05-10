@@ -117,7 +117,7 @@ class _NetworkGraphWidgetState extends State<NetworkGraphWidget>
                         ? const Color(0xFF0B1324)
                         : const Color(0xFFF8FAFC),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: primaryTint.withOpacity(0.2)),
+                    border: Border.all(color: primaryTint.withValues(alpha: 0.2)),
                   ),
                   child: AnimatedBuilder(
                     animation: _motionCtrl,
@@ -294,10 +294,10 @@ class _ClusterGraphPanel extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF7C3AED).withOpacity(0.12),
+                  color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(999),
                   border: Border.all(
-                    color: const Color(0xFF7C3AED).withOpacity(0.3),
+                    color: const Color(0xFF7C3AED).withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
@@ -364,7 +364,7 @@ class _ClusterPainter extends CustomPainter {
       center,
       (compact ? 22 : 28) + mergeT * 10,
       Paint()
-        ..color = tint.withOpacity(0.06 + mergeT * 0.04)
+        ..color = tint.withValues(alpha: 0.06 + mergeT * 0.04)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
     );
     final sweepStart = (sweepT * 2 * math.pi) - (math.pi / 2);
@@ -378,7 +378,7 @@ class _ClusterPainter extends CustomPainter {
       math.pi / 4.0,
       false,
       Paint()
-        ..color = tint.withOpacity(0.16)
+        ..color = tint.withValues(alpha: 0.16)
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round
         ..strokeWidth = compact ? 1.1 : 1.4,
@@ -387,7 +387,7 @@ class _ClusterPainter extends CustomPainter {
       center,
       compact ? 16 : 20,
       Paint()
-        ..color = tint.withOpacity(0.16)
+        ..color = tint.withValues(alpha: 0.16)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.4,
     );
@@ -404,8 +404,8 @@ class _ClusterPainter extends CustomPainter {
       final highlighted = hoveredCase == edge.from || hoveredCase == edge.to;
       final linePaint = Paint()
         ..color = highlighted
-            ? tint.withOpacity(0.7)
-            : tint.withOpacity(0.28 + 0.08 * mergeT)
+            ? tint.withValues(alpha: 0.7)
+            : tint.withValues(alpha: 0.28 + 0.08 * mergeT)
         ..strokeWidth = highlighted ? 1.8 : 1.25
         ..style = PaintingStyle.stroke;
 
@@ -418,7 +418,7 @@ class _ClusterPainter extends CustomPainter {
         packet,
         compact ? 1.7 : 2.0,
         Paint()
-          ..color = tint.withOpacity(0.7)
+          ..color = tint.withValues(alpha: 0.7)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.3),
       );
 
@@ -440,7 +440,7 @@ class _ClusterPainter extends CustomPainter {
       canvas.drawRRect(
         labelBg,
         Paint()
-          ..color = tint.withOpacity(0.24)
+          ..color = tint.withValues(alpha: 0.24)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1,
       );
@@ -471,13 +471,13 @@ class _ClusterPainter extends CustomPainter {
         p,
         radius + 6,
         Paint()
-          ..color = tint.withOpacity(selected ? 0.28 : 0.12)
+          ..color = tint.withValues(alpha: selected ? 0.28 : 0.12)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
       );
       canvas.drawCircle(
         p,
         radius,
-        Paint()..color = selected ? tint : tint.withOpacity(0.8),
+        Paint()..color = selected ? tint : tint.withValues(alpha: 0.8),
       );
 
       textPainter.text = TextSpan(
@@ -587,9 +587,9 @@ class _BottomSummary extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
       decoration: BoxDecoration(
-        color: tint.withOpacity(isDark ? 0.12 : 0.08),
+        color: tint.withValues(alpha: isDark ? 0.12 : 0.08),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: tint.withOpacity(0.22)),
+        border: Border.all(color: tint.withValues(alpha: 0.22)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -655,9 +655,9 @@ class _RiskBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.14),
+        color: color.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: color.withOpacity(0.28)),
+        border: Border.all(color: color.withValues(alpha: 0.28)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -700,9 +700,9 @@ class _MetricPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       decoration: BoxDecoration(
-        color: color.withOpacity(isDark ? 0.14 : 0.1),
+        color: color.withValues(alpha: isDark ? 0.14 : 0.1),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: color.withOpacity(0.25)),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -728,3 +728,4 @@ class _MetricPill extends StatelessWidget {
     );
   }
 }
+
