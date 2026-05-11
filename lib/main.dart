@@ -5,7 +5,11 @@ import 'package:spacebar/features/home/presentation/pages/home_page.dart';
 import 'package:spacebar/features/evi_store/presentation/bloc/evi_store_bloc/evi_store_bloc.dart';
 import 'package:spacebar/init_deps.dart';
 
+const String _windowsMetaKeyAssertion =
+    'Attempted to send a key down event when no keys are in keysPressed';
+
 void main() async {
+  _installDebugKeyboardAssertionFilter();
   WidgetsFlutterBinding.ensureInitialized();
   await initDeps();
   runApp(
@@ -17,6 +21,32 @@ void main() async {
       child: const MainApp(),
     ),
   );
+}
+
+void _installDebugKeyboardAssertionFilter() {
+  var enabled = false;
+  assert(() {
+    enabled = true;
+    return true;
+  }());
+  if (!enabled) return;
+
+  final original = FlutterError.onError;
+  FlutterError.onError = (FlutterErrorDetails details) {
+    final message = details.exceptionAsString();
+
+    // Workaround for a known Windows Meta key raw keyboard assertion in debug.
+    if (message.contains(_windowsMetaKeyAssertion)) {
+      debugPrint('Ignored known Windows keyboard assertion: $message');
+      return;
+    }
+
+    if (original != null) {
+      original(details);
+      return;
+    }
+    FlutterError.presentError(details);
+  };
 }
 
 class MainApp extends StatelessWidget {

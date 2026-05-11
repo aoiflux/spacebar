@@ -17,7 +17,7 @@ class ShowcasePage extends StatefulWidget {
 }
 
 class _ShowcasePageState extends State<ShowcasePage> {
-  bool _darkOps = ShowcaseDefaults.darkOpsEnabled;
+  final bool _darkOps = ShowcaseDefaults.darkOpsEnabled;
   bool _enableCardTickers = false;
 
   static const int _ingestionModuleCount = 4;
@@ -81,9 +81,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
     final headerVerticalPadding = isWideLayout
         ? ShowcaseDimens.pagePadding - 4
         : ShowcaseDimens.pagePadding;
-    final titleToSubtitleGap = isWideLayout
-        ? ShowcaseDimens.gap2
-        : ShowcaseDimens.gap6;
 
     Widget modulePill() {
       return Container(
@@ -189,7 +186,6 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   0.0,
                   double.infinity,
                 );
-            final showSubtitle = contentHeight >= 72;
             final showBuzz = contentHeight >= 110;
 
             return Padding(

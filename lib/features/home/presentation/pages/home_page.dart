@@ -73,7 +73,7 @@ class HomePage extends StatelessWidget {
                                   reverseTransitionDuration: const Duration(
                                     milliseconds: 220,
                                   ),
-                                  pageBuilder: (_, __, ___) =>
+                                  pageBuilder: (_, _, _) =>
                                       const ShowcasePage(),
                                   transitionsBuilder:
                                       (

@@ -59,7 +59,7 @@ class ShowcaseDimens {
 
 class ShowcaseStrings {
   static const String pageTitle =
-      'Next Generation Digital Forensic Readiness for Cross-Domain Artefact Correlation';
+      'Next Generation Digital Forensic Readiness Engine for Cross-Domain Artefact Correlation';
 
   static const String ingestionSectionTitle = 'Ingestion & Processing';
   static const String ingestionSectionSubtitle =
