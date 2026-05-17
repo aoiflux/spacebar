@@ -13,7 +13,7 @@ dependencies:
   fixnum: ^1.1.1
   flutter:
     sdk: flutter
-  flutter_bloc: ^9.0.0
+  flutter_bloc: ^9.1.1
   fpdart: ^1.1.0
   get_it: ^9.1.0
   grpc: ^5.0.0

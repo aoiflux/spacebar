@@ -87,25 +87,42 @@ class FeatureShowcaseData {
       'Scheduled task: updater.exe',
       'Service: suspicioussvc',
     ],
+    'highlights': [
+      {
+        'title': 'Scan Search v2',
+        'detail':
+            'Upgraded scan-based search fixes race conditions, edge cases, and double counts.',
+      },
+      {
+        'title': 'Query Parser',
+        'detail': 'Basic parsing now supports AND, OR, and PHRASE searching.',
+      },
+      {
+        'title': 'Hybrid Search',
+        'detail':
+            'Full-text search falls back to scan-based search while content indexing completes.',
+      },
+    ],
     'queries': [
       {
-        'keyword': 'persistence',
+        'keyword': 'persistence AND "updater.exe"',
         'results': [
-          'Registry Run key',
           'Scheduled task: updater.exe',
-          'Service: suspicioussvc',
+          'Registry Run key -> updater.exe',
+          'Service launch chain: suspicioussvc -> updater.exe',
         ],
       },
       {
-        'keyword': 'beacon',
+        'keyword': 'beacon OR ransomware',
         'results': [
           'TLS fingerprint: ja3-6f1a',
+          'archive_patch_2026.bin',
           'Flow 3190 -> 185.203.118.44:443',
-          'DNS query: cdn-upd.net',
+          'triage/ransomware_family_notes.md',
         ],
       },
       {
-        'keyword': 'powershell',
+        'keyword': '"powershell -enc"',
         'results': [
           'Process start: powershell -enc ...',
           'Script block: updater bootstrap',
@@ -113,19 +130,19 @@ class FeatureShowcaseData {
         ],
       },
       {
-        'keyword': '185.203.118.44',
+        'keyword': '185.203.118.44 AND beacon',
         'results': [
           'Flow 3190 -> 185.203.118.44:443',
           'pcap/c2_tls_185.203.118.44.json',
-          'ioc/ip_185.203.118.44.txt',
+          'DNS query: cdn-upd.net',
         ],
       },
       {
-        'keyword': 'ransomware',
+        'keyword': '"scheduled task" AND persistence',
         'results': [
-          'archive_patch_2026.bin',
-          'svc_update_signed.dat',
-          'triage/ransomware_family_notes.md',
+          'Scheduled task: updater.exe',
+          'Registry Run key',
+          'Service: suspicioussvc',
         ],
       },
     ],

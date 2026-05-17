@@ -85,13 +85,13 @@ class ShowcaseStrings {
   static const String diskPipelineCardDescription =
       'Deduplicate + Zstd-compress first, then parse and index asynchronously across partitions and file systems.';
 
-  static const String microArtifactCardTitle = 'Micro-Artifact Extraction';
-  static const String microArtifactCardDescription =
+  static const String artifactCardTitle = 'Artifact Extraction';
+  static const String artifactCardDescription =
       'Stream of extracted atomic artifacts';
 
   static const String keywordCardTitle = 'Keyword Search';
   static const String keywordCardDescription =
-      'Fast indexed search across all extracted artefacts.';
+      'Hybrid full-text and scan-based search across extracted artefacts.';
 
   static const String artefactGraphTitle = 'Artefact Relation Graph';
   static const String artefactGraphDescription =

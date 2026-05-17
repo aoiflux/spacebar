@@ -25,6 +25,7 @@ class _KeywordSearchWidgetState extends State<KeywordSearchWidget>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _typingProgress;
+  late final List<_KeywordHighlight> _highlights;
   late final List<_KeywordResultSet> _querySets;
   int _activeQueryIndex = 0;
   int _activeResultIndex = 0;
@@ -34,6 +35,7 @@ class _KeywordSearchWidgetState extends State<KeywordSearchWidget>
   @override
   void initState() {
     super.initState();
+    _highlights = _parseHighlights(widget.mockData);
     _querySets = _parseQuerySets(widget.mockData);
     _controller = AnimationController(
       vsync: this,
@@ -87,6 +89,7 @@ class _KeywordSearchWidgetState extends State<KeywordSearchWidget>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final tint = widget.tint ?? const Color(0xFF38BDF8);
+    final highlights = _highlights;
     final activeSet = _querySets.isEmpty
         ? const _KeywordResultSet('persistence', <String>[])
         : _querySets[_activeQueryIndex.clamp(0, _querySets.length - 1)];
@@ -105,173 +108,239 @@ class _KeywordSearchWidgetState extends State<KeywordSearchWidget>
       title: widget.title,
       description: widget.description,
       tint: tint,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  tint.withValues(alpha: 0.18),
-                  tint.withValues(alpha: 0.07),
-                ],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compactLayout = constraints.maxWidth < 320;
+          final isDark = theme.brightness == Brightness.dark;
+          final activeHighlight = highlights.isEmpty
+              ? null
+              : highlights[_activeQueryIndex % highlights.length];
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (highlights.isNotEmpty) ...[
+                if (compactLayout)
+                  _FeatureHighlightCard(
+                    highlight: activeHighlight!,
+                    tint: tint,
+                    isDark: isDark,
+                    icon: _featureIconFor(_activeQueryIndex),
+                    compact: true,
+                  )
+                else
+                  SizedBox(
+                    height: 88,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      padding: EdgeInsets.zero,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: highlights.length,
+                      separatorBuilder: (_, _) => const SizedBox(width: 8),
+                      itemBuilder: (context, index) {
+                        final highlight = highlights[index];
+                        return SizedBox(
+                          width: 188,
+                          child: _FeatureHighlightCard(
+                            highlight: highlight,
+                            tint: tint,
+                            isDark: isDark,
+                            icon: _featureIconFor(index),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                SizedBox(height: compactLayout ? 8 : 10),
+              ],
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: compactLayout ? 9 : 10,
+                  vertical: compactLayout ? 8 : 9,
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      tint.withValues(alpha: 0.18),
+                      tint.withValues(alpha: 0.07),
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: tint.withValues(alpha: 0.35)),
+                ),
+                child: Semantics(
+                  container: true,
+                  readOnly: true,
+                  label: 'query: $query',
+                  child: ExcludeSemantics(
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.search_rounded,
+                          size: compactLayout ? 15 : 16,
+                          color: tint,
+                        ),
+                        SizedBox(width: compactLayout ? 6 : 8),
+                        Expanded(
+                          child: AnimatedBuilder(
+                            animation: _typingProgress,
+                            builder: (context, _) {
+                              final progress = _typingProgress.value;
+                              final typingPhase = (progress / 0.56).clamp(
+                                0.0,
+                                1.0,
+                              );
+                              final effectiveQuery = query.isEmpty
+                                  ? 'search'
+                                  : query;
+                              final chars = (query.length * typingPhase).clamp(
+                                1,
+                                effectiveQuery.length,
+                              );
+                              final typedQuery = effectiveQuery.substring(
+                                0,
+                                chars.toInt(),
+                              );
+                              return RichText(
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                text: TextSpan(
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    fontSize: compactLayout ? 10 : 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: isDark
+                                        ? const Color(0xFFE2E8F0)
+                                        : const Color(0xFF0F172A),
+                                  ),
+                                  children: [
+                                    const TextSpan(text: 'query: '),
+                                    TextSpan(
+                                      text: typedQuery,
+                                      style: TextStyle(
+                                        color: tint,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    if (typingPhase < 1)
+                                      const TextSpan(text: '▌'),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: tint.withValues(alpha: 0.35)),
-            ),
-            child: Semantics(
-              container: true,
-              readOnly: true,
-              label: 'query: $query',
-              child: ExcludeSemantics(
-                child: Row(
-                  children: [
-                    Icon(Icons.search_rounded, size: 16, color: tint),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: AnimatedBuilder(
-                        animation: _typingProgress,
-                        builder: (context, _) {
-                          final progress = _typingProgress.value;
-                          final typingPhase = (progress / 0.56).clamp(0.0, 1.0);
-                          final chars = (query.length * typingPhase).clamp(
-                            1,
-                            query.length,
-                          );
-                          final typedQuery = query.substring(0, chars.toInt());
-                          return RichText(
-                            text: TextSpan(
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: theme.brightness == Brightness.dark
-                                    ? const Color(0xFFE2E8F0)
-                                    : const Color(0xFF0F172A),
+              SizedBox(height: compactLayout ? 8 : 10),
+              Expanded(
+                child: Semantics(
+                  container: true,
+                  readOnly: true,
+                  label: '$hits results for $query',
+                  child: ExcludeSemantics(
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 220),
+                      curve: Curves.easeOutCubic,
+                      opacity: _resultsVisible ? 1 : 0,
+                      child: ListView.separated(
+                        padding: EdgeInsets.zero,
+                        itemCount: results.length,
+                        physics: const BouncingScrollPhysics(),
+                        separatorBuilder: (_, _) =>
+                            SizedBox(height: compactLayout ? 6 : 8),
+                        itemBuilder: (context, index) {
+                          final item = results[index];
+                          final highlighted = index == highlightedIndex;
+
+                          return Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: compactLayout ? 9 : 10,
+                              vertical: compactLayout ? 7 : 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: highlighted
+                                  ? tint.withValues(alpha: 0.15)
+                                  : (isDark
+                                        ? const Color(0xFF111827)
+                                        : const Color(0xFFF8FAFC)),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: highlighted
+                                    ? tint.withValues(alpha: 0.5)
+                                    : tint.withValues(alpha: 0.2),
                               ),
+                              boxShadow: highlighted
+                                  ? [
+                                      BoxShadow(
+                                        color: tint.withValues(alpha: 0.16),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ]
+                                  : null,
+                            ),
+                            child: Row(
                               children: [
-                                const TextSpan(text: 'query: '),
-                                TextSpan(
-                                  text: typedQuery.toLowerCase(),
-                                  style: TextStyle(
-                                    color: tint,
-                                    fontWeight: FontWeight.w800,
+                                Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: BoxDecoration(
+                                    color: highlighted
+                                        ? tint
+                                        : tint.withValues(alpha: 0.4),
+                                    shape: BoxShape.circle,
                                   ),
                                 ),
-                                if (typingPhase < 1) const TextSpan(text: '▌'),
+                                SizedBox(width: compactLayout ? 6 : 8),
+                                Expanded(
+                                  child: Text(
+                                    item,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: theme.textTheme.labelSmall?.copyWith(
+                                      fontSize: compactLayout ? 9 : 10,
+                                      fontWeight: FontWeight.w700,
+                                      color: isDark
+                                          ? const Color(0xFFCBD5E1)
+                                          : const Color(0xFF1E293B),
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           );
                         },
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: Semantics(
-              container: true,
-              readOnly: true,
-              label: '$hits results for $query',
-              child: ExcludeSemantics(
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 220),
-                  curve: Curves.easeOutCubic,
-                  opacity: _resultsVisible ? 1 : 0,
-                  child: ListView.separated(
-                    padding: EdgeInsets.zero,
-                    itemCount: results.length,
-                    physics: const BouncingScrollPhysics(),
-                    separatorBuilder: (_, _) => const SizedBox(height: 8),
-                    itemBuilder: (context, index) {
-                      final item = results[index];
-                      final highlighted = index == highlightedIndex;
-
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: highlighted
-                              ? tint.withValues(alpha: 0.15)
-                              : (theme.brightness == Brightness.dark
-                                    ? const Color(0xFF111827)
-                                    : const Color(0xFFF8FAFC)),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: highlighted
-                                ? tint.withValues(alpha: 0.5)
-                                : tint.withValues(alpha: 0.2),
-                          ),
-                          boxShadow: highlighted
-                              ? [
-                                  BoxShadow(
-                                    color: tint.withValues(alpha: 0.16),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ]
-                              : null,
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 6,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                color: highlighted
-                                    ? tint
-                                    : tint.withValues(alpha: 0.4),
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                item,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: theme.textTheme.labelSmall?.copyWith(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  color: theme.brightness == Brightness.dark
-                                      ? const Color(0xFFCBD5E1)
-                                      : const Color(0xFF1E293B),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
                   ),
                 ),
               ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              _StatPill(
-                label: 'Hits',
-                value: '$hits',
-                color: const Color(0xFF0EA5E9),
-              ),
-              const SizedBox(width: 8),
-              _StatPill(
-                label: 'Artefact Types',
-                value: '$artifactTypes',
-                color: const Color(0xFF7C3AED),
+              SizedBox(height: compactLayout ? 6 : 8),
+              Row(
+                children: [
+                  _StatPill(
+                    label: 'Hits',
+                    value: '$hits',
+                    color: const Color(0xFF0EA5E9),
+                    compact: compactLayout,
+                  ),
+                  SizedBox(width: compactLayout ? 6 : 8),
+                  _StatPill(
+                    label: 'Artefact Types',
+                    value: '$artifactTypes',
+                    color: const Color(0xFF7C3AED),
+                    compact: compactLayout,
+                  ),
+                ],
               ),
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -283,8 +352,7 @@ class _KeywordSearchWidgetState extends State<KeywordSearchWidget>
           .whereType<Map>()
           .map((entry) {
             final keyword = (entry['keyword'] as String?)?.trim() ?? '';
-            final isSingleWord = keyword.isNotEmpty && !keyword.contains(' ');
-            if (!isSingleWord) return null;
+            if (keyword.isEmpty) return null;
             final results =
                 (entry['results'] as List?)?.whereType<String>().toList() ??
                 const <String>[];
@@ -302,6 +370,34 @@ class _KeywordSearchWidgetState extends State<KeywordSearchWidget>
         (mockData['results'] as List?)?.whereType<String>().toList() ??
         const <String>[];
     return [_KeywordResultSet(fallbackQuery, fallbackResults)];
+  }
+
+  List<_KeywordHighlight> _parseHighlights(Map<String, dynamic> mockData) {
+    final raw = mockData['highlights'];
+    if (raw is! List) return const <_KeywordHighlight>[];
+
+    return raw
+        .whereType<Map>()
+        .map((entry) {
+          final title = (entry['title'] as String?)?.trim() ?? '';
+          final detail = (entry['detail'] as String?)?.trim() ?? '';
+          if (title.isEmpty || detail.isEmpty) return null;
+          return _KeywordHighlight(title, detail);
+        })
+        .whereType<_KeywordHighlight>()
+        .take(3)
+        .toList();
+  }
+
+  IconData _featureIconFor(int index) {
+    switch (index % 3) {
+      case 0:
+        return Icons.document_scanner_outlined;
+      case 1:
+        return Icons.account_tree_outlined;
+      default:
+        return Icons.find_in_page_outlined;
+    }
   }
 
   void _restartResultTimer() {
@@ -329,22 +425,111 @@ class _KeywordResultSet {
   const _KeywordResultSet(this.keyword, this.results);
 }
 
+class _KeywordHighlight {
+  final String title;
+  final String detail;
+
+  const _KeywordHighlight(this.title, this.detail);
+}
+
+class _FeatureHighlightCard extends StatelessWidget {
+  final _KeywordHighlight highlight;
+  final Color tint;
+  final bool isDark;
+  final IconData icon;
+  final bool compact;
+
+  const _FeatureHighlightCard({
+    required this.highlight,
+    required this.tint,
+    required this.isDark,
+    required this.icon,
+    this.compact = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      container: true,
+      readOnly: true,
+      label: '${highlight.title}: ${highlight.detail}',
+      child: ExcludeSemantics(
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: compact ? 9 : 10,
+            vertical: compact ? 8 : 9,
+          ),
+          decoration: BoxDecoration(
+            color: tint.withValues(alpha: isDark ? 0.12 : 0.08),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: tint.withValues(alpha: 0.24)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(icon, size: compact ? 13 : 14, color: tint),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      highlight.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        fontSize: compact ? 9 : 10,
+                        fontWeight: FontWeight.w800,
+                        color: isDark
+                            ? const Color(0xFFE2E8F0)
+                            : const Color(0xFF0F172A),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: compact ? 6 : 8),
+              Text(
+                highlight.detail,
+                maxLines: compact ? 2 : 3,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  fontSize: compact ? 8.5 : 9,
+                  height: 1.35,
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? const Color(0xFFCBD5E1)
+                      : const Color(0xFF334155),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _StatPill extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
+  final bool compact;
 
   const _StatPill({
     required this.label,
     required this.value,
     required this.color,
+    this.compact = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
+        padding: EdgeInsets.symmetric(
+          horizontal: compact ? 7 : 8,
+          vertical: compact ? 6 : 7,
+        ),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(8),
@@ -356,7 +541,7 @@ class _StatPill extends StatelessWidget {
               value,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color: color,
-                fontSize: 11,
+                fontSize: compact ? 10 : 11,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -366,7 +551,7 @@ class _StatPill extends StatelessWidget {
                 color: Theme.of(context).brightness == Brightness.dark
                     ? const Color(0xFF94A3B8)
                     : const Color(0xFF64748B),
-                fontSize: 9,
+                fontSize: compact ? 8 : 9,
                 fontWeight: FontWeight.w700,
               ),
             ),

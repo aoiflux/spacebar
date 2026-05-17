@@ -100,6 +100,25 @@ class GrpcStoreImpl implements IEviStoreRemoteDataSource {
     return '${normalized.substring(0, 280)}...';
   }
 
+  Map<String, dynamic> _parseJsonObjectBody(String body, String context) {
+    final trimmed = body.trim();
+    if (trimmed.isEmpty) {
+      throw Exception('$context returned an empty response body.');
+    }
+
+    dynamic decoded;
+    try {
+      decoded = jsonDecode(trimmed);
+    } on FormatException catch (e) {
+      throw Exception('$context returned invalid JSON: ${e.message}');
+    }
+
+    if (decoded is! Map<String, dynamic>) {
+      throw Exception('$context returned a non-object JSON payload.');
+    }
+    return decoded;
+  }
+
   Future<void> _prepareFileHash(PickedFileData fileData) async {
     final fileHashResult = fileData.isWeb
         ? await getFileHashWeb(fileData)
@@ -354,7 +373,7 @@ class GrpcStoreImpl implements IEviStoreRemoteDataSource {
         );
       }
 
-      final startJson = jsonDecode(startRes.body) as Map<String, dynamic>;
+      final startJson = _parseJsonObjectBody(startRes.body, 'Web upload start');
       final uploadId = (startJson['upload_id'] ?? '').toString();
       if (uploadId.isEmpty) {
         throw Exception('Web upload start response missing upload_id.');
@@ -457,7 +476,10 @@ class GrpcStoreImpl implements IEviStoreRemoteDataSource {
         );
       }
 
-      final finalizeJson = jsonDecode(finalizeRes.body) as Map<String, dynamic>;
+      final finalizeJson = _parseJsonObjectBody(
+        finalizeRes.body,
+        'Web upload finalize',
+      );
       final eviRaw = finalizeJson['evi_file'];
       if (eviRaw is! Map<String, dynamic>) {
         throw Exception('Web upload finalize response missing evi_file.');

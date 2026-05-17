@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:spacebar/features/showcase/presentation/widgets/showcase_card.dart';
 
@@ -8,19 +6,127 @@ class _ArtifactItem {
     required this.type,
     required this.icon,
     required this.color,
+    required this.detail,
   });
 
   final String type;
   final String icon;
   final Color color;
+  final String detail;
 
   factory _ArtifactItem.fromMap(Map<String, dynamic> map) {
+    final type = map['type'] as String? ?? 'Item';
+    final detail = (map['detail'] as String?)?.trim();
     return _ArtifactItem(
-      type: map['type'] as String? ?? 'Item',
+      type: type,
       icon: map['icon'] as String? ?? '📄',
       color: Color(map['color'] as int? ?? 0xFFE8EDF5),
+      detail: detail == null || detail.isEmpty
+          ? _artifactDetailFor(type)
+          : detail,
     );
   }
+}
+
+String _artifactDetailFor(String type) {
+  final normalized = type.toLowerCase();
+  if (normalized.contains('event record')) {
+    return 'Process or system activity timeline entry';
+  }
+  if (normalized.contains('registry')) {
+    return 'Persistent key/value configuration artifact';
+  }
+  if (normalized.contains('extracted string')) {
+    return 'Decoded text candidate from binary payload';
+  }
+  if (normalized.contains('pe section')) {
+    return 'Portable Executable segment fingerprint';
+  }
+  if (normalized.contains('binary signature')) {
+    return 'Byte-pattern match used for detection';
+  }
+  if (normalized.contains('sticky bit')) {
+    return 'Flagged marker retained for triage context';
+  }
+  if (normalized.contains('timestamp')) {
+    return 'Time-based indicator for sequence analysis';
+  }
+  return 'Low-level extracted artifact for investigation';
+}
+
+Color _readableAccent(Color base, {required bool isDark}) {
+  final hsl = HSLColor.fromColor(base);
+  final saturation = (hsl.saturation + 0.32).clamp(0.42, 0.9).toDouble();
+  final lightness = isDark ? 0.68 : 0.34;
+  return hsl.withSaturation(saturation).withLightness(lightness).toColor();
+}
+
+List<_ArtifactItem> _buildArtifactItems(List<Map<String, dynamic>> source) {
+  final items = source.map(_ArtifactItem.fromMap).toList();
+  if (items.isNotEmpty) {
+    return items;
+  }
+
+  return const [
+    _ArtifactItem(
+      type: 'No artifacts',
+      icon: '📄',
+      color: Color(0xFFE8EDF5),
+      detail: 'No extracted artifacts are currently available',
+    ),
+  ];
+}
+
+class _ArtifactLayout {
+  const _ArtifactLayout({
+    required this.expandedDialog,
+    required this.compact,
+    required this.spacious,
+    required this.reducedMotion,
+    required this.stripWidth,
+    required this.previewHeight,
+    required this.showPreview,
+    required this.tightHeight,
+    required this.queueGap,
+    required this.sectionGap,
+  });
+
+  final bool compact;
+  final bool spacious;
+  final bool expandedDialog;
+  final bool reducedMotion;
+  final double stripWidth;
+  final double previewHeight;
+  final bool showPreview;
+  final bool tightHeight;
+  final double queueGap;
+  final double sectionGap;
+
+  factory _ArtifactLayout.fromConstraints(
+    BoxConstraints constraints, {
+    required bool isExpandedDialog,
+  }) {
+    final compact = constraints.maxWidth < 310 || constraints.maxHeight < 300;
+    final spacious =
+        constraints.maxWidth >= 520 && constraints.maxHeight >= 360;
+    final reducedMotion = isExpandedDialog;
+    final tightHeight = constraints.maxHeight < 220;
+
+    return _ArtifactLayout(
+      expandedDialog: isExpandedDialog,
+      compact: compact,
+      spacious: spacious,
+      reducedMotion: reducedMotion,
+      stripWidth: compact ? 58.0 : (tightHeight ? 62.0 : 72.0),
+      previewHeight: compact ? 90.0 : (spacious ? 168.0 : 132.0),
+      showPreview: constraints.maxHeight >= 200,
+      tightHeight: tightHeight,
+      queueGap: tightHeight ? 4.0 : 6.0,
+      sectionGap: tightHeight ? 4.0 : 8.0,
+    );
+  }
+
+  bool get effectiveCompact => compact || tightHeight;
 }
 
 class ScrollingListWidget extends StatefulWidget {
@@ -45,8 +151,32 @@ class _ScrollingListWidgetState extends State<ScrollingListWidget>
     with TickerProviderStateMixin {
   late final AnimationController _flowCtrl;
   late final AnimationController _pulseCtrl;
-  Timer? _rotateTimer;
+  bool _stripAnimationsRunning = false;
   int _selected = 0;
+
+  void _setStripAnimationsRunning(bool shouldRun) {
+    if (_stripAnimationsRunning == shouldRun) {
+      return;
+    }
+    _stripAnimationsRunning = shouldRun;
+
+    if (shouldRun) {
+      if (!_flowCtrl.isAnimating) {
+        _flowCtrl.repeat();
+      }
+      if (!_pulseCtrl.isAnimating) {
+        _pulseCtrl.repeat(reverse: true);
+      }
+      return;
+    }
+
+    if (_flowCtrl.isAnimating) {
+      _flowCtrl.stop(canceled: false);
+    }
+    if (_pulseCtrl.isAnimating) {
+      _pulseCtrl.stop(canceled: false);
+    }
+  }
 
   @override
   void initState() {
@@ -54,43 +184,29 @@ class _ScrollingListWidgetState extends State<ScrollingListWidget>
     _flowCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1800),
-    )..repeat();
+    );
     _pulseCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1100),
-    )..repeat(reverse: true);
-
-    _rotateTimer = Timer.periodic(const Duration(milliseconds: 2300), (_) {
-      if (!mounted || widget.items.isEmpty) return;
-      setState(() => _selected = (_selected + 1) % widget.items.length);
-    });
+    );
+    _setStripAnimationsRunning(true);
   }
 
   @override
   void dispose() {
     _flowCtrl.dispose();
     _pulseCtrl.dispose();
-    _rotateTimer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final tint = widget.tint ?? const Color(0xFF6941C6);
-    final parsed = widget.items.map(_ArtifactItem.fromMap).toList();
-    if (parsed.isEmpty) {
-      parsed.add(
-        const _ArtifactItem(
-          type: 'No artifacts',
-          icon: '📄',
-          color: Color(0xFFE8EDF5),
-        ),
-      );
-    }
-    if (_selected >= parsed.length) {
-      _selected = 0;
-    }
+    final parsed = _buildArtifactItems(widget.items);
+    final selectedIndex = _selected.clamp(0, parsed.length - 1);
+    final stripAnimation = Listenable.merge([_flowCtrl, _pulseCtrl]);
 
     return ShowcaseCard(
       title: widget.title,
@@ -98,81 +214,295 @@ class _ScrollingListWidgetState extends State<ScrollingListWidget>
       tint: tint,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final compact =
-              constraints.maxWidth < 310 || constraints.maxHeight < 300;
-          final stripWidth = compact ? 58.0 : 72.0;
+          final isExpandedDialog = ShowcaseExpansionScope.of(context);
+          final layout = _ArtifactLayout.fromConstraints(
+            constraints,
+            isExpandedDialog: isExpandedDialog,
+          );
+          _setStripAnimationsRunning(!layout.reducedMotion);
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _SummaryRow(
-                total: parsed.length,
-                selected: parsed[_selected].type,
-                isDark: isDark,
-                tint: tint,
-                compact: compact,
-              ),
-              const SizedBox(height: 8),
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SizedBox(
-                      width: stripWidth,
-                      child: AnimatedBuilder(
-                        animation: _flowCtrl,
-                        builder: (_, _) => _ExtractorStrip(
-                          flowT: _flowCtrl.value,
-                          pulseT: _pulseCtrl.value,
-                          tint: tint,
-                          isDark: isDark,
-                          compact: compact,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: ListView.separated(
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: parsed.length,
-                              separatorBuilder: (_, _) =>
-                                  SizedBox(height: compact ? 5 : 7),
-                              itemBuilder: (context, index) {
-                                final item = parsed[index];
-                                final active = index == _selected;
-                                return _ArtifactCard(
-                                  item: item,
-                                  active: active,
-                                  isDark: isDark,
-                                  compact: compact,
-                                  onTap: () =>
-                                      setState(() => _selected = index),
-                                );
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          SizedBox(
-                            height: compact ? 74 : 96,
-                            child: _ArtifactPreviewPanel(
-                              item: parsed[_selected],
-                              isDark: isDark,
-                              compact: compact,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          return _ArtifactWorkspace(
+            items: parsed,
+            selectedIndex: selectedIndex,
+            isDark: isDark,
+            tint: tint,
+            layout: layout,
+            stripAnimation: stripAnimation,
+            flowT: _flowCtrl.value,
+            pulseT: _pulseCtrl.value,
+            onSelect: (index) => setState(() => _selected = index),
           );
         },
       ),
+    );
+  }
+}
+
+class _ArtifactWorkspace extends StatelessWidget {
+  const _ArtifactWorkspace({
+    required this.items,
+    required this.selectedIndex,
+    required this.isDark,
+    required this.tint,
+    required this.layout,
+    required this.stripAnimation,
+    required this.flowT,
+    required this.pulseT,
+    required this.onSelect,
+  });
+
+  final List<_ArtifactItem> items;
+  final int selectedIndex;
+  final bool isDark;
+  final Color tint;
+  final _ArtifactLayout layout;
+  final Listenable stripAnimation;
+  final double flowT;
+  final double pulseT;
+  final ValueChanged<int> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final selectedItem = items[selectedIndex];
+
+    if (layout.expandedDialog) {
+      return _ExpandedArtifactWorkspace(
+        items: items,
+        selectedIndex: selectedIndex,
+        selectedItem: selectedItem,
+        isDark: isDark,
+        onSelect: onSelect,
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _SummaryRow(
+          total: items.length,
+          selected: selectedItem.type,
+          isDark: isDark,
+          tint: tint,
+          compact: layout.compact,
+        ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                width: layout.stripWidth,
+                child: _ArtifactStripPanel(
+                  animate: !layout.reducedMotion,
+                  animation: stripAnimation,
+                  flowT: flowT,
+                  pulseT: pulseT,
+                  tint: tint,
+                  isDark: isDark,
+                  compact: layout.compact,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: RepaintBoundary(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _SectionCaption(
+                        title: 'Artifact Queue',
+                        subtitle: 'Tap any row to inspect details',
+                        compact: layout.effectiveCompact,
+                        isDark: isDark,
+                        subtitleMaxLines: layout.tightHeight ? 1 : 2,
+                      ),
+                      SizedBox(height: layout.queueGap),
+                      Expanded(
+                        child: ListView.separated(
+                          physics: layout.reducedMotion
+                              ? const ClampingScrollPhysics()
+                              : const BouncingScrollPhysics(),
+                          itemCount: items.length,
+                          separatorBuilder: (_, _) =>
+                              SizedBox(height: layout.effectiveCompact ? 4 : 6),
+                          itemBuilder: (context, index) {
+                            final item = items[index];
+                            final isActive = index == selectedIndex;
+                            return _ArtifactCard(
+                              item: item,
+                              active: isActive,
+                              isDark: isDark,
+                              compact: layout.effectiveCompact,
+                              spacious: layout.spacious,
+                              reducedMotion: layout.reducedMotion,
+                              onTap: () => onSelect(index),
+                            );
+                          },
+                        ),
+                      ),
+                      if (layout.showPreview) ...[
+                        SizedBox(height: layout.sectionGap),
+                        _SectionCaption(
+                          title: 'Selected Artifact Preview',
+                          subtitle: selectedItem.detail,
+                          compact: layout.effectiveCompact,
+                          isDark: isDark,
+                          subtitleMaxLines: layout.tightHeight
+                              ? 1
+                              : (layout.spacious ? 3 : 2),
+                        ),
+                        SizedBox(height: layout.queueGap),
+                        Flexible(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxHeight: layout.previewHeight,
+                            ),
+                            child: _ArtifactPreviewPanel(
+                              item: selectedItem,
+                              isDark: isDark,
+                              compact: layout.effectiveCompact,
+                              spacious: layout.spacious,
+                              reducedMotion: layout.reducedMotion,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ExpandedArtifactWorkspace extends StatelessWidget {
+  const _ExpandedArtifactWorkspace({
+    required this.items,
+    required this.selectedIndex,
+    required this.selectedItem,
+    required this.isDark,
+    required this.onSelect,
+  });
+
+  final List<_ArtifactItem> items;
+  final int selectedIndex;
+  final _ArtifactItem selectedItem;
+  final bool isDark;
+  final ValueChanged<int> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(
+          width: 280,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _SectionCaption(
+                title: 'Artifact Queue',
+                subtitle: '${items.length} items',
+                compact: false,
+                isDark: isDark,
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: ListView.separated(
+                  physics: const ClampingScrollPhysics(),
+                  itemCount: items.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 6),
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    final active = index == selectedIndex;
+                    return _ArtifactCard(
+                      item: item,
+                      active: active,
+                      isDark: isDark,
+                      compact: false,
+                      spacious: true,
+                      reducedMotion: true,
+                      onTap: () => onSelect(index),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _SectionCaption(
+                title: 'Selected Artifact Preview',
+                subtitle: selectedItem.detail,
+                compact: false,
+                isDark: isDark,
+                subtitleMaxLines: 2,
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: _ArtifactPreviewPanel(
+                  item: selectedItem,
+                  isDark: isDark,
+                  compact: false,
+                  spacious: true,
+                  reducedMotion: true,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ArtifactStripPanel extends StatelessWidget {
+  const _ArtifactStripPanel({
+    required this.animate,
+    required this.animation,
+    required this.flowT,
+    required this.pulseT,
+    required this.tint,
+    required this.isDark,
+    required this.compact,
+  });
+
+  final bool animate;
+  final Listenable animation;
+  final double flowT;
+  final double pulseT;
+  final Color tint;
+  final bool isDark;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return RepaintBoundary(
+      child: animate
+          ? AnimatedBuilder(
+              animation: animation,
+              builder: (_, _) => _ExtractorStrip(
+                flowT: flowT,
+                pulseT: pulseT,
+                tint: tint,
+                isDark: isDark,
+                compact: compact,
+              ),
+            )
+          : _ExtractorStrip(
+              flowT: 0.5,
+              pulseT: 0.25,
+              tint: tint,
+              isDark: isDark,
+              compact: compact,
+            ),
     );
   }
 }
@@ -195,20 +525,25 @@ class _SummaryRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final left = _StatChip(
-      label: 'Extracted',
+      label: 'Artifacts',
       value: '$total',
       color: tint,
       isDark: isDark,
+      expand: false,
     );
     final right = _StatChip(
-      label: 'Focus',
+      label: 'Selected',
       value: selected,
       color: const Color(0xFF0D7A5F),
       isDark: isDark,
+      expand: true,
     );
 
     if (compact) {
-      return Wrap(spacing: 6, runSpacing: 6, children: [left, right]);
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [left, const SizedBox(height: 6), right],
+      );
     }
 
     return Row(
@@ -227,44 +562,95 @@ class _StatChip extends StatelessWidget {
     required this.value,
     required this.color,
     required this.isDark,
+    required this.expand,
   });
 
   final String label;
   final String value;
   final Color color;
   final bool isDark;
+  final bool expand;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      width: expand ? double.infinity : null,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: color.withValues(alpha: isDark ? 0.18 : 0.1),
         borderRadius: BorderRadius.circular(999),
         border: Border.all(color: color.withValues(alpha: 0.28)),
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         children: [
           Text(
             '$label: ',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               fontWeight: FontWeight.w700,
               color: color,
-              fontSize: 9,
+              fontSize: 11,
             ),
           ),
-          Text(
-            value,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              fontWeight: FontWeight.w800,
-              color: color,
-              fontSize: 9.5,
+          Expanded(
+            child: Text(
+              value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: color,
+                fontSize: 11.5,
+              ),
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _SectionCaption extends StatelessWidget {
+  const _SectionCaption({
+    required this.title,
+    required this.subtitle,
+    required this.compact,
+    required this.isDark,
+    this.subtitleMaxLines = 1,
+  });
+
+  final String title;
+  final String subtitle;
+  final bool compact;
+  final bool isDark;
+  final int subtitleMaxLines;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            fontSize: compact ? 10.5 : 11.5,
+            fontWeight: FontWeight.w800,
+            color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF0F172A),
+          ),
+        ),
+        Text(
+          subtitle,
+          maxLines: subtitleMaxLines,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            fontSize: compact ? 9.2 : 10.2,
+            fontWeight: FontWeight.w600,
+            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -286,26 +672,42 @@ class _ExtractorStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: compact ? 4 : 6,
-        vertical: compact ? 6 : 8,
-      ),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0B1324) : const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
-        ),
-      ),
-      child: CustomPaint(
-        painter: _ExtractorStripPainter(
-          flowT: flowT,
-          pulseT: pulseT,
-          tint: tint,
-          isDark: isDark,
-        ),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final targetHeight = compact ? 150.0 : 220.0;
+        final stripHeight = constraints.maxHeight < targetHeight
+            ? constraints.maxHeight
+            : targetHeight;
+
+        return Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: compact ? 4 : 6,
+            vertical: compact ? 6 : 8,
+          ),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF0B1324) : const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
+            ),
+          ),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: SizedBox(
+              height: stripHeight,
+              width: double.infinity,
+              child: CustomPaint(
+                painter: _ExtractorStripPainter(
+                  flowT: flowT,
+                  pulseT: pulseT,
+                  tint: tint,
+                  isDark: isDark,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -388,6 +790,8 @@ class _ArtifactCard extends StatelessWidget {
     required this.active,
     required this.isDark,
     required this.compact,
+    required this.spacious,
+    required this.reducedMotion,
     required this.onTap,
   });
 
@@ -395,16 +799,22 @@ class _ArtifactCard extends StatelessWidget {
   final bool active;
   final bool isDark;
   final bool compact;
+  final bool spacious;
+  final bool reducedMotion;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final accent = _readableAccent(item.color, isDark: isDark);
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 220),
-        curve: Curves.easeOutCubic,
+        duration: reducedMotion
+            ? Duration.zero
+            : const Duration(milliseconds: 220),
+        curve: reducedMotion ? Curves.linear : Curves.easeOutCubic,
         padding: EdgeInsets.symmetric(
           vertical: compact ? 7 : 8,
           horizontal: compact ? 9 : 11,
@@ -424,28 +834,70 @@ class _ArtifactCard extends StatelessWidget {
             Text(item.icon, style: TextStyle(fontSize: compact ? 15 : 17)),
             const SizedBox(width: 9),
             Expanded(
-              child: Text(
-                item.type,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontWeight: active ? FontWeight.w800 : FontWeight.w600,
-                  color: isDark
-                      ? const Color(0xFFE2E8F0)
-                      : const Color(0xFF0F1C2E),
-                  fontSize: compact ? 11 : 12,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    item.type,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: active ? FontWeight.w800 : FontWeight.w700,
+                      color: isDark
+                          ? const Color(0xFFE2E8F0)
+                          : const Color(0xFF0F1C2E),
+                      fontSize: compact ? 11.2 : (spacious ? 13.0 : 12.4),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    item.detail,
+                    maxLines: spacious ? 2 : 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: isDark
+                          ? const Color(0xFF94A3B8)
+                          : const Color(0xFF64748B),
+                      fontSize: compact ? 9.2 : (spacious ? 10.6 : 10),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: 6),
+            SizedBox(width: compact ? 4 : 6),
+            if (active && !compact)
+              Container(
+                margin: const EdgeInsets.only(right: 4),
+                padding: EdgeInsets.symmetric(
+                  horizontal: compact ? 4 : 5,
+                  vertical: 2,
+                ),
+                decoration: BoxDecoration(
+                  color: item.color.withValues(alpha: isDark ? 0.28 : 0.34),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  'ACTIVE',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    fontSize: compact ? 7 : 8,
+                    letterSpacing: 0.4,
+                    fontWeight: FontWeight.w800,
+                    color: accent,
+                  ),
+                ),
+              ),
             AnimatedContainer(
-              duration: const Duration(milliseconds: 220),
+              duration: reducedMotion
+                  ? Duration.zero
+                  : const Duration(milliseconds: 220),
               width: active ? 8 : 6,
               height: active ? 8 : 6,
               decoration: BoxDecoration(
                 color: item.color,
                 shape: BoxShape.circle,
-                boxShadow: active
+                boxShadow: active && !reducedMotion
                     ? [
                         BoxShadow(
                           color: item.color.withValues(alpha: 0.55),
@@ -467,117 +919,204 @@ class _ArtifactPreviewPanel extends StatelessWidget {
     required this.item,
     required this.isDark,
     required this.compact,
+    required this.spacious,
+    required this.reducedMotion,
   });
 
   final _ArtifactItem item;
   final bool isDark;
   final bool compact;
+  final bool spacious;
+  final bool reducedMotion;
 
   @override
   Widget build(BuildContext context) {
     final t = item.type.toLowerCase();
+    final accent = _readableAccent(item.color, isDark: isDark);
     Widget visual;
 
     if (t.contains('registry')) {
       visual = _RegistryPreview(
         isDark: isDark,
-        color: item.color,
+        color: accent,
         compact: compact,
       );
     } else if (t.contains('pe section')) {
       visual = _PeSectionPreview(
         isDark: isDark,
-        color: item.color,
+        color: accent,
         compact: compact,
       );
     } else if (t.contains('binary signature')) {
       visual = _SignaturePreview(
         isDark: isDark,
-        color: item.color,
+        color: accent,
         compact: compact,
       );
     } else if (t.contains('extracted string')) {
-      visual = _StringPreview(
-        isDark: isDark,
-        color: item.color,
-        compact: compact,
-      );
+      visual = _StringPreview(isDark: isDark, color: accent, compact: compact);
     } else if (t.contains('event record')) {
-      visual = _EventPreview(
-        isDark: isDark,
-        color: item.color,
-        compact: compact,
-      );
+      visual = _EventPreview(isDark: isDark, color: accent, compact: compact);
     } else if (t.contains('sticky bit')) {
       visual = _StickyBitPreview(
         isDark: isDark,
-        color: item.color,
+        color: accent,
         compact: compact,
       );
     } else {
       visual = _TimestampPreview(
         isDark: isDark,
-        color: item.color,
+        color: accent,
         compact: compact,
       );
     }
 
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: compact ? 8 : 10,
-        vertical: compact ? 6 : 8,
-      ),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0B1324) : const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(9),
-        border: Border.all(
-          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            item.type,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              fontSize: compact ? 9 : 9.5,
-              fontWeight: FontWeight.w800,
-              color: item.color,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Expanded(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 240),
-              reverseDuration: const Duration(milliseconds: 180),
-              switchInCurve: Curves.easeOutCubic,
-              switchOutCurve: Curves.easeInCubic,
-              layoutBuilder: (currentChild, previousChildren) {
-                return Stack(
-                  alignment: Alignment.centerLeft,
-                  children: [...previousChildren, ?currentChild],
-                );
-              },
-              transitionBuilder: (child, animation) {
-                final offsetTween = Tween<Offset>(
-                  begin: const Offset(0.04, 0),
-                  end: Offset.zero,
-                );
-                return FadeTransition(
-                  opacity: animation,
-                  child: SlideTransition(
-                    position: offsetTween.animate(animation),
-                    child: child,
+    return LayoutBuilder(
+      builder: (context, panelConstraints) {
+        final tinyPanel = panelConstraints.maxHeight < 72;
+        final densePanel = panelConstraints.maxHeight < 180;
+        final verticalPadding = tinyPanel ? 4.0 : (compact ? 8.0 : 10.0);
+
+        Widget headerRow() {
+          return Row(
+            children: [
+              Text(item.icon, style: TextStyle(fontSize: compact ? 14 : 16)),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  'Preview: ${item.type}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    fontSize: compact ? 11 : (spacious ? 13.2 : 12.4),
+                    fontWeight: FontWeight.w800,
+                    color: accent,
                   ),
-                );
-              },
-              child: KeyedSubtree(key: ValueKey(item.type), child: visual),
+                ),
+              ),
+            ],
+          );
+        }
+
+        return Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: compact ? 9 : 11,
+            vertical: verticalPadding,
+          ),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF0A1221) : const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: isDark
+                  ? accent.withValues(alpha: 0.7)
+                  : accent.withValues(alpha: 0.45),
+              width: 1.2,
             ),
           ),
-        ],
-      ),
+          child: tinyPanel
+              ? Align(alignment: Alignment.centerLeft, child: headerRow())
+              : densePanel
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    headerRow(),
+                    const SizedBox(height: 3),
+                    Text(
+                      item.detail,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        fontSize: compact ? 9.2 : 10,
+                        height: 1.2,
+                        fontWeight: FontWeight.w600,
+                        color: isDark
+                            ? const Color(0xFFCBD5E1)
+                            : const Color(0xFF475569),
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    headerRow(),
+                    const SizedBox(height: 4),
+                    Text(
+                      item.detail,
+                      maxLines: compact ? 2 : (spacious ? 4 : 3),
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        fontSize: compact ? 9.6 : (spacious ? 11.2 : 10.6),
+                        height: 1.25,
+                        fontWeight: FontWeight.w600,
+                        color: isDark
+                            ? const Color(0xFFCBD5E1)
+                            : const Color(0xFF475569),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: compact ? 6 : 8,
+                          vertical: compact ? 5 : 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF0F172A)
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: accent.withValues(alpha: 0.42),
+                          ),
+                        ),
+                        child: reducedMotion
+                            ? KeyedSubtree(
+                                key: ValueKey(item.type),
+                                child: visual,
+                              )
+                            : AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 240),
+                                reverseDuration: const Duration(
+                                  milliseconds: 180,
+                                ),
+                                switchInCurve: Curves.easeOutCubic,
+                                switchOutCurve: Curves.easeInCubic,
+                                layoutBuilder:
+                                    (currentChild, previousChildren) {
+                                      return Stack(
+                                        alignment: Alignment.centerLeft,
+                                        children: [
+                                          ...previousChildren,
+                                          ?currentChild,
+                                        ],
+                                      );
+                                    },
+                                transitionBuilder: (child, animation) {
+                                  final offsetTween = Tween<Offset>(
+                                    begin: const Offset(0.04, 0),
+                                    end: Offset.zero,
+                                  );
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: SlideTransition(
+                                      position: offsetTween.animate(animation),
+                                      child: child,
+                                    ),
+                                  );
+                                },
+                                child: KeyedSubtree(
+                                  key: ValueKey(item.type),
+                                  child: visual,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
+        );
+      },
     );
   }
 }
@@ -611,7 +1150,7 @@ class _RegistryPreview extends StatelessWidget {
                 maxLines: compact ? 1 : 2,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  fontSize: compact ? 7.2 : 8,
+                  fontSize: compact ? 8.2 : 9,
                   color: isDark
                       ? const Color(0xFF94A3B8)
                       : const Color(0xFF64748B),
@@ -636,7 +1175,7 @@ class _RegistryPreview extends StatelessWidget {
                 maxLines: compact ? 1 : 2,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  fontSize: compact ? 7.2 : 8,
+                  fontSize: compact ? 8.2 : 9,
                   fontWeight: FontWeight.w700,
                   color: color,
                 ),
@@ -681,8 +1220,8 @@ class _PeSectionPreview extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final dense = compact || constraints.maxHeight <= 44;
-        final labelHeight = dense ? 7.0 : 10.0;
-        final labelFontSize = dense ? 6.0 : (compact ? 7.0 : 8.0);
+        final labelHeight = dense ? 8.0 : 11.0;
+        final labelFontSize = dense ? 7.0 : (compact ? 8.0 : 9.0);
         final spacer = dense ? 1.0 : 2.0;
 
         Widget label(String text, Color textColor) {
@@ -759,7 +1298,7 @@ class _SignaturePreview extends StatelessWidget {
         child: Text(
           b,
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            fontSize: compact ? 7 : 8,
+            fontSize: compact ? 8.2 : 9,
             fontWeight: FontWeight.w700,
             color: hit
                 ? color
@@ -816,7 +1355,7 @@ class _StringPreview extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         text: TextSpan(
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            fontSize: compact ? 7.5 : 8.5,
+            fontSize: compact ? 8.6 : 9.6,
             color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
           ),
           children: [
@@ -868,7 +1407,7 @@ class _EventPreview extends StatelessWidget {
           Text(
             'EventID 4688',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              fontSize: compact ? 7.5 : 8.5,
+              fontSize: compact ? 8.6 : 9.6,
               fontWeight: FontWeight.w700,
               color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
             ),
@@ -885,7 +1424,7 @@ class _EventPreview extends StatelessWidget {
             child: Text(
               'process_start',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                fontSize: compact ? 7 : 8,
+                fontSize: compact ? 8 : 9,
                 color: color,
                 fontWeight: FontWeight.w800,
               ),
@@ -927,7 +1466,7 @@ class _StickyBitPreview extends StatelessWidget {
           Text(
             '-rwxrwxr',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              fontSize: compact ? 8 : 9,
+              fontSize: compact ? 8.8 : 9.8,
               color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
               fontWeight: FontWeight.w700,
             ),
@@ -942,7 +1481,7 @@ class _StickyBitPreview extends StatelessWidget {
             child: Text(
               't',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                fontSize: compact ? 8 : 9,
+                fontSize: compact ? 8.8 : 9.8,
                 color: color,
                 fontWeight: FontWeight.w900,
               ),
@@ -951,7 +1490,7 @@ class _StickyBitPreview extends StatelessWidget {
           Text(
             '/tmp/drop/',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              fontSize: compact ? 7.5 : 8.5,
+              fontSize: compact ? 8.4 : 9.4,
               color: isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
             ),
           ),
@@ -994,7 +1533,7 @@ class _TimestampPreview extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                fontSize: compact ? 7.5 : 8.5,
+                fontSize: compact ? 8.6 : 9.6,
                 fontWeight: FontWeight.w700,
                 color: isDark
                     ? const Color(0xFF94A3B8)

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:spacebar/features/showcase/presentation/constants/showcase_page_constants.dart';
 import 'package:spacebar/features/showcase/presentation/widgets/graph_timeline_widget.dart';
 import 'package:spacebar/features/showcase/presentation/widgets/hierarchical_pipeline_widget.dart';
+import 'package:spacebar/features/showcase/presentation/widgets/knowledge_fusion_widget.dart';
 import 'package:spacebar/features/showcase/presentation/widgets/keyword_search_widget.dart';
 import 'package:spacebar/features/showcase/presentation/widgets/network_graph_widget.dart';
 import 'package:spacebar/features/showcase/presentation/widgets/similarity_index_widget.dart';
-import 'package:spacebar/features/showcase/presentation/widgets/scrolling_list_widget.dart';
 import 'package:spacebar/features/showcase/presentation/widgets/watcher_pipeline_widget.dart';
 import 'package:spacebar/mock/feature_showcase_data.dart';
 
@@ -305,6 +305,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
                               child: _buildIngestionWrap(
                                 cardWidth: cardWidth,
                                 cardHeight: regularHeight,
+                                rowWidth: constraints.maxWidth,
                               ),
                             ),
                           ),
@@ -360,6 +361,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
                       child: _buildShowcaseSkeleton(
                         cardWidth: cardWidth,
                         cardHeight: regularHeight,
+                        isMobile: isMobile,
                         artefactHeight: artefactHeight,
                         spacing: spacing,
                       ),
@@ -374,6 +376,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
   Widget _buildShowcaseSkeleton({
     required double cardWidth,
     required double cardHeight,
+    required bool isMobile,
     required double artefactHeight,
     required double spacing,
   }) {
@@ -390,7 +393,13 @@ class _ShowcasePageState extends State<ShowcasePage> {
         _buildSkeletonWrap(
           cardWidth: cardWidth,
           cardHeight: cardHeight,
-          count: 4,
+          count: 3,
+        ),
+        const SizedBox(height: ShowcaseDimens.sectionSpacing),
+        _SkeletonCard(
+          width: double.infinity,
+          height: isMobile ? cardHeight + 22 : cardHeight,
+          darkOps: _darkOps,
         ),
         const SizedBox(height: ShowcaseDimens.sectionSpacing),
         _SectionLabel(
@@ -444,6 +453,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
   Widget _buildIngestionWrap({
     required double cardWidth,
     required double cardHeight,
+    required double rowWidth,
   }) {
     return Wrap(
       spacing: ShowcaseDimens.sectionSpacing,
@@ -472,21 +482,21 @@ class _ShowcasePageState extends State<ShowcasePage> {
         SizedBox(
           width: cardWidth,
           height: cardHeight,
-          child: const ScrollingListWidget(
-            title: ShowcaseStrings.microArtifactCardTitle,
-            description: ShowcaseStrings.microArtifactCardDescription,
-            items: FeatureShowcaseData.microArtifactItems,
-            tint: ShowcaseColors.tintViolet,
-          ),
-        ),
-        SizedBox(
-          width: cardWidth,
-          height: cardHeight,
           child: const KeywordSearchWidget(
             title: ShowcaseStrings.keywordCardTitle,
             description: ShowcaseStrings.keywordCardDescription,
             mockData: FeatureShowcaseData.keywordSearchData,
             tint: ShowcaseColors.tintSky,
+          ),
+        ),
+        SizedBox(
+          width: rowWidth,
+          height: cardHeight,
+          child: const KnowledgeFusionWidget(
+            title: ShowcaseStrings.artifactCardTitle,
+            description:
+                'Enrichment parity + micro-artefact intelligence in one lane',
+            tint: ShowcaseColors.tintViolet,
           ),
         ),
       ],
