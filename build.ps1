@@ -1,23 +1,28 @@
 <#
 .SYNOPSIS
-    Build Spacebar for Windows (exe), Linux, and Android.
+    Build Spacebar end-to-end for Windows (exe), Linux, and Android.
 .DESCRIPTION
-    Runs flutter build for each target platform and collects all
-    outputs into a timestamped folder under dist/.
+    Runs full pre-build pipeline first (Flutter deps, FRB codegen, Rust test/build),
+    then runs flutter build for each target platform and collects outputs
+    into a timestamped folder under dist/.
 .PARAMETER Targets
     Comma-separated list of targets to build: windows, linux, android.
     Defaults to all three.
 .PARAMETER OutDir
     Root output directory. Defaults to .\dist.
+.PARAMETER SkipPrebuild
+    Skips pre-build pipeline (flutter pub get, FRB generate, Rust test/build).
 .EXAMPLE
     .\build.ps1
     .\build.ps1 -Targets windows,android
     .\build.ps1 -OutDir C:\releases
+    .\build.ps1 -SkipPrebuild
 #>
 
 param(
     [string[]] $Targets = @("windows", "linux", "android"),
-    [string]   $OutDir = ".\dist"
+    [string]   $OutDir = ".\dist",
+    [switch]   $SkipPrebuild
 )
 
 Set-StrictMode -Version Latest
@@ -37,6 +42,10 @@ function Write-Err([string]$msg) {
     Write-Host "    ERROR: $msg" -ForegroundColor Red
 }
 
+function Test-Command([string]$name) {
+    return $null -ne (Get-Command $name -ErrorAction SilentlyContinue)
+}
+
 function Run([string[]]$cmd) {
     & $cmd[0] $cmd[1..($cmd.Length - 1)]
     if ($LASTEXITCODE -ne 0) {
@@ -46,78 +55,131 @@ function Run([string[]]$cmd) {
 
 # ── setup ────────────────────────────────────────────────────────────────────
 
-$stamp = Get-Date -Format "yyyyMMdd_HHmmss"
-$release = Join-Path $OutDir $stamp
-New-Item -ItemType Directory -Force -Path $release | Out-Null
-Write-Step "Output directory: $release"
+$ProjectRoot = Split-Path -Parent $PSCommandPath
+Push-Location $ProjectRoot
 
-$results = @()
-
-# ── windows ──────────────────────────────────────────────────────────────────
-
-if ($Targets -contains "windows") {
-    Write-Step "Building Windows (exe)..."
-    try {
-        Run flutter, build, windows, --release
-        $src = "build\windows\x64\runner\Release"
-        $dst = Join-Path $release "windows"
-        Copy-Item -Recurse -Force -Path $src -Destination $dst
-        Write-Ok "Copied → $dst"
-        $results += [pscustomobject]@{ Target = "windows"; Status = "OK"; Path = $dst }
+try {
+    if (-not (Test-Command "flutter")) {
+        throw "flutter is not available in PATH."
     }
-    catch {
-        Write-Err $_
-        $results += [pscustomobject]@{ Target = "windows"; Status = "FAILED"; Path = "" }
+
+    if (-not (Test-Command "cargo")) {
+        throw "cargo is not available in PATH."
+    }
+
+    $normalizedTargets = @($Targets | ForEach-Object { $_.ToLowerInvariant() })
+    $validTargets = @("windows", "linux", "android")
+    $invalidTargets = @($normalizedTargets | Where-Object { $_ -notin $validTargets })
+    if ($invalidTargets.Count -gt 0) {
+        throw "Invalid target(s): $($invalidTargets -join ', '). Valid values: windows, linux, android."
+    }
+
+    $stamp = Get-Date -Format "yyyyMMdd_HHmmss"
+    $releaseRoot = if ([System.IO.Path]::IsPathRooted($OutDir)) { $OutDir } else { Join-Path $ProjectRoot $OutDir }
+    $release = Join-Path $releaseRoot $stamp
+    New-Item -ItemType Directory -Force -Path $release | Out-Null
+    Write-Step "Output directory: $release"
+
+    $results = @()
+
+    # ── pre-build pipeline ───────────────────────────────────────────────────────
+
+    if (-not $SkipPrebuild) {
+        Write-Step "Pre-build: Flutter dependencies"
+        Run flutter, pub, get
+        Write-Ok "flutter pub get completed"
+
+        Write-Step "Pre-build: Flutter Rust Bridge code generation"
+        if (-not (Test-Command "flutter_rust_bridge_codegen")) {
+            throw "flutter_rust_bridge_codegen is not installed. Run: cargo install flutter_rust_bridge_codegen"
+        }
+        Run flutter_rust_bridge_codegen, generate
+        Write-Ok "FRB bindings generated"
+
+        Write-Step "Pre-build: Rust test and release build"
+        Push-Location (Join-Path $ProjectRoot "rust")
+        try {
+            Run cargo, test
+            Run cargo, build, --release
+        }
+        finally {
+            Pop-Location
+        }
+        Write-Ok "Rust test/build completed"
+    }
+    else {
+        Write-Step "Skipping pre-build pipeline (SkipPrebuild=true)"
+    }
+
+    # ── windows ──────────────────────────────────────────────────────────────────
+
+    if ($normalizedTargets -contains "windows") {
+        Write-Step "Building Windows (exe)..."
+        try {
+            Run flutter, build, windows, --release
+            $src = Join-Path $ProjectRoot "build\windows\x64\runner\Release"
+            $dst = Join-Path $release "windows"
+            Copy-Item -Recurse -Force -Path $src -Destination $dst
+            Write-Ok "Copied → $dst"
+            $results += [pscustomobject]@{ Target = "windows"; Status = "OK"; Path = $dst }
+        }
+        catch {
+            Write-Err $_
+            $results += [pscustomobject]@{ Target = "windows"; Status = "FAILED"; Path = "" }
+        }
+    }
+
+    # ── linux ─────────────────────────────────────────────────────────────────────
+
+    if ($normalizedTargets -contains "linux") {
+        Write-Step "Building Linux..."
+        try {
+            Run flutter, build, linux, --release
+            $src = Join-Path $ProjectRoot "build\linux\x64\release\bundle"
+            $dst = Join-Path $release "linux"
+            Copy-Item -Recurse -Force -Path $src -Destination $dst
+            Write-Ok "Copied → $dst"
+            $results += [pscustomobject]@{ Target = "linux"; Status = "OK"; Path = $dst }
+        }
+        catch {
+            Write-Err $_
+            $results += [pscustomobject]@{ Target = "linux"; Status = "FAILED"; Path = "" }
+        }
+    }
+
+    # ── android ───────────────────────────────────────────────────────────────────
+
+    if ($normalizedTargets -contains "android") {
+        Write-Step "Building Android (APK)..."
+        try {
+            Run flutter, build, apk, --release
+            $src = Join-Path $ProjectRoot "build\app\outputs\flutter-apk\app-release.apk"
+            $dst = Join-Path $release "android"
+            New-Item -ItemType Directory -Force -Path $dst | Out-Null
+            Copy-Item -Force -Path $src -Destination (Join-Path $dst "spacebar.apk")
+            Write-Ok "Copied → $dst\spacebar.apk"
+            $results += [pscustomobject]@{ Target = "android"; Status = "OK"; Path = "$dst\spacebar.apk" }
+        }
+        catch {
+            Write-Err $_
+            $results += [pscustomobject]@{ Target = "android"; Status = "FAILED"; Path = "" }
+        }
+    }
+
+    # ── summary ───────────────────────────────────────────────────────────────────
+
+    Write-Host "`n────────────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "  Build summary" -ForegroundColor White
+    Write-Host "────────────────────────────────────────" -ForegroundColor DarkGray
+    $results | Format-Table -AutoSize
+    Write-Host "  Release folder: $release" -ForegroundColor White
+    Write-Host "────────────────────────────────────────`n" -ForegroundColor DarkGray
+
+    $failed = ($results | Where-Object { $_.Status -eq "FAILED" }).Count
+    if ($failed -gt 0) {
+        exit 1
     }
 }
-
-# ── linux ─────────────────────────────────────────────────────────────────────
-
-if ($Targets -contains "linux") {
-    Write-Step "Building Linux..."
-    try {
-        Run flutter, build, linux, --release
-        $src = "build\linux\x64\release\bundle"
-        $dst = Join-Path $release "linux"
-        Copy-Item -Recurse -Force -Path $src -Destination $dst
-        Write-Ok "Copied → $dst"
-        $results += [pscustomobject]@{ Target = "linux"; Status = "OK"; Path = $dst }
-    }
-    catch {
-        Write-Err $_
-        $results += [pscustomobject]@{ Target = "linux"; Status = "FAILED"; Path = "" }
-    }
-}
-
-# ── android ───────────────────────────────────────────────────────────────────
-
-if ($Targets -contains "android") {
-    Write-Step "Building Android (APK)..."
-    try {
-        Run flutter, build, apk, --release
-        $src = "build\app\outputs\flutter-apk\app-release.apk"
-        $dst = Join-Path $release "android"
-        New-Item -ItemType Directory -Force -Path $dst | Out-Null
-        Copy-Item -Force -Path $src -Destination (Join-Path $dst "spacebar.apk")
-        Write-Ok "Copied → $dst\spacebar.apk"
-        $results += [pscustomobject]@{ Target = "android"; Status = "OK"; Path = "$dst\spacebar.apk" }
-    }
-    catch {
-        Write-Err $_
-        $results += [pscustomobject]@{ Target = "android"; Status = "FAILED"; Path = "" }
-    }
-}
-
-# ── summary ───────────────────────────────────────────────────────────────────
-
-Write-Host "`n────────────────────────────────────────" -ForegroundColor DarkGray
-Write-Host "  Build summary" -ForegroundColor White
-Write-Host "────────────────────────────────────────" -ForegroundColor DarkGray
-$results | Format-Table -AutoSize
-Write-Host "  Release folder: $release" -ForegroundColor White
-Write-Host "────────────────────────────────────────`n" -ForegroundColor DarkGray
-
-$failed = ($results | Where-Object { $_.Status -eq "FAILED" }).Count
-if ($failed -gt 0) {
-    exit 1
+finally {
+    Pop-Location
 }
