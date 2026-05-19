@@ -232,9 +232,6 @@ class _FeatureColumn extends StatelessWidget {
     final subtitleColor = isDark
         ? _ForensicPalette.darkTextSecondary
         : _ForensicPalette.lightTextSecondary;
-    final metaColor = isDark
-        ? _ForensicPalette.darkTextMuted
-        : _ForensicPalette.lightTextMuted;
 
     return LayoutBuilder(
       builder: (context, constraints) {

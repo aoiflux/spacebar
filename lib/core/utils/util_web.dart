@@ -5,36 +5,34 @@ import 'package:fpdart/fpdart.dart';
 import 'package:pointycastle/digests/sha3.dart';
 import 'package:spacebar/core/common/models/picked_file_data.dart';
 import 'package:spacebar/core/error/err.dart';
+import 'package:spacebar/core/utils/crypto_ffi.dart';
 
-/// Web-specific: Compute hash from HTML File object using FileReader API
+String _hexToBase64(String hex) {
+  final bytes = Uint8List(hex.length ~/ 2);
+  for (int i = 0; i < bytes.length; i++) {
+    bytes[i] = int.parse(hex.substring(i * 2, i * 2 + 2), radix: 16);
+  }
+  return base64Encode(bytes);
+}
+
+String _sha3Base64FromBytes(Uint8List bytes) {
+  final digest = SHA3Digest(256);
+  digest.update(bytes, 0, bytes.length);
+  final out = Uint8List(digest.digestSize);
+  digest.doFinal(out, 0);
+  return base64Encode(out);
+}
+
+/// Web-specific: compute hash from browser file data.
+///
+/// Uses Rust/FRB first (bytes API), then falls back to Dart SHA3.
 Future<Either<FileError, String>> getFileHashWeb(
   PickedFileData fileData,
 ) async {
   try {
     final platformFile = fileData.webFile;
-    final digest = SHA3Digest(256);
-    final yieldWatch = Stopwatch()..start();
-
-    Future<void> maybeYield() async {
-      // Keep hashing responsive by yielding at ~1 frame budget.
-      if (yieldWatch.elapsedMilliseconds >= 8) {
-        yieldWatch
-          ..reset()
-          ..start();
-        await Future<void>.delayed(Duration.zero);
-      }
-    }
-
-    final bytes = platformFile.bytes;
-    if (bytes != null && bytes.isNotEmpty) {
-      const chunkSize = 256 * 1024;
-      for (int offset = 0; offset < bytes.length; offset += chunkSize) {
-        final end =
-            (offset + chunkSize < bytes.length) ? offset + chunkSize : bytes.length;
-        digest.update(bytes, offset, end - offset);
-        await maybeYield();
-      }
-    } else {
+    Uint8List? bytes = platformFile.bytes;
+    if (bytes == null) {
       final readStream = platformFile.readStream;
       if (readStream == null) {
         return Left(
@@ -44,17 +42,19 @@ Future<Either<FileError, String>> getFileHashWeb(
         );
       }
 
+      final builder = BytesBuilder(copy: false);
       await for (final stream in readStream) {
-        final chunk = stream is Uint8List ? stream : Uint8List.fromList(stream);
-        digest.update(chunk, 0, chunk.length);
-        await maybeYield();
+        builder.add(stream is Uint8List ? stream : Uint8List.fromList(stream));
       }
+      bytes = builder.takeBytes();
     }
 
-    final out = Uint8List(digest.digestSize);
-    digest.doFinal(out, 0);
-
-    return Right(base64Encode(out));
+    try {
+      final hex = await SpacebarCrypto.sha3HashBytes(bytes);
+      return Right(_hexToBase64(hex));
+    } catch (_) {
+      return Right(_sha3Base64FromBytes(bytes));
+    }
   } catch (e) {
     return Left(FileError(e.toString()));
   }

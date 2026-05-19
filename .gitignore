@@ -125,3 +125,5 @@ linux/
 android/
 ios/
 .idea/
+
+rust/target/
