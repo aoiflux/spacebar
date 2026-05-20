@@ -16,7 +16,7 @@ class EviListPage extends StatefulWidget {
 }
 
 class _EviListPageState extends State<EviListPage> {
-  static const _tint = Color(0xFF2D7FF9);
+  static const _tint = Color(0xFF0B57D0);
 
   final Set<String> _selectedEviIds = <String>{};
 
@@ -130,7 +130,7 @@ class _EviListPageState extends State<EviListPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FA),
       appBar: AppBar(
-        backgroundColor: Colors.white.withValues(alpha: 0.85),
+        backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         titleSpacing: 20,
@@ -141,9 +141,7 @@ class _EviListPageState extends State<EviListPage> {
               height: 32,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(9),
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF2D7FF9), Color(0xFF1EA7FD)],
-                ),
+                color: const Color(0xFF0B57D0),
               ),
               child: const Icon(
                 Icons.dataset_outlined,
@@ -158,7 +156,7 @@ class _EviListPageState extends State<EviListPage> {
                   : 'Evidence List',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF1C2430),
+                color: const Color(0xFF0F1C2E),
                 letterSpacing: 0.1,
               ),
             ),
@@ -208,7 +206,7 @@ class _EviListPageState extends State<EviListPage> {
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: _tint.withValues(alpha: 0.08)),
+          child: Container(height: 1, color: const Color(0xFFDDE5F0)),
         ),
       ),
       body: BlocConsumer<EviListBloc, EviListState>(
@@ -233,7 +231,7 @@ class _EviListPageState extends State<EviListPage> {
                   Text(
                     state.msg,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: const Color(0xFF364254).withValues(alpha: 0.7),
+                      color: const Color(0xFF52637A),
                     ),
                   ),
                 ],
@@ -265,7 +263,7 @@ class _EviListPageState extends State<EviListPage> {
                       'Something went wrong',
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFF1C2430),
+                        color: const Color(0xFF0F1C2E),
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -273,7 +271,7 @@ class _EviListPageState extends State<EviListPage> {
                       state.msg,
                       textAlign: TextAlign.center,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFF364254).withValues(alpha: 0.6),
+                        color: const Color(0xFF52637A),
                       ),
                     ),
                     const SizedBox(height: 20),

@@ -12,11 +12,23 @@ class EviStoreRepoImpl implements IEviStoreRepo {
   final IEviStoreRemoteDataSource rds;
   const EviStoreRepoImpl(this.rds, this.logger);
 
+  static const _fileTypeOverride = String.fromEnvironment(
+    'DUES_FILE_TYPE',
+    defaultValue: '',
+  );
+
   @override
   Future<Either<Failure, Evidence>> storeEvidence({
     required PickedFileData eviData,
     OnProgressChanged? onProgress,
   }) async {
+    final sourceName = eviData.path ?? eviData.name;
+    final fileType = _fileTypeOverride.trim().isNotEmpty
+        ? _fileTypeOverride.trim()
+        : FileType.resolveFromFileName(sourceName);
+
+    logger.i('Resolved upload fileType=$fileType for file=$sourceName');
+
     final appendRes = await rds.appendIfExists(eviData, onProgress: onProgress);
     if (appendRes != null) {
       return right((appendRes));
@@ -24,12 +36,13 @@ class EviStoreRepoImpl implements IEviStoreRepo {
 
     try {
       final storeRes = await rds.streamFile(
-        FileType.evi,
+        fileType,
         eviData,
         onProgress: onProgress,
       );
       return right(storeRes);
-    } catch (e) {
+    } catch (e, st) {
+      logger.e('storeEvidence failed: $e', error: e, stackTrace: st);
       return left(Failure(e.toString()));
     }
   }

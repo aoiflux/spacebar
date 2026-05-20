@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:spacebar/features/home/presentation/widgets/home_status_pill.dart';
 
@@ -31,20 +29,28 @@ class HomeActionPane extends StatelessWidget {
       tint: tint,
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.all(22),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: tint.withValues(alpha: 0.14),
+                    color: tint,
                     borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: tint.withValues(alpha: 0.28),
+                        blurRadius: 14,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
                   ),
-                  child: Icon(icon, color: tint, size: 26),
+                  child: Icon(icon, color: Colors.white, size: 24),
                 ),
                 const Spacer(),
                 HomeStatusPill(
@@ -54,35 +60,56 @@ class HomeActionPane extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 20),
             Text(
               title,
               style: textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF1C2430),
+                color: const Color(0xFF0F1C2E),
+                letterSpacing: -0.3,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Text(
               subtitle,
-              style: textTheme.bodyLarge?.copyWith(
-                height: 1.35,
-                color: const Color(0xFF364254),
+              style: textTheme.bodyMedium?.copyWith(
+                height: 1.55,
+                color: const Color(0xFF52637A),
               ),
             ),
             const Spacer(),
-            Row(
-              children: [
-                Text(
-                  ctaLabel,
-                  style: textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: tint,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: tint,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: tint.withValues(alpha: 0.22),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Icon(Icons.arrow_forward_rounded, color: tint),
-              ],
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    ctaLabel,
+                    style: textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      letterSpacing: 0.1,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(
+                    Icons.arrow_forward_rounded,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -117,45 +144,34 @@ class _HomeHoverLiftCardState extends State<_HomeHoverLiftCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOutCubic,
-        transform: Matrix4.translationValues(0, _hovered ? -5 : 0, 0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 13, sigmaY: 13),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: widget.onTap,
-                child: Ink(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: widget.tint.withValues(
-                        alpha: _hovered ? 0.45 : 0.26,
-                      ),
-                      width: 1.2,
-                    ),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Colors.white.withValues(alpha: 0.74),
-                        Colors.white.withValues(alpha: 0.48),
-                      ],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: widget.tint.withValues(
-                          alpha: _hovered ? 0.2 : 0.13,
-                        ),
-                        blurRadius: _hovered ? 38 : 28,
-                        offset: Offset(0, _hovered ? 18 : 12),
-                      ),
-                    ],
-                  ),
-                  child: widget.child,
+        transform: Matrix4.translationValues(0, _hovered ? -4 : 0, 0),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: widget.onTap,
+            borderRadius: BorderRadius.circular(20),
+            splashColor: widget.tint.withValues(alpha: 0.06),
+            highlightColor: widget.tint.withValues(alpha: 0.03),
+            child: Ink(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.white,
+                border: Border.all(
+                  color: _hovered
+                      ? widget.tint.withValues(alpha: 0.35)
+                      : const Color(0xFFDDE5F0),
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: _hovered
+                        ? widget.tint.withValues(alpha: 0.14)
+                        : const Color(0x0A0B2240),
+                    blurRadius: _hovered ? 40 : 16,
+                    offset: Offset(0, _hovered ? 16 : 6),
+                  ),
+                ],
               ),
+              child: widget.child,
             ),
           ),
         ),

@@ -12,3 +12,5 @@ final class EviStoreProgressUpdate extends EviStoreEvent {
   final ProgressUpdate progress;
   EviStoreProgressUpdate(this.progress);
 }
+
+final class EviStoreReset extends EviStoreEvent {}

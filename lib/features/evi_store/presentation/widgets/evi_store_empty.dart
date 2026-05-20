@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:desktop_drop/desktop_drop.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:spacebar/core/common/models/picked_file_data.dart';
 import 'package:spacebar/features/evi_list/presentation/pages/evi_list_page.dart';
@@ -21,6 +22,7 @@ class EviStoreEmpty extends StatefulWidget {
 
 class _EviStoreEmptyState extends State<EviStoreEmpty> {
   bool _isDragHovering = false;
+  DropzoneViewController? _dropzoneController;
 
   @override
   Widget build(BuildContext context) {
@@ -44,14 +46,33 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
           // Navigation Button
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
+            child: TextButton.icon(
               onPressed: () => Navigator.of(
                 context,
               ).push(MaterialPageRoute(builder: (_) => const EviListPage())),
-              icon: const Icon(Icons.list_outlined),
-              label: const Text('View Evidence List'),
-              style: ElevatedButton.styleFrom(
+              icon: const Icon(
+                Icons.list_outlined,
+                size: 16,
+                color: Color(0xFF0B57D0),
+              ),
+              label: const Text(
+                'View Evidence List',
+                style: TextStyle(
+                  color: Color(0xFF0B57D0),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              style: TextButton.styleFrom(
+                backgroundColor: const Color(
+                  0xFF0B57D0,
+                ).withValues(alpha: 0.08),
                 padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: const Color(0xFF0B57D0).withValues(alpha: 0.3),
+                  ),
+                ),
               ),
             ),
           ),
@@ -64,23 +85,35 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.85),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF0B57D0), Color(0xFF0946B0)],
+        ),
         shape: BoxShape.circle,
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x440B57D0),
+            blurRadius: 20,
+            offset: Offset(0, 6),
+          ),
+        ],
       ),
-      child: Icon(
+      child: const Icon(
         Icons.cloud_upload_outlined,
-        size: 40,
-        color: Theme.of(context).colorScheme.onPrimary,
+        size: 38,
+        color: Colors.white,
       ),
     );
   }
 
   Widget _buildTitle(BuildContext context) {
     return Text(
-      'Upload Your Files',
+      'Upload Evidence File',
       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         letterSpacing: -0.5,
+        color: const Color(0xFF0F1C2E),
       ),
       textAlign: TextAlign.center,
     );
@@ -88,9 +121,9 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
 
   Widget _buildDescription(BuildContext context) {
     return Text(
-      'Securely store and manage your files with advanced encryption, deduplication, and smart compression',
+      'Securely store and manage evidence files with hash-based deduplication, smart compression, and chain-of-custody preservation.',
       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+        color: const Color(0xFF52637A),
         height: 1.5,
       ),
       textAlign: TextAlign.center,
@@ -116,75 +149,73 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
         _handleDroppedFile(pickedFile);
       },
       child: MouseRegion(
+        cursor: SystemMouseCursors.click,
         onEnter: (_) {
           if (!_isDragHovering) setState(() => _isDragHovering = true);
         },
         onExit: (_) {
           if (_isDragHovering) setState(() => _isDragHovering = false);
         },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          decoration: BoxDecoration(
-            border: Border.all(
+        child: GestureDetector(
+          onTap: _onDesktopDropzoneClicked,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: _isDragHovering
+                    ? const Color(0xFF0B57D0)
+                    : const Color(0xFFDDE5F0),
+                width: 1.5,
+              ),
+              borderRadius: BorderRadius.circular(12),
               color: _isDragHovering
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(
-                      context,
-                    ).colorScheme.primary.withValues(alpha: 0.2),
-              width: 1.5,
+                  ? const Color(0xFF0B57D0).withValues(alpha: 0.06)
+                  : const Color(0xFFFFFFFF).withValues(alpha: 0.6),
+              boxShadow: _isDragHovering
+                  ? [
+                      BoxShadow(
+                        color: const Color(0xFF0B57D0).withValues(alpha: 0.12),
+                        blurRadius: 20,
+                        spreadRadius: 0,
+                      ),
+                    ]
+                  : null,
             ),
-            borderRadius: BorderRadius.circular(8),
-            color: _isDragHovering
-                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.04)
-                : Theme.of(context).colorScheme.primary.withValues(alpha: 0.02),
-            boxShadow: _isDragHovering
-                ? [
-                    BoxShadow(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.primary.withValues(alpha: 0.08),
-                      blurRadius: 12,
-                      spreadRadius: 0,
-                    ),
-                  ]
-                : null,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AnimatedScale(
-                scale: _isDragHovering ? 1.1 : 1.0,
-                duration: const Duration(milliseconds: 200),
-                child: Icon(
-                  Icons.folder_open_outlined,
-                  size: 36,
-                  color: Theme.of(context).colorScheme.primary.withValues(
-                    alpha: _isDragHovering ? 1.0 : 0.5,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedScale(
+                  scale: _isDragHovering ? 1.1 : 1.0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Icon(
+                    Icons.folder_open_outlined,
+                    size: 36,
+                    color: const Color(
+                      0xFF0B57D0,
+                    ).withValues(alpha: _isDragHovering ? 1.0 : 0.5),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Drag & drop files here',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w500,
+                const SizedBox(height: 16),
+                Text(
+                  'Drag & drop files here',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: const Color(0xFF0B57D0),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'or tap the button below',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.5),
+                const SizedBox(height: 4),
+                Text(
+                  'or tap the button below',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: const Color(0xFF52637A),
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -195,18 +226,34 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
     return Stack(
       children: [
         DropzoneView(
-          onCreated: (controller) {},
+          onCreated: (controller) {
+            _dropzoneController = controller;
+          },
           onHover: () {
             setState(() => _isDragHovering = true);
           },
           onLeave: () {
             setState(() => _isDragHovering = false);
           },
-          onDropFile: (file) {
+          onDropFile: (file) async {
             setState(() => _isDragHovering = false);
+            final controller = _dropzoneController;
+            if (controller == null) {
+              return;
+            }
+
+            final size = await controller.getFileSize(file);
+            final stream = controller.getFileStream(file);
+
+            final platformFile = PlatformFile(
+              name: file.name,
+              size: size,
+              readStream: stream,
+            );
+
             final pickedFile = PickedFileData(
               name: file.name,
-              platformFile: file.getNative(),
+              platformFile: platformFile,
             );
             _handleDroppedFile(pickedFile);
           },
@@ -273,7 +320,7 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'or tap the button below',
+                    'or use the button below',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Theme.of(
                         context,
@@ -286,6 +333,17 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
             ),
           ),
         ),
+        // Clickable overlay for web file picker
+        if (kIsWeb)
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: _onWebDropzoneClicked,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Container(color: Colors.transparent),
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -298,21 +356,67 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
     }
   }
 
+  Future<void> _onDesktopDropzoneClicked() async {
+    try {
+      final result = await FilePicker.pickFiles();
+      if (result == null || result.files.isEmpty) {
+        return;
+      }
+
+      for (final file in result.files) {
+        final pickedFile = PickedFileData(name: file.name, path: file.path);
+        _handleDroppedFile(pickedFile);
+      }
+    } catch (e) {
+      debugPrint('File picker error: $e');
+    }
+  }
+
+  Future<void> _onWebDropzoneClicked() async {
+    final controller = _dropzoneController;
+    if (controller == null) {
+      return;
+    }
+
+    try {
+      final uploadedFiles = await controller.pickFiles();
+      if (uploadedFiles.isEmpty) {
+        return;
+      }
+
+      for (final file in uploadedFiles) {
+        final size = await controller.getFileSize(file);
+        final stream = controller.getFileStream(file);
+
+        final platformFile = PlatformFile(
+          name: file.name,
+          size: size,
+          readStream: stream,
+        );
+
+        final pickedFile = PickedFileData(
+          name: file.name,
+          platformFile: platformFile,
+        );
+        _handleDroppedFile(pickedFile);
+      }
+    } catch (e) {
+      // File picker was cancelled or error occurred
+      debugPrint('File picker error: $e');
+    }
+  }
+
   Widget _buildHint(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Tooltip(
-          message: 'Use the floating button to add a file',
-          child: Opacity(
-            opacity: 0.6,
-            child: Text(
-              '💡 Tip: Use the button in the bottom right corner',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
-          ),
+        Icon(Icons.lightbulb_outline, size: 13, color: const Color(0xFF52637A)),
+        const SizedBox(width: 6),
+        Text(
+          'Use the + button in the bottom right to pick a file',
+          style: Theme.of(
+            context,
+          ).textTheme.labelSmall?.copyWith(color: const Color(0xFF52637A)),
         ),
       ],
     );
@@ -375,34 +479,31 @@ class _EviStoreEmptyState extends State<EviStoreEmpty> {
     required String description,
   }) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
-        ),
+        color: const Color(0xFFFFFFFF),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFDDE5F0)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 24, color: Theme.of(context).colorScheme.primary),
+          Icon(icon, size: 22, color: const Color(0xFF0B57D0)),
           const SizedBox(height: 6),
           Text(
             title,
-            style: Theme.of(
-              context,
-            ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF0F1C2E),
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
           Text(
             description,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.6),
-              height: 1.3,
+              color: const Color(0xFF52637A),
+              height: 1.35,
             ),
             textAlign: TextAlign.center,
           ),

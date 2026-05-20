@@ -43,8 +43,13 @@ class EviBloc extends Bloc<EviStoreEvent, EviStoreState> {
     emit(EviStoreLoading(event.progress));
   }
 
+  void _reset(EviStoreReset event, Emitter<EviStoreState> emit) {
+    emit(EviStoreInitial());
+  }
+
   EviBloc(this._eviStoreCase) : super(EviStoreInitial()) {
     on<EviStore>(_eviStore);
     on<EviStoreProgressUpdate>(_progressUpdate);
+    on<EviStoreReset>(_reset);
   }
 }

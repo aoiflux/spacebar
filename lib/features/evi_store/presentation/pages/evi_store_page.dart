@@ -11,10 +11,29 @@ import 'package:spacebar/features/evi_store/presentation/bloc/evi_store_bloc/evi
 import 'package:spacebar/features/evi_store/presentation/widgets/evi_store_empty.dart';
 import 'package:spacebar/features/evi_store/presentation/widgets/evi_store_success.dart';
 
-class EviStorePage extends StatelessWidget {
+class EviStorePage extends StatefulWidget {
   final Evidence? initialEvidence;
 
   const EviStorePage({super.key, this.initialEvidence});
+
+  @override
+  State<EviStorePage> createState() => _EviStorePageState();
+}
+
+class _EviStorePageState extends State<EviStorePage> {
+  late final EviBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = context.read<EviBloc>();
+  }
+
+  @override
+  void dispose() {
+    _bloc.add(EviStoreReset());
+    super.dispose();
+  }
 
   void store(BuildContext context) async {
     final bloc = context.read<EviBloc>();
@@ -51,10 +70,32 @@ class EviStorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // If initial evidence provided, show it directly without BLoC
-    if (initialEvidence != null) {
+    if (widget.initialEvidence != null) {
       return Scaffold(
+        backgroundColor: const Color(0xFFF4F6FA),
         appBar: AppBar(
-          title: const Text("DUES"),
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          title: Row(
+            children: [
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: const Color(0xFF0B57D0),
+                ),
+                child: const Icon(
+                  Icons.shield_outlined,
+                  size: 16,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 10),
+              const Text('DUES'),
+            ],
+          ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).pop(),
@@ -71,14 +112,40 @@ class EviStorePage extends StatelessWidget {
               icon: const Icon(Icons.list_outlined),
             ),
           ],
+          bottom: const PreferredSize(
+            preferredSize: Size.fromHeight(1),
+            child: Divider(height: 1, color: Color(0xFFDDE5F0)),
+          ),
         ),
-        body: EviStoreSuccessView(evidence: initialEvidence!),
+        body: EviStoreSuccessView(evidence: widget.initialEvidence!),
       );
     }
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF4F6FA),
       appBar: AppBar(
-        title: const Text("DUES"),
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        title: Row(
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: const Color(0xFF0B57D0),
+              ),
+              child: const Icon(
+                Icons.shield_outlined,
+                size: 16,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Text('DUES'),
+          ],
+        ),
         actions: [
           IconButton(
             onPressed: () => _goHome(context),
@@ -91,10 +158,19 @@ class EviStorePage extends StatelessWidget {
             icon: const Icon(Icons.list_outlined),
           ),
         ],
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, color: Color(0xFFDDE5F0)),
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => store(context),
-        child: const Icon(Icons.add),
+      floatingActionButton: BlocBuilder<EviBloc, EviStoreState>(
+        builder: (context, state) {
+          if (state is EviStoreInitial) return const SizedBox.shrink();
+          return FloatingActionButton(
+            onPressed: () => store(context),
+            child: const Icon(Icons.add),
+          );
+        },
       ),
       body: BlocConsumer<EviBloc, EviStoreState>(
         listener: (context, state) {

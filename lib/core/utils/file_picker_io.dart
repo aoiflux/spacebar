@@ -3,7 +3,7 @@ import 'package:spacebar/core/common/models/picked_file_data.dart';
 
 /// Desktop/Mobile implementation - uses file path for efficient streaming
 Future<PickedFileData?> pickFile() async {
-  final result = await FilePicker.platform.pickFiles();
+  final result = await FilePicker.pickFiles();
   if (result == null || result.files.isEmpty) {
     return null;
   }
