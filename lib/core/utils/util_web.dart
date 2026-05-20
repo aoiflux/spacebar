@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:pointycastle/digests/sha3.dart';
 import 'package:spacebar/core/common/models/picked_file_data.dart';
@@ -50,9 +51,11 @@ Future<Either<FileError, String>> getFileHashWeb(
     }
 
     try {
+      debugPrint("Attempting FRB hash function call");
       final hex = await SpacebarCrypto.sha3HashBytes(bytes);
       return Right(_hexToBase64(hex));
     } catch (_) {
+      debugPrint("Falling back to dart-based computation");
       return Right(_sha3Base64FromBytes(bytes));
     }
   } catch (e) {
