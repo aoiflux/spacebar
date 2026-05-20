@@ -4,7 +4,7 @@
 .DESCRIPTION
     Runs full pre-build pipeline first (Flutter deps, FRB codegen, Rust test/build),
     then runs flutter build for each target platform and collects outputs
-    into a timestamped folder under dist/.
+    into fixed folders under dist/.
 .PARAMETER Targets
     Comma-separated list of targets to build: windows, linux, android.
     Defaults to all three.
@@ -74,11 +74,9 @@ try {
         throw "Invalid target(s): $($invalidTargets -join ', '). Valid values: windows, linux, android."
     }
 
-    $stamp = Get-Date -Format "yyyyMMdd_HHmmss"
     $releaseRoot = if ([System.IO.Path]::IsPathRooted($OutDir)) { $OutDir } else { Join-Path $ProjectRoot $OutDir }
-    $release = Join-Path $releaseRoot $stamp
-    New-Item -ItemType Directory -Force -Path $release | Out-Null
-    Write-Step "Output directory: $release"
+    New-Item -ItemType Directory -Force -Path $releaseRoot | Out-Null
+    Write-Step "Output directory: $releaseRoot"
 
     $results = @()
 
@@ -118,7 +116,10 @@ try {
         try {
             Run flutter, build, windows, --release
             $src = Join-Path $ProjectRoot "build\windows\x64\runner\Release"
-            $dst = Join-Path $release "windows"
+            $dst = Join-Path $releaseRoot "windows"
+            if (Test-Path $dst) {
+                Remove-Item -Recurse -Force -Path $dst
+            }
             Copy-Item -Recurse -Force -Path $src -Destination $dst
             Write-Ok "Copied → $dst"
             $results += [pscustomobject]@{ Target = "windows"; Status = "OK"; Path = $dst }
@@ -136,7 +137,10 @@ try {
         try {
             Run flutter, build, linux, --release
             $src = Join-Path $ProjectRoot "build\linux\x64\release\bundle"
-            $dst = Join-Path $release "linux"
+            $dst = Join-Path $releaseRoot "linux"
+            if (Test-Path $dst) {
+                Remove-Item -Recurse -Force -Path $dst
+            }
             Copy-Item -Recurse -Force -Path $src -Destination $dst
             Write-Ok "Copied → $dst"
             $results += [pscustomobject]@{ Target = "linux"; Status = "OK"; Path = $dst }
@@ -154,7 +158,7 @@ try {
         try {
             Run flutter, build, apk, --release
             $src = Join-Path $ProjectRoot "build\app\outputs\flutter-apk\app-release.apk"
-            $dst = Join-Path $release "android"
+            $dst = Join-Path $releaseRoot "andrioid"
             New-Item -ItemType Directory -Force -Path $dst | Out-Null
             Copy-Item -Force -Path $src -Destination (Join-Path $dst "spacebar.apk")
             Write-Ok "Copied → $dst\spacebar.apk"
@@ -172,7 +176,7 @@ try {
     Write-Host "  Build summary" -ForegroundColor White
     Write-Host "────────────────────────────────────────" -ForegroundColor DarkGray
     $results | Format-Table -AutoSize
-    Write-Host "  Release folder: $release" -ForegroundColor White
+    Write-Host "  Output root: $releaseRoot" -ForegroundColor White
     Write-Host "────────────────────────────────────────`n" -ForegroundColor DarkGray
 
     $failed = ($results | Where-Object { $_.Status -eq "FAILED" }).Count
